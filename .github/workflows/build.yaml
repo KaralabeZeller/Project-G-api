@@ -1,0 +1,71 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    # Runs a single command using the runners shell
+    - name: Run a one-line script
+      run: echo Hello, world!
+    
+    - name: Setup Python
+      uses: actions/setup-python@v1.2.0
+      with:
+        # Version range or exact version of a Python version to use, using SemVer's version range syntax.
+        python-version: 2.7 # optional, default is 3.x
+
+        # Runs a set of commands using the runners shell
+    - name: Setup gcloud environment
+      uses: GoogleCloudPlatform/github-actions@master
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+        
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+      
+    - name: Cache
+      uses: actions/cache@v1
+      id: cache
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: Build with Maven
+      run: mvn -B verify --file pom.xml 
+        
+    - name: SCP sources
+      run: gcloud compute scp $GITHUB_WORKSPACE/target/*.jar project-g-api-ci@project-g-1:~/ --zone=europe-west3-c
+      
+    - name: Kill previous process
+      run: gcloud compute ssh project-g-api-ci@project-g-1 --ssh-flag="-vvv" --zone=europe-west3-c -- "exec pkill -f 'java -jar'"
+    
+    - name: Start deployed version
+      run: gcloud compute ssh project-g-api-ci@project-g-1 --ssh-flag="-vvv" --zone=europe-west3-c -- "nohup java -jar ~/*.jar > out.log 2>err.log &"
+
+     # - name: Publish to GitHub Packages Apache Maven
+      # run: mvn deploy
+      # env:
+        # GITHUB_TOKEN: ${{ github.token }} # GITHUB_TOKEN is the default env for the password
