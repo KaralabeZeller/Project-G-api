@@ -60,7 +60,7 @@ jobs:
       run: gcloud compute scp $GITHUB_WORKSPACE/target/*.jar project-g-api-ci@project-g-1:~/ --zone=europe-west3-c
       
     - name: Kill previous process
-      run: gcloud compute ssh project-g-api-ci@project-g-1 --zone=europe-west3-c -- pkill -f 'java -jar'
+      run: gcloud compute ssh project-g-api-ci@project-g-1 --zone=europe-west3-c -- pkill -f "java -jar"
     
     - name: Start deployed version
       run: gcloud compute ssh project-g-api-ci@project-g-1 --zone=europe-west3-c -- java -jar ~/*.jar &
