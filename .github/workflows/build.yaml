@@ -63,7 +63,7 @@ jobs:
       run: gcloud compute ssh project-g-api-ci@project-g-1 --ssh-flag="-vvv" --zone=europe-west3-c -- "exec pkill -f 'java -jar'"
     
     - name: Start deployed version
-      run: gcloud compute ssh project-g-api-ci@project-g-1 --ssh-flag="-vvv" --zone=europe-west3-c -- "exec nohup java -jar ~/*.jar &"
+      run: gcloud compute ssh project-g-api-ci@project-g-1 --ssh-flag="-vvv" --zone=europe-west3-c -- "nohup java -jar ~/*.jar > out.log 2>err.log &"
 
      # - name: Publish to GitHub Packages Apache Maven
       # run: mvn deploy
