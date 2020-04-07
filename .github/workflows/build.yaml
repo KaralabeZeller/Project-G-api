@@ -57,13 +57,13 @@ jobs:
       run: mvn -B verify --file pom.xml 
         
     - name: SCP sources
-      run: gcloud compute scp $GITHUB_WORKSPACE/target/*.jar project-g-api-ci@project-g-1:~/
+      run: gcloud compute scp $GITHUB_WORKSPACE/target/*.jar project-g-api-ci@project-g-1:~/ --zone=europe-west3-c
       
     - name: Kill previous process
-      run: gcloud compute ssh project-g-api-ci@project-g-1 -- pkill -f 'java -jar'
+      run: gcloud compute ssh project-g-api-ci@project-g-1 --zone=europe-west3-c -- pkill -f 'java -jar'
     
     - name: Start deployed version
-      run: gcloud compute ssh project-g-api-ci@project-g-1 -- java -jar ~/*.jar &
+      run: gcloud compute ssh project-g-api-ci@project-g-1 --zone=europe-west3-c -- java -jar ~/*.jar &
 
      # - name: Publish to GitHub Packages Apache Maven
       # run: mvn deploy
