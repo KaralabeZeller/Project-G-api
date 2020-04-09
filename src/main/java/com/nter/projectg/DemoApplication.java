@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nter.projectg.common.Lobby;
 import com.nter.projectg.controller.WebSocketEventListener;
 import com.nter.projectg.games.common.Game;
 import com.nter.projectg.games.secrethitler.SecretHitler;
@@ -20,7 +21,7 @@ public class DemoApplication {
 		SpringApplication.run(DemoApplication.class, args);
 		
 		logger.info("Creating game Secreet  Hitler");
-		Game game = new SecretHitler();
+		Lobby lobby = new Lobby();
 		
 	}
 }

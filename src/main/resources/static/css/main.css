@@ -122,7 +122,8 @@ button.accent {
 }
 
 .chat-container {
-	max-width: 500px;
+	max-width: 20%;
+	min-width: 300px;
 	margin-left: auto;
 	margin-right: auto;
 	background-color: #fff;
@@ -137,7 +138,7 @@ button.accent {
 }
 
 .game-canvas {
-	max-width: 10000px;
+	max-width: 80%;
 	margin-left: auto;
 	margin-right: auto;
 	background-color: #fff;
@@ -150,6 +151,7 @@ button.accent {
 	right: 42px;
 	left: 550px;
 	margin-top: -160px;
+	image-rendering: optimizeQuality; /* Awesome future-browsers       */
 
 }
 

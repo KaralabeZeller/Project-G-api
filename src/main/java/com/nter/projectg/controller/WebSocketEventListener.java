@@ -15,24 +15,25 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import com.nter.projectg.common.Lobby;
 import com.nter.projectg.model.GMessage;
 
 @Component
 public class WebSocketEventListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
-    private List<String> connectedClientId = new ArrayList<String>();
+	private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
+	private List<String> connectedClientId = new ArrayList<String>();
 
-    @Autowired
-    private SimpMessageSendingOperations messagingTemplate;
+	@Autowired
+	private SimpMessageSendingOperations messagingTemplate;
 
-    @EventListener
-    public void handleWebSocketConnectListener(SessionConnectedEvent event) {
-        logger.info("Received a new web socket connection");
-        
-    }
+	@EventListener
+	public void handleWebSocketConnectListener(SessionConnectedEvent event) {
+		logger.info("Received a new web socket connection");
 
-    @EventListener
+	}
+
+	@EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
@@ -43,6 +44,25 @@ public class WebSocketEventListener {
             GMessage chatMessage = new GMessage();
             chatMessage.setType(GMessage.MessageType.LEAVE);
             chatMessage.setSender(username);
+            
+            for(int i = 0; i <Lobby.users.size(); i++)
+            {
+            	if(Lobby.users.get(i).equals(username)) {
+            		Lobby.users.remove(i);
+            		break;
+            	}
+            	
+            }
+            
+            String message = "";
+    		for (String user : Lobby.users) {
+    			message += user + ",";
+
+    		}
+    		
+    		if(message.length() > 0)
+    			chatMessage.setContent(message.substring(0, message.length() - 1));
+
 
             messagingTemplate.convertAndSend("/topic/public", chatMessage);            
         }

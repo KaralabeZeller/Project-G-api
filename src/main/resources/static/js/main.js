@@ -7,6 +7,7 @@ var messageForm = document.querySelector('#messageForm');
 var messageInput = document.querySelector('#message');
 var messageArea = document.querySelector('#messageArea');
 var connectingElement = document.querySelector('.connecting');
+var startButton = document.getElementById('startButton');
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -102,17 +103,43 @@ function sendMessage(event) {
 	event.preventDefault();
 }
 
+function startGame(event) {
+	var chatMessage = {
+		sender : username,
+		content : 'SecretHitler',
+		type : 'START'
+	};
+	stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+
+	event.preventDefault();
+}
+
 function onMessageReceived(payload) {
 	var message = JSON.parse(payload.body);
 
-	if (message.type === 'JOIN') {
+	if (message.type === 'JOIN' || message.type === 'LEAVE') {
+
+		if (message.type === 'JOIN') {
+			userList.push(message.sender)
+		} else {
+			if (message.type === 'JOIN') {
+				userList.remove(message.sender)
+			}
+		}
+
+		if (userList.length >= 2) {
+			startButton.classList.remove('hidden');
+		} else {
+			startButton.classList.add('hidden');
+		}
+
 		var splitted = message.content.split(','), i;
-		
+
 		var element = document.getElementById('messageArea');
 		element.innerHTML = '';
 
 		for (i = 0; i < splitted.length; i++) {
-			
+
 			var messageElement = document.createElement('li');
 
 			messageElement.classList.add('chat-message');
@@ -139,47 +166,8 @@ function onMessageReceived(payload) {
 			messageArea.scrollTop = messageArea.scrollHeight;
 		}
 
-	} else if (message.type === 'LEAVE') {
-		var messageElement = document.createElement('li');
-
-		messageElement.classList.add('event-message');
-		message.content = message.sender + ' left!';
-
-		var textElement = document.createElement('p');
-		var messageText = document.createTextNode(message.content);
-		textElement.appendChild(messageText);
-
-		messageElement.appendChild(textElement);
-
-		messageArea.appendChild(messageElement);
-		messageArea.scrollTop = messageArea.scrollHeight;
-
-	} else {
-
-		var messageElement = document.createElement('li');
-		messageElement.classList.add('chat-message');
-
-		var avatarElement = document.createElement('i');
-		var avatarText = document.createTextNode(message.sender[0]);
-		avatarElement.appendChild(avatarText);
-		avatarElement.style['background-color'] = getAvatarColor(message.sender);
-
-		messageElement.appendChild(avatarElement);
-
-		var usernameElement = document.createElement('span');
-		var usernameText = document.createTextNode(message.sender);
-		usernameElement.appendChild(usernameText);
-		messageElement.appendChild(usernameElement);
-
-		var textElement = document.createElement('p');
-		var messageText = document.createTextNode(message.content);
-		textElement.appendChild(messageText);
-
-		messageElement.appendChild(textElement);
-
-		messageArea.appendChild(messageElement);
-		messageArea.scrollTop = messageArea.scrollHeight;
-
+	} else if (message.type === 'START') {
+		playSecretHitler();
 	}
 
 }
@@ -193,5 +181,56 @@ function getAvatarColor(messageSender) {
 	return colors[index];
 }
 
+function playSecretHitler() {
+	var drawing = new Image();
+	var drawing2 = new Image();
+	
+	
+	drawing.onload = function(){
+	    var width = this.naturalWidth,
+	        height = this.naturalHeight;
+
+	    canvas.width = Math.floor(width / 2);
+	    canvas.height = Math.floor(height / 2);
+
+	    ctx.scale(0.5, 0.5);
+	    ctx.drawImage(this, 0, 0, canvas.width, canvas.height/2);
+
+	    // restore original 1x1 scale
+	    ctx.scale(2, 2);
+	};
+	
+	drawing2.onload = function(){
+	    var width = this.naturalWidth,
+	        height = this.naturalHeight;
+
+	    canvas.width = Math.floor(width / 2);
+	    canvas.height = Math.floor(height / 2);
+
+	    ctx.scale(0.5, 0.5);
+	    ctx.drawImage(this, 0, canvas.height/2, canvas.width, canvas.height/2);
+
+	    // restore original 1x1 scale
+	    ctx.scale(2, 2);
+	};
+
+
+	
+	
+	
+	
+	
+	drawing.src = "./games/secrethitler/SH1.png";
+	drawing2.src = "./games/secrethitler/SH2.png";
+
+	/*drawing.onload = function() {
+		ctx.drawImage(drawing, 0, 0, ctx.canvas.width, ctx.canvas.height/2);
+	};
+	
+	drawing2.onload = function() {
+		ctx.drawImage(drawing2, 0, ctx.canvas.height/2, ctx.canvas.width, ctx.canvas.height/2);
+	};*/
+}
+
 usernameForm.addEventListener('submit', connect, true)
-messageForm.addEventListener('submit', sendMessage, true)
+messageForm.addEventListener('submit', startGame, true)

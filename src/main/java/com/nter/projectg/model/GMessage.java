@@ -8,6 +8,7 @@ public class GMessage {
     public enum MessageType {
         CHAT,
         JOIN,
+        START,
         LEAVE
     }
 
