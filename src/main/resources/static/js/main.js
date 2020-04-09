@@ -7,9 +7,13 @@ var messageForm = document.querySelector('#messageForm');
 var messageInput = document.querySelector('#message');
 var messageArea = document.querySelector('#messageArea');
 var connectingElement = document.querySelector('.connecting');
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
 
 var stompClient = null;
+var stompClient_screen = null;
 var username = null;
+var userList = new Array();
 
 var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107',
 		'#ff85af', '#FF9800', '#39bbb0' ];
@@ -22,11 +26,15 @@ function connect(event) {
 		chatPage.classList.remove('hidden');
 
 		var socket = new SockJS('/ws');
+		var sock_screen = new SockJS('/ws');
 		stompClient = Stomp.over(socket);
+		stompClient_screen = Stomp.over(sock_screen);
 
 		stompClient.connect({}, onConnected, onError);
+		stompClient_screen.connect({}, onConnectedScreen, onError);
 	}
 	event.preventDefault();
+
 }
 
 function onConnected() {
@@ -40,6 +48,38 @@ function onConnected() {
 	}))
 
 	connectingElement.classList.add('hidden');
+}
+
+function onConnectedScreen() {
+	// Subscribe to the Public Topic
+	stompClient_screen.subscribe('/topic/greetings', onMessageReceivedScreen);
+
+	// Tell your username to the server
+	stompClient.send("/app/hello", {}, JSON.stringify({
+		'name' : username
+	}));
+
+	connectingElement.classList.add('hidden');
+}
+
+function onMessageReceivedScreen(payload) {
+	// var message = payload;
+	//
+	// var messageElement = document.createElement('li');
+	//
+	//	
+	// messageElement.classList.add('event-message');
+	// message.content = 'Screen queue: ' + message;
+	//
+	//
+	// var textElement = document.createElement('p');
+	// var messageText = document.createTextNode(message.content);
+	// textElement.appendChild(messageText);
+	//
+	// messageElement.appendChild(textElement);
+	//
+	// messageArea.appendChild(messageElement);
+	// messageArea.scrollTop = messageArea.scrollHeight;
 }
 
 function onError(error) {
@@ -65,15 +105,58 @@ function sendMessage(event) {
 function onMessageReceived(payload) {
 	var message = JSON.parse(payload.body);
 
-	var messageElement = document.createElement('li');
-
 	if (message.type === 'JOIN') {
-		messageElement.classList.add('event-message');
-		message.content = message.sender + ' joined!';
+		var splitted = message.content.split(','), i;
+		
+		var element = document.getElementById('messageArea');
+		element.innerHTML = '';
+
+		for (i = 0; i < splitted.length; i++) {
+			
+			var messageElement = document.createElement('li');
+
+			messageElement.classList.add('chat-message');
+			var avatarElement = document.createElement('i');
+			var avatarText = document.createTextNode(splitted[i][0]);
+			avatarElement.appendChild(avatarText);
+			avatarElement.style['background-color'] = getAvatarColor(splitted[i]);
+
+			messageElement.appendChild(avatarElement);
+
+			var usernameElement = document.createElement('span');
+			var usernameText = document.createTextNode(splitted[i]);
+			usernameElement.appendChild(usernameText);
+			messageElement.appendChild(usernameElement);
+			message.content = '';
+
+			var textElement = document.createElement('p');
+			var messageText = document.createTextNode('');
+			textElement.appendChild(messageText);
+
+			messageElement.appendChild(textElement);
+
+			messageArea.appendChild(messageElement);
+			messageArea.scrollTop = messageArea.scrollHeight;
+		}
+
 	} else if (message.type === 'LEAVE') {
+		var messageElement = document.createElement('li');
+
 		messageElement.classList.add('event-message');
 		message.content = message.sender + ' left!';
+
+		var textElement = document.createElement('p');
+		var messageText = document.createTextNode(message.content);
+		textElement.appendChild(messageText);
+
+		messageElement.appendChild(textElement);
+
+		messageArea.appendChild(messageElement);
+		messageArea.scrollTop = messageArea.scrollHeight;
+
 	} else {
+
+		var messageElement = document.createElement('li');
 		messageElement.classList.add('chat-message');
 
 		var avatarElement = document.createElement('i');
@@ -87,16 +170,18 @@ function onMessageReceived(payload) {
 		var usernameText = document.createTextNode(message.sender);
 		usernameElement.appendChild(usernameText);
 		messageElement.appendChild(usernameElement);
+
+		var textElement = document.createElement('p');
+		var messageText = document.createTextNode(message.content);
+		textElement.appendChild(messageText);
+
+		messageElement.appendChild(textElement);
+
+		messageArea.appendChild(messageElement);
+		messageArea.scrollTop = messageArea.scrollHeight;
+
 	}
 
-	var textElement = document.createElement('p');
-	var messageText = document.createTextNode(message.content);
-	textElement.appendChild(messageText);
-
-	messageElement.appendChild(textElement);
-
-	messageArea.appendChild(messageElement);
-	messageArea.scrollTop = messageArea.scrollHeight;
 }
 
 function getAvatarColor(messageSender) {

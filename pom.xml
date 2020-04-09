@@ -10,7 +10,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.nter</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>project-g</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>projectg</name>
 	<description>Project-G backend</description>
