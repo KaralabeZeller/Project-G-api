@@ -196,7 +196,6 @@ function playSecretHitler() {
 	    ctx.scale(0.5, 0.5);
 	    ctx.drawImage(this, 0, 0, canvas.width, canvas.height/2);
 
-	    // restore original 1x1 scale
 	    ctx.scale(2, 2);
 	};
 	
@@ -210,7 +209,6 @@ function playSecretHitler() {
 	    ctx.scale(0.5, 0.5);
 	    ctx.drawImage(this, 0, canvas.height/2, canvas.width, canvas.height/2);
 
-	    // restore original 1x1 scale
 	    ctx.scale(2, 2);
 	};
 
