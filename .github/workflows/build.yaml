@@ -53,7 +53,7 @@ jobs:
       run: mvn -B verify --file pom.xml
     
     - name: Find application artifact
-      run: echo ::set-env name=JAR::$(echo $GITHUB_WORKSPACE/target/*.jar) && echo ::set-env name=JAR_NAME::$(basename -f $JAR)
+      run: echo ::set-env name=JAR::$(echo $GITHUB_WORKSPACE/target/*.jar) && echo ::set-env name=JAR_NAME::$(basename $JAR)
       
     - name: Deploy application with SCP
       run: gcloud compute scp $JAR project-g-api-ci@project-g-1:~/ --zone=europe-west3-c
