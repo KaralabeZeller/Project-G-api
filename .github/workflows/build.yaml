@@ -59,7 +59,7 @@ jobs:
       run: gcloud compute scp $GITHUB_WORKSPACE/target/*.jar project-g-api-ci@project-g-1:~/ --zone=europe-west3-c
       
     - name: Restart application with init.d
-      run: gcloud compute ssh project-g-api-ci@project-g-1 --zone=europe-west3-c -- "ln -sf ~/$JAR_NAME ~/project-g-api-service && sudo service project-g-api restart"
+      run: gcloud compute ssh project-g-api-ci@project-g-1 --zone=europe-west3-c -- "ln -sf ~/$JAR ~/project-g-api-service && sudo service project-g-api restart"
 
      # - name: Publish to GitHub Packages Apache Maven
       # run: mvn deploy
