@@ -10,10 +10,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.nter</groupId>
-	<artifactId>project-g</artifactId>
+	<artifactId>project-g-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>projectg</name>
-	<description>Project-G backend</description>
+	<name>project-g-api</name>
+	<description>Project-G API Backend</description>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -52,6 +52,11 @@
 				<configuration>
 					<!-- https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html#deployment-install -->
 					<executable>true</executable>
+<!--
+					<embeddedLaunchScriptProperties>
+						<initInfoProvides>project-g-api</initInfoProvides>
+					</embeddedLaunchScriptProperties>
+-->
 				</configuration>				
 			</plugin>
 		</plugins>
