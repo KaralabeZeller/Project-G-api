@@ -53,10 +53,10 @@ jobs:
       run: mvn -B verify --file pom.xml
     
     - name: Find application artifact
-      run: echo ::set-env name=JAR::$(echo $GITHUB_WORKSPACE/target/*.jar) && echo ::set-env name=JAR_NAME::$(basename $JAR)
+      run: echo ::set-env name=JAR::$(basename $GITHUB_WORKSPACE/target/*.jar)
       
     - name: Deploy application with SCP
-      run: gcloud compute scp $JAR project-g-api-ci@project-g-1:~/ --zone=europe-west3-c
+      run: gcloud compute scp $GITHUB_WORKSPACE/target/*.jar project-g-api-ci@project-g-1:~/ --zone=europe-west3-c
       
     - name: Restart application with init.d
       run: gcloud compute ssh project-g-api-ci@project-g-1 --zone=europe-west3-c -- "ln -s ~/$JAR_NAME ~/project-g-api-service && sudo service project-g-api restart"
