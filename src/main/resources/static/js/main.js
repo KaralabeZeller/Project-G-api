@@ -193,7 +193,7 @@ function playSecretHitler() {
 	    canvas.width = Math.floor(width / 2);
 	    canvas.height = Math.floor(height / 2);
 
-	    ctx.scale(0.5, 0.5);
+	    ctx.scale(0.25, 0.25);
 	    ctx.drawImage(this, 0, 0, width, height);
 	    ctx.setTransform(1, 0, 0, 1, 0, 0);
 	};
@@ -204,7 +204,7 @@ function playSecretHitler() {
 	    canvas.width = Math.floor(width / 2);
 	    canvas.height = Math.floor(height / 2);
 
-	    ctx.scale(0.5, 0.5);
+	    ctx.scale(0.25, 0.25);
 	    ctx.drawImage(this, 0, height, width, height);
 	    ctx.setTransform(1, 0, 0, 1, 0, 0);
 	};
