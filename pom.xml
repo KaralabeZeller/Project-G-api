@@ -22,9 +22,18 @@
 	<repositories>
 		<repository>
 			<id>spring-milestone</id>
+			<name>Spring Framework - Milestone Repository</name>
 			<url>https://maven.springframework.org/milestone/</url>
 		</repository>
-	</repositories>	
+	</repositories>
+	
+	<pluginRepositories>
+		<pluginRepository>
+			<id>spring-milestone</id>
+			<name>Spring Framework - Milestone Repository</name>
+			<url>https://maven.springframework.org/milestone/</url>
+		</pluginRepository>
+	</pluginRepositories>		
 	
 	<dependencies>
 		<dependency>
