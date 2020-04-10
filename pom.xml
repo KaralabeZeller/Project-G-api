@@ -75,6 +75,7 @@
 					</embeddedLaunchScriptProperties>
 -->
 					<!-- https://spring.io/guides/topicals/spring-boot-docker/ -->
+					<!-- https://docs.spring.io/spring-boot/docs/2.3.0.M4/maven-plugin/reference/html/ -->
 					<image>
 						<name>project-g.xyz/${project.artifactId}</name>
 					</image>
@@ -82,7 +83,11 @@
 				<executions>
 					<execution>
 						<goals>
+							<!-- Publish and deploy Docker image to Google Cloud -->
+							<!-- project-g.xyz/project-g-api:latest -->
+<!--
 							<goal>build-image</goal>
+-->
 						</goals>
 					</execution>
 				</executions>				
