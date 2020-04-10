@@ -122,8 +122,8 @@ button.accent {
 }
 
 .chat-container {
-	max-width: 20%;
-	min-width: 300px;
+	max-width: 500px;
+	min-width: 400px;
 	margin-left: auto;
 	margin-right: auto;
 	background-color: #fff;
@@ -137,15 +137,15 @@ button.accent {
 	margin-top: -160px;
 }
 
-.game-canvas {
-	max-width: 80%;
+.game-canvas-liberal {
+	max-width: 1200px;
 	margin-left: auto;
 	margin-right: auto;
 	background-color: #fff;
 	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
 	margin-top: 30px;
 	height: calc(100% - 60px);
-	max-height: 600px;
+	max-height: 450px;
 	position: absolute;
 	top: 20%;
 	right: 42px;
@@ -155,12 +155,29 @@ button.accent {
 
 }
 
+.game-canvas-fascist {
+	max-width: 1200px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #fff;
+	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+	margin-top: 30px;
+	height: calc(100% - 60px);
+	max-height: 450px;
+	position: absolute;
+	right: 42px;
+	left: 550px;
+	margin-top: 500px;
+	image-rendering: optimizeQuality; /* Awesome future-browsers       */
+}
+
 #chat-page ul {
 	list-style-type: none;
 	background-color: #FFF;
 	margin: 0;
-	overflow: auto;
-	overflow-y: scroll;
+	overflow: scroll;
+	overflow-y: hidden;
+	overflow-x: hidden;
 	padding: 0 20px 0px 20px;
 	height: calc(100% - 150px);
 }
