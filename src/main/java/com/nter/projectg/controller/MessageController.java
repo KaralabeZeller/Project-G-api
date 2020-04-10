@@ -56,7 +56,8 @@ public class MessageController {
 			SimpMessageHeaderAccessor reconnectMessageHeaderAccessor = SimpMessageHeaderAccessor.create();
 			reconnectMessageHeaderAccessor.copyHeaders(startMessageHeaderAccessor.toMap());
 			reconnectMessageHeaderAccessor.setSessionId(headerAccessor.getSessionId());
-			messagingTemplate.convertAndSendToUser(headerAccessor.getSessionId(), reconnectMessageHeaderAccessor.getDestination(), reconnectMessage, reconnectMessageHeaderAccessor.toMap());
+			reconnectMessageHeaderAccessor.setDestination("/topic/public");
+			messagingTemplate.convertAndSendToUser(headerAccessor.getSessionId(), "/topic/public", reconnectMessage, reconnectMessageHeaderAccessor.toMap());
 		}		
 		
 		String message = "";
