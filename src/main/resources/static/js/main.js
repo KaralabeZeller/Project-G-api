@@ -8,6 +8,7 @@ var messageInput = document.querySelector('#message');
 var messageArea = document.querySelector('#messageArea');
 var connectingElement = document.querySelector('.connecting');
 var startButton = document.getElementById('startButton');
+
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -185,39 +186,29 @@ function playSecretHitler() {
 	var drawing = new Image();
 	var drawing2 = new Image();
 	
-	
 	drawing.onload = function(){
 	    var width = this.naturalWidth,
 	        height = this.naturalHeight;
 
-	    canvas.width = Math.floor(width / 2);
-	    canvas.height = Math.floor(height / 2);
+	    // canvas.width = Math.floor(width / 2);
+	    // canvas.height = Math.floor(height / 2);
 
 	    ctx.scale(0.5, 0.5);
 	    ctx.drawImage(this, 0, 0, canvas.width, canvas.height/2);
-
-	    ctx.scale(2, 2);
+	    ctx.setTransform(1, 0, 0, 1, 0, 0);
 	};
-	
 	drawing2.onload = function(){
 	    var width = this.naturalWidth,
 	        height = this.naturalHeight;
 
-	    canvas.width = Math.floor(width / 2);
-	    canvas.height = Math.floor(height / 2);
+	    // canvas.width = Math.floor(width / 2);
+	    // canvas.height = Math.floor(height / 2);
 
 	    ctx.scale(0.5, 0.5);
 	    ctx.drawImage(this, 0, canvas.height/2, canvas.width, canvas.height/2);
-
-	    ctx.scale(2, 2);
+	    ctx.setTransform(1, 0, 0, 1, 0, 0);
 	};
 
-
-	
-	
-	
-	
-	
 	drawing.src = "./games/secrethitler/SH1.png";
 	drawing2.src = "./games/secrethitler/SH2.png";
 
