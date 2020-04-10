@@ -57,8 +57,19 @@
 						<initInfoProvides>project-g-api</initInfoProvides>
 					</embeddedLaunchScriptProperties>
 -->
-				</configuration>				
-			</plugin>
+					<!-- https://spring.io/guides/topicals/spring-boot-docker/ -->
+					<image>
+						<name>project-g.xyz/${project.artifactId}</name>
+					</image>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>build-image</goal>
+						</goals>
+					</execution>
+				</executions>				
+			</plugin>			
 		</plugins>
 	</build>
 
