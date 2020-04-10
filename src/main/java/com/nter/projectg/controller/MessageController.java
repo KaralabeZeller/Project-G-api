@@ -54,7 +54,7 @@ public class MessageController {
 		if (game != null /* && startMessage != null &&  startMessageHeaderAccessor != null */) {
 			GMessage reconnectMessage = startMessage;
 			SimpMessageHeaderAccessor reconnectMessageHeaderAccessor = SimpMessageHeaderAccessor.create();
-			reconnectMessageHeaderAccessor.copyHeaders(startMessageHeaderAccessor.toMap());
+			// reconnectMessageHeaderAccessor.copyHeaders(startMessageHeaderAccessor.toMap());
 			reconnectMessageHeaderAccessor.setSessionId(headerAccessor.getSessionId());
 			reconnectMessageHeaderAccessor.setDestination("/topic/public");
 			messagingTemplate.convertAndSendToUser(headerAccessor.getSessionId(), "/topic/public", reconnectMessage, reconnectMessageHeaderAccessor.toMap());
