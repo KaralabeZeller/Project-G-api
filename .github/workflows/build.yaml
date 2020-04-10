@@ -50,16 +50,16 @@ jobs:
           ${{ runner.os }}-maven-
 
     - name: Build with Maven
-      run: mvn -B verify --file pom.xml 
-        
-    - name: SCP sources
+      run: mvn -B verify --file pom.xml
+    
+    - name: Find application artifact
+      run: echo ::set-env name=JAR::$(basename $GITHUB_WORKSPACE/target/*.jar)
+      
+    - name: Deploy application with SCP
       run: gcloud compute scp $GITHUB_WORKSPACE/target/*.jar project-g-api-ci@project-g-1:~/ --zone=europe-west3-c
       
-    - name: Kill previous process
-      run: gcloud compute ssh project-g-api-ci@project-g-1 --zone=europe-west3-c -- "exec  pkill -f java"
-    
-    - name: Start deployed version
-      run: gcloud compute ssh project-g-api-ci@project-g-1 --zone=europe-west3-c -- "nohup java -jar ~/*.jar > out.log 2>err.log &"
+    - name: Restart application with init.d
+      run: gcloud compute ssh project-g-api-ci@project-g-1 --zone=europe-west3-c -- "ln -sf ~/${{ env.JAR }} ~/project-g-api && sudo systemctl daemon-reload && sudo service project-g-api restart"
 
      # - name: Publish to GitHub Packages Apache Maven
       # run: mvn deploy
