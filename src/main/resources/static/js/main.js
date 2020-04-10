@@ -190,22 +190,22 @@ function playSecretHitler() {
 	    var width = this.naturalWidth,
 	        height = this.naturalHeight;
 
-	    // canvas.width = Math.floor(width / 2);
-	    // canvas.height = Math.floor(height / 2);
+	    canvas.width = Math.floor(width / 2);
+	    canvas.height = Math.floor(height / 2);
 
 	    ctx.scale(0.5, 0.5);
-	    ctx.drawImage(this, 0, 0, canvas.width, canvas.height/2);
+	    ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
 	    ctx.setTransform(1, 0, 0, 1, 0, 0);
 	};
 	drawing2.onload = function(){
 	    var width = this.naturalWidth,
 	        height = this.naturalHeight;
 
-	    // canvas.width = Math.floor(width / 2);
-	    // canvas.height = Math.floor(height / 2);
+	    canvas.width = Math.floor(width / 2);
+	    canvas.height = Math.floor(height / 2);
 
 	    ctx.scale(0.5, 0.5);
-	    ctx.drawImage(this, 0, canvas.height/2, canvas.width, canvas.height/2);
+	    ctx.drawImage(this, 0, canvas.height, canvas.width, canvas.height);
 	    ctx.setTransform(1, 0, 0, 1, 0, 0);
 	};
 
