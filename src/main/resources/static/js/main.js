@@ -8,11 +8,11 @@ var messageInput = document.querySelector('#message');
 var messageArea = document.querySelector('#messageArea');
 var connectingElement = document.querySelector('.connecting');
 var startButton = document.getElementById('startButton');
+
 const canvasLiberal = document.getElementById('gameCanvasLiberal');
 const ctxLiberal = canvasLiberal.getContext('2d');
 const canvasFascist = document.getElementById('gameCanvasFascist');
 const ctxFascist = canvasFascist.getContext('2d');
-
 
 var stompClient = null;
 var stompClient_screen = null;
@@ -194,7 +194,6 @@ function drawBoards() {
 	var drawing = new Image();
 	var drawing2 = new Image();
 	
-	
 	drawing.onload = function(){
 	    var width = this.naturalWidth,
 	        height = this.naturalHeight;
@@ -207,7 +206,6 @@ function drawBoards() {
 	    ctxLiberal.scale(2,2);
 
 	};
-	
 	drawing2.onload = function(){
 	    var width = this.naturalWidth,
 	        height = this.naturalHeight;
@@ -220,7 +218,7 @@ function drawBoards() {
 	    ctxFascist.scale(2,2);
 
 	};
-	
+
 	drawing.src = "./games/secrethitler/SH1.png";
 	drawing2.src = "./games/secrethitler/SH2.png";
 }
