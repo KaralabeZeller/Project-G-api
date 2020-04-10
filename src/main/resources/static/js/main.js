@@ -19,6 +19,10 @@ var stompClient_screen = null;
 var username = null;
 var userList = new Array();
 
+var liberalPolicies = 0;
+var fascistPolicies = 0;
+
+
 var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107',
 		'#ff85af', '#FF9800', '#39bbb0' ];
 
@@ -122,26 +126,16 @@ function onMessageReceived(payload) {
 
 	if (message.type === 'JOIN' || message.type === 'LEAVE') {
 
-		if (message.type === 'JOIN') {
-			userList.push(message.sender)
-		} else {
-			if (message.type === 'JOIN') {
-				userList.remove(message.sender)
-			}
-		}
-
-		if (userList.length >= 2) {
-			startButton.classList.remove('hidden');
-		} else {
-			startButton.classList.add('hidden');
-		}
-
 		var splitted = message.content.split(','), i;
 
 		var element = document.getElementById('messageArea');
 		element.innerHTML = '';
-
+		
+		userList.length = 0;
+		
 		for (i = 0; i < splitted.length; i++) {
+			
+			userList.push(splitted[i]);
 
 			var messageElement = document.createElement('li');
 
@@ -168,6 +162,13 @@ function onMessageReceived(payload) {
 			messageArea.appendChild(messageElement);
 			messageArea.scrollTop = messageArea.scrollHeight;
 		}
+		
+		
+		if (userList.length >= 2) {
+			startButton.classList.remove('hidden');
+		} else {
+			startButton.classList.add('hidden');
+		}
 
 	} else if (message.type === 'START') {
 		playSecretHitler();
@@ -188,6 +189,67 @@ function playSecretHitler() {
 	startButton.classList.add('hidden');
 	
 	drawBoards();
+	setTimeout(() => { addLiberalPolicy(); addFascistPolicy();}, 1000);
+	setTimeout(() => { addLiberalPolicy(); addFascistPolicy();}, 2000);
+	setTimeout(() => { addLiberalPolicy(); addFascistPolicy();}, 3000);
+	setTimeout(() => { addLiberalPolicy(); addFascistPolicy();}, 4000);
+	setTimeout(() => { addLiberalPolicy(); addFascistPolicy();}, 5000);
+	setTimeout(() => { addFascistPolicy(); }, 6000);
+	
+}
+
+function addLiberalPolicy() {
+	var drawing = new Image();
+	drawing.src = "./games/secrethitler/liberalp-l.png";
+	
+	drawing.onload = function(){
+		if(liberalPolicies == 0) {
+			ctxLiberal.drawImage(this, 250, 160);		
+		}
+		if(liberalPolicies == 1) {
+			ctxLiberal.drawImage(this, 430, 160);		
+		}
+		if(liberalPolicies == 2) {
+			ctxLiberal.drawImage(this, 610, 160);		
+		}
+		if(liberalPolicies == 3) {
+			ctxLiberal.drawImage(this, 790, 160);		
+		}
+		if(liberalPolicies == 4) {
+			ctxLiberal.drawImage(this, 970, 160);		
+		}
+		
+		liberalPolicies ++;
+	}
+
+}
+
+function addFascistPolicy() {
+	var drawing = new Image();
+	drawing.src = "./games/secrethitler/fascistp-l.png";
+	
+	drawing.onload = function(){
+		if(fascistPolicies == 0) {
+			ctxFascist.drawImage(this, 150, 160);		
+		}
+		if(fascistPolicies == 1) {
+			ctxFascist.drawImage(this, 330, 160);		
+		}
+		if(fascistPolicies == 2) {
+			ctxFascist.drawImage(this, 510, 160);		
+		}
+		if(fascistPolicies == 3) {
+			ctxFascist.drawImage(this, 690, 160);		
+		}
+		if(fascistPolicies == 4) {
+			ctxFascist.drawImage(this, 870, 160);		
+		}
+		if(fascistPolicies == 5) {
+			ctxFascist.drawImage(this, 1050, 160);		
+		}
+		
+		fascistPolicies ++;
+	}
 }
 
 function drawBoards() {
@@ -216,11 +278,17 @@ function drawBoards() {
 	    ctxFascist.scale(0.5, 0.5);
 	    ctxFascist.drawImage(this, 0, 0);
 	    ctxFascist.scale(2,2);
-
 	};
 
 	drawing.src = "./games/secrethitler/SH1.png";
-	drawing2.src = "./games/secrethitler/SH2.png";
+	
+	if(userList.length == 7 || userList.length == 7) {
+		drawing2.src = "./games/secrethitler/SH2_2.png";
+	} else if(userList.length == 9 || userList.length == 10) {
+		drawing2.src = "./games/secrethitler/SH2_3.png";
+	} else {
+		drawing2.src = "./games/secrethitler/SH2.png";
+	}
 }
 
 usernameForm.addEventListener('submit', connect, true)
