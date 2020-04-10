@@ -21,3 +21,9 @@ mvn spring-boot:run
 
 ### Deploying the application
 See [GitHub Actions](https://github.com/KaralabeZeller/Project-G-api/actions) and [build.yaml](https://github.com/KaralabeZeller/Project-G-api/blob/master/.github/workflows/build.yaml).
+
+
+### Other repos
+See [nTer](https://github.com/KaralabeZeller/nter)
+See [Project-G](https://github.com/KaralabeZeller/Project-G)
+
