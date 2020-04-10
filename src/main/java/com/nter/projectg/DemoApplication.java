@@ -21,7 +21,5 @@ public class DemoApplication {
 		SpringApplication.run(DemoApplication.class, args);
 		
 		logger.info("Creating game Secreet  Hitler");
-		Lobby lobby = new Lobby();
-		
 	}
 }

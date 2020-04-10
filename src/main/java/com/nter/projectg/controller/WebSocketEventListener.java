@@ -22,7 +22,7 @@ import com.nter.projectg.model.GMessage;
 public class WebSocketEventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
-	private List<String> connectedClientId = new ArrayList<String>();
+	private List<String> connectedClientId = new ArrayList<>();
 
 	@Autowired
 	private SimpMessageSendingOperations messagingTemplate;
@@ -45,17 +45,10 @@ public class WebSocketEventListener {
             chatMessage.setType(GMessage.MessageType.LEAVE);
             chatMessage.setSender(username);
             
-            for(int i = 0; i <Lobby.users.size(); i++)
-            {
-            	if(Lobby.users.get(i).equals(username)) {
-            		Lobby.users.remove(i);
-            		break;
-            	}
-            	
-            }
+            Lobby.delUser(username);
             
             String message = "";
-    		for (String user : Lobby.users) {
+    		for (String user : Lobby.getUsers()) {
     			message += user + ",";
 
     		}

@@ -26,6 +26,27 @@ var fascistPolicies = 0;
 var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107',
 		'#ff85af', '#FF9800', '#39bbb0' ];
 
+
+
+
+var stringData = localStorage.getItem("name");
+var obj = JSON.parse(stringData);
+
+if(obj !== null) {
+    username = obj;
+    usernamePage.classList.add('hidden');
+    chatPage.classList.remove('hidden');
+
+    var socket = new SockJS('/ws');
+    var sock_screen = new SockJS('/ws');
+    stompClient = Stomp.over(socket);
+    stompClient_screen = Stomp.over(sock_screen);
+
+    stompClient.connect({}, onConnected, onError);
+    stompClient_screen.connect({}, onConnectedScreen, onError);
+    localStorage.setItem("name",JSON.stringify(username));
+}
+
 function connect(event) {
 	username = document.querySelector('#name').value.trim();
 
@@ -40,7 +61,9 @@ function connect(event) {
 
 		stompClient.connect({}, onConnected, onError);
 		stompClient_screen.connect({}, onConnectedScreen, onError);
-	}
+        localStorage.setItem("name",JSON.stringify(username));
+
+    	}
 	event.preventDefault();
 
 }

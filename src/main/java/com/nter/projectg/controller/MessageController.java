@@ -35,11 +35,11 @@ public class MessageController {
 	public GMessage addUser(@Payload GMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
 		// Add username in web socket session
 		headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
-		Lobby.users.add(chatMessage.getSender());
-		logger.info("Users: " + Lobby.users.size());
+		Lobby.addUser(chatMessage.getSender());
+		logger.info("Users: " + Lobby.size());
 
 		String message = "";
-		for (String user : Lobby.users) {
+		for (String user : Lobby.getUsers()) {
 			message += user + ",";
 
 		}
