@@ -16,29 +16,28 @@ import com.nter.projectg.games.secrethitler.SecretHitler;
 import com.nter.projectg.model.GMessage;
 import com.nter.projectg.model.GMessage.MessageType;
 
+import java.util.concurrent.CompletableFuture;
+
 @Controller
 public class MessageController {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
 
 	@Autowired
 	private SimpMessageSendingOperations messagingTemplate;
 
 	private Game game;
-	
 	private GMessage startMessage;
-	private SimpMessageHeaderAccessor startMessageHeaderAccessor;	
-	
+
 	@MessageMapping("/chat.sendMessage")
 	@SendTo("/topic/public")
 	public GMessage sendMessage(@Payload GMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
-		
+
 		if(chatMessage.getType() == MessageType.START) {
 			startMessage = chatMessage;
-			startMessageHeaderAccessor = headerAccessor;
 			game = new SecretHitler();
 		}
-		
+
 		return chatMessage;
 	}
 
@@ -47,19 +46,12 @@ public class MessageController {
 	public GMessage addUser(@Payload GMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
 		// Add username in web socket session
 		headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
-		
+
 		Lobby.addUser(chatMessage.getSender());
 		logger.info("Users: " + Lobby.size());
 
-		if (game != null /* && startMessage != null &&  startMessageHeaderAccessor != null */) {
-			GMessage reconnectMessage = startMessage;
-			SimpMessageHeaderAccessor reconnectMessageHeaderAccessor = SimpMessageHeaderAccessor.create();
-			// reconnectMessageHeaderAccessor.copyHeaders(startMessageHeaderAccessor.toMap());
-			reconnectMessageHeaderAccessor.setSessionId(headerAccessor.getSessionId());
-			reconnectMessageHeaderAccessor.setDestination("/topic/public");
-			messagingTemplate.convertAndSendToUser(headerAccessor.getSessionId(), "/topic/public", reconnectMessage, reconnectMessageHeaderAccessor.toMap());
-		}		
-		
+		reconnect(chatMessage, headerAccessor.getSessionId());
+
 		String message = "";
 		for (String user : Lobby.getUsers()) {
 			message += user + ",";
@@ -69,5 +61,27 @@ public class MessageController {
 
 		return chatMessage;
 	}
+
+    private CompletableFuture<Void> reconnect(@Payload GMessage chatMessage, String sessionId) {
+        // Fake asynchronous computation
+        logger.info("User Reconnected : " + chatMessage.getSender());
+        return CompletableFuture.runAsync(() -> {
+            // Fake delay
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ignored) {
+
+            }
+
+            if (game != null /* && startMessage != null &&  startMessageHeaderAccessor != null */) {
+                        GMessage reconnectMessage = startMessage;
+                        SimpMessageHeaderAccessor reconnectMessageHeaderAccessor = SimpMessageHeaderAccessor.create();
+                        reconnectMessageHeaderAccessor.setSessionId(sessionId);
+                        reconnectMessageHeaderAccessor.setLeaveMutable(true);
+                        messagingTemplate.convertAndSendToUser(sessionId, "/topic/public", reconnectMessage, reconnectMessageHeaderAccessor.getMessageHeaders());
+                    }
+                }
+        );
+    }
 
 }
