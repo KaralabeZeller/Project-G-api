@@ -47,7 +47,7 @@ public class MessageController {
 		// Add username in web socket session
 		headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
 
-		Lobby.addUser(chatMessage.getSender());
+		Lobby.addUser(chatMessage.getSender(), headerAccessor.getSessionId());
 		logger.info("Users: " + Lobby.size());
 
 		reconnect(chatMessage, headerAccessor.getSessionId());

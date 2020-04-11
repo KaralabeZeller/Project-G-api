@@ -45,7 +45,7 @@ public class WebSocketEventListener {
             chatMessage.setType(GMessage.MessageType.LEAVE);
             chatMessage.setSender(username);
             
-            Lobby.delUser(username);
+            Lobby.delUser(username, headerAccessor.getSessionId());
             
             String message = "";
     		for (String user : Lobby.getUsers()) {

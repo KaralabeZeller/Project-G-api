@@ -1,35 +1,32 @@
 package com.nter.projectg.common;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public final class Lobby {
-	private static List<String> users = new ArrayList<>();
+	private static Map<String, String> userSession = new HashMap<>();
+	private static Map<String, String> sessionUser = new HashMap<>();
 	
 	private Lobby() {
 
 	}
 
-	public static void addUser(String user) {
-		users.add(user);
+	public static void addUser(String user, String session) {
+
+		userSession.put(user, session);
+		sessionUser.put(session, user);
 	}
 
-	public static void delUser(String user) {
-		for(int i = 0; i < users.size(); i++) {
-			String locUser = users.get(i);
-			if(user.equals(locUser))
-			{
-				users.remove(i);
-				break;
-			}
-		}
+	public static void delUser(String user, String session) {
+		userSession.remove(user);
+		sessionUser.remove(session);
 	}
 
-	public static List<String> getUsers() {
-		return users;
+	public static Collection<String> getUsers() {
+		return userSession.keySet();
 	}
 
 	public static int size() {
-		return users.size();
+
+		return userSession.size();
 	}
 }

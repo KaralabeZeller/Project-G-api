@@ -2,22 +2,18 @@ package com.nter.projectg.controller;
 
 import com.nter.projectg.games.common.Constants;
 
-public class GameClient {
-
+public abstract class GameClient {
 
     private volatile Constants.ClientState state;
+    private String name;
 
-
-
-    private boolean connected = false;
-
-    public GameClient() {
+    public GameClient(String name) {
+        this.name = name;
         this.state = Constants.ClientState.ACCEPTED;
     }
 
     private void setState(Constants.ClientState auth) {
         state = Constants.ClientState.AUTH;
-
     }
 
     public Constants.ClientState getState() {
@@ -25,8 +21,7 @@ public class GameClient {
     }
 
     public String getName() {
-        //TODO
-        return null;
+        return name;
 
     }
 
