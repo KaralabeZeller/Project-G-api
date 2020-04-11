@@ -4,13 +4,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
 
+import java.util.concurrent.TimeUnit;
+
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/ws")
+                .setAllowedOrigins("*")
+                .withSockJS()
+                .setHeartbeatTime(TimeUnit.SECONDS.toMillis(10))
+                .setDisconnectDelay(TimeUnit.MINUTES.toMillis(1));
     }
 
     @Override
