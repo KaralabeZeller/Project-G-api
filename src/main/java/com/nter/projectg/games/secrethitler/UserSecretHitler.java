@@ -2,14 +2,12 @@ package com.nter.projectg.games.secrethitler;
 
 import com.nter.projectg.controller.GameClient;
 
-public class UserSecretHitler extends GameClient{
+public class UserSecretHitler extends GameClient {
 
     private Constants.Faction faction;
 
     public UserSecretHitler(String name) {
         super(name);
-
-        System.out.println("SHuser: " + getName());
     }
 
     public void setFaction(Constants.Faction faction) {
@@ -21,5 +19,11 @@ public class UserSecretHitler extends GameClient{
         return faction;
     }
 
-
+    @Override
+    public String toString() {
+        return "UserSecretHitler{" +
+                "super=" + super.toString() +
+                ", faction=" + faction +
+                '}';
+    }
 }

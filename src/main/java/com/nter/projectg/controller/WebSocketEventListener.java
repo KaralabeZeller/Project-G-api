@@ -1,64 +1,54 @@
 package com.nter.projectg.controller;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.nter.projectg.common.Lobby;
+import com.nter.projectg.model.GMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import com.nter.projectg.common.Lobby;
-import com.nter.projectg.model.GMessage;
-
 @Component
 public class WebSocketEventListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
-	private List<String> connectedClientId = new ArrayList<>();
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
 
-	@Autowired
-	private SimpMessageSendingOperations messagingTemplate;
+    @Autowired
+    private SimpMessageSendingOperations messagingTemplate;
 
-	@EventListener
-	public void handleWebSocketConnectListener(SessionConnectedEvent event) {
-		logger.info("Received a new web socket connection");
+    @Autowired
+    private Lobby lobby;
 
-	}
+    @EventListener
+    public void handleWebSocketConnectListener(SessionConnectedEvent event) {
+        logger.info("Received a new web socket connection: {}", event);
+    }
 
-	@EventListener
+    @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
+        logger.info("Received a web socket disconnection: {}", event);
+
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
+        // TODO remove - username in web socket session
         String username = (String) headerAccessor.getSessionAttributes().get("username");
-        if(username != null) {
-            logger.info("User Disconnected : " + username);
+        if (username != null) {
+            // Update lobby
+            lobby.remove(username, headerAccessor.getSessionId());
+            logger.info("User left lobby: {} {}", username, lobby);
 
+            // Broadcast leave message
             GMessage chatMessage = new GMessage();
             chatMessage.setType(GMessage.MessageType.LEAVE);
             chatMessage.setSender(username);
-            
-            Lobby.delUser(username, headerAccessor.getSessionId());
-            
-            String message = "";
-    		for (String user : Lobby.getUsers()) {
-    			message += user + ",";
+            chatMessage.setContent(String.join(",", lobby.getUsers()));
 
-    		}
-    		
-    		if(message.length() > 0)
-    			chatMessage.setContent(message.substring(0, message.length() - 1));
-
-
-            messagingTemplate.convertAndSend("/topic/public", chatMessage);            
+            messagingTemplate.convertAndSend("/topic/public", chatMessage);
         }
-        
+
     }
 }

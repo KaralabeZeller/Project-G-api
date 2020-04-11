@@ -33,5 +33,13 @@ public abstract class GameClient {
         //TODO
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "GameClient{" +
+                "name='" + name + '\'' +
+                '}';
+    }
+
 }
 

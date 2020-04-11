@@ -35,4 +35,14 @@ public class GMessage {
     public void setSender(String sender) {
         this.sender = sender;
     }
+
+    @Override
+    public String toString() {
+        return "GMessage{" +
+                "type=" + type +
+                ", content='" + content + '\'' +
+                ", sender='" + sender + '\'' +
+                '}';
+    }
+
 }

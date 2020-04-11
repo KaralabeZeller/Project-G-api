@@ -1,77 +1,93 @@
 package com.nter.projectg.games.common;
 
-
 import com.nter.projectg.common.Lobby;
 import com.nter.projectg.controller.GameClient;
+import com.nter.projectg.games.secrethitler.SecretHitler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Game<Client extends GameClient> implements Runnable{
-	
-	private String name;
-	protected int playerCount = 0;
-	protected int minPlayers = 0;
-	protected int maxPlayers = 0;
-	protected volatile boolean isRunning = false;
+public abstract class Game<Client extends GameClient> implements Runnable {
 
-	private List<Client> clientList;
-	
-	public Game(String name, int minPlayer, int maxPlayer) {
-		this.name = name;
-		this.minPlayers = minPlayer;
-		this.maxPlayers = maxPlayer;
-		createClients();
-		
-	}
+    private static final Logger logger = LoggerFactory.getLogger(SecretHitler.class);
 
-	public String getName() {
-		return name;
-	}
-	
-	public int getMinPlayer() {
-		return minPlayers;
-	}
-	
-	public int getMaxPlayer() {
-		return maxPlayers;
-	}
-	
-	public int getPlayerCount() {
-		return playerCount;
-	}
-	
-	public void setPlayerCount(int playerCount) {
-		this.playerCount = playerCount;
-	}
+    private final Lobby lobby;
 
-	@Override
-	public void run() {
-		isRunning = true;
-		Thread.currentThread().setName(getName());
-		System.out.println("Game starting: " + getName());
-		
-		System.out.println("Game closing: " + getName());
-		return;
-		
-	}
+    private final String name;
+    private final int minPlayers;
+    private final int maxPlayers;
 
-	private void createClients() {
-		for (String user : Lobby.getUsers()) {
-			clientList.add(createClient(user));
-		}
-	}
+    private final List<Client> clients = new ArrayList<>();
 
-	protected abstract Client createClient(String user);
+    private volatile boolean isRunning = false;
 
-	protected int getUserCount(){
-		return clientList.size();
-	}
+    public Game(Lobby lobby, String name, int minPlayer, int maxPlayer) {
+        this.lobby = lobby;
 
-	protected List<Client> getClientList() {
-		return clientList;
-	}
+        this.name = name;
+        this.minPlayers = minPlayer;
+        this.maxPlayers = maxPlayer;
 
+        logger.debug("Initializing game: {} {}", name, lobby);
+        createClients();
+        logger.info("Initialized game: {} {}", name, lobby);
+    }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getMinPlayers() {
+        return minPlayers;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public int getPlayerCount() {
+        return clients.size();
+    }
+
+    protected Lobby getLobby() {
+        return lobby;
+    }
+
+    protected List<Client> getPlayers() {
+        return clients;
+    }
+
+    protected abstract Client createClient(String name);
+
+    private void createClients() {
+        logger.debug("Creating clients: {}", clients);
+        for (String user : lobby.getUsers()) {
+            clients.add(createClient(user));
+        }
+        logger.info("Created clients: {}", clients);
+    }
+
+    @Override
+    public void run() {
+        isRunning = true;
+
+        // TODO
+        Thread.currentThread().setName(getName());
+        System.out.println("Game starting: " + getName());
+
+        System.out.println("Game closing: " + getName());
+    }
+
+    @Override
+    public String toString() {
+        return "Game{" +
+                "lobby=" + lobby +
+                ", name='" + name + '\'' +
+                ", clients=" + clients +
+                '}';
+    }
 }
 
 
