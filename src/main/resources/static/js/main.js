@@ -8,6 +8,7 @@ var messageInput = document.querySelector('#message');
 var messageArea = document.querySelector('#messageArea');
 var connectingElement = document.querySelector('.connecting');
 var startButton = document.getElementById('startButton');
+var lobbyText =document.getElementById("LobbyText");
 
 const canvasLiberal = document.getElementById('gameCanvasLiberal');
 const ctxLiberal = canvasLiberal.getContext('2d');
@@ -25,8 +26,6 @@ var fascistPolicies = 0;
 
 var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107',
 		'#ff85af', '#FF9800', '#39bbb0' ];
-
-
 
 
 var stringData = localStorage.getItem("name");
@@ -196,6 +195,8 @@ function onMessageReceived(payload) {
 
 	} else if (message.type === 'START') {
 		playSecretHitler();
+	} else if (playSecretHitler(message.type === 'FACTION')) {
+	    displayFaction(payload);
 	}
 
 }
@@ -213,6 +214,7 @@ function playSecretHitler() {
 	startButton.classList.add('hidden');
 	
 	drawBoards();
+	initController();
 	setTimeout(() => { addLiberalPolicy(); addFascistPolicy();}, 1000);
 	setTimeout(() => { addLiberalPolicy(); addFascistPolicy();}, 2000);
 	setTimeout(() => { addLiberalPolicy(); addFascistPolicy();}, 3000);
@@ -313,6 +315,32 @@ function drawBoards() {
 	} else {
 		drawing2.src = "./games/secrethitler/SH2.png";
 	}
+}
+
+function initController() {
+    lobbyText.innerHTML = username;
+    var element = document.getElementById('messageArea');
+    element.innerHTML = '';
+}
+
+function displayFaction(payload) {
+     var message = payload;
+
+	 var messageElement = document.createElement('li');
+
+
+	 messageElement.classList.add('event-message');
+	 message.content = 'You are: ' + message;
+
+	 var textElement = document.createElement('p');
+	 var messageText = document.createTextNode(message.content);
+	 textElement.appendChild(messageText);
+
+	 messageElement.appendChild(textElement);
+
+	 messageArea.appendChild(messageElement);
+	 messageArea.scrollTop = messageArea.scrollHeight;
+
 }
 
 usernameForm.addEventListener('submit', connect, true)
