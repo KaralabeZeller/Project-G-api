@@ -17,53 +17,52 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - name: Checkout project 
-      uses: actions/checkout@v2
-    
-    - name: Setup Python 2.7
-      uses: actions/setup-python@v1.2.0
-      with:
-        # Version range or exact version of a Python version to use, using SemVer's version range syntax.
-        python-version: 2.7 # optional, default is 3.x
 
-        # Runs a set of commands using the runners shell
-    - name: Setup gcloud environment
-      uses: GoogleCloudPlatform/github-actions@master
-      with:
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
-        service_account_email: ${{ secrets.GCP_SA_EMAIL }}
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        export_default_credentials: true
-        
-    - name: Set up JDK 1.8
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.8
-      
-    - name: Maven cache
-      uses: actions/cache@v1
-      id: cache
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout project
+        uses: actions/checkout@v2
 
-    - name: Build with Maven
-      run: mvn -B verify --file pom.xml
-    
-    - name: Find application artifact
-      run: echo ::set-env name=JAR::$(basename $GITHUB_WORKSPACE/target/*.jar)
-      
-    - name: Deploy application with SCP
-      run: gcloud compute scp $GITHUB_WORKSPACE/target/*.jar project-g-api-ci@project-g-1:~/ --zone=europe-west3-c --ssh-key-expire-after=1h
-      
-    - name: Restart application with init.d
-      run: gcloud compute ssh project-g-api-ci@project-g-1 --zone=europe-west3-c -- "ln -sf ~/${{ env.JAR }} ~/project-g-api && sudo systemctl daemon-reload && sudo service project-g-api restart"
+      - name: Setup Python 2.7
+        uses: actions/setup-python@v1.2.0
+        with:
+          # Version range or exact version of a Python version to use, using SemVer's version range syntax.
+          python-version: 2.7 # optional, default is 3.x
 
-     # - name: Publish to GitHub Packages Apache Maven
-      # run: mvn deploy
-      # env:
+      - name: Setup gcloud environment
+        uses: GoogleCloudPlatform/github-actions@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Cache for Maven
+        uses: actions/cache@v1
+        id: cache
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build with Maven
+        run: mvn -B verify --file pom.xml
+
+      - name: Find application artifact
+        run: echo ::set-env name=JAR::$(basename $GITHUB_WORKSPACE/target/*.jar)
+
+      - name: Deploy application with SCP
+        run: gcloud compute scp $GITHUB_WORKSPACE/target/*.jar project-g-api-ci@project-g-1:~/ --zone=europe-west3-c --ssh-key-expire-after=1h
+
+      - name: Restart application with init.d
+        run: gcloud compute ssh project-g-api-ci@project-g-1 --zone=europe-west3-c -- "ln -sf ~/${{ env.JAR }} ~/project-g-api && sudo systemctl daemon-reload && sudo service project-g-api restart"
+
+          # - name: Publish to GitHub Packages Apache Maven
+          # run: mvn deploy
+          # env:
         # GITHUB_TOKEN: ${{ github.token }} # GITHUB_TOKEN is the default env for the password

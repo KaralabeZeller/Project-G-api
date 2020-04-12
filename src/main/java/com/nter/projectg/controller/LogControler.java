@@ -23,7 +23,7 @@ public class LogControler {
     private static final String API_KEY = "N7WxsJLRePC4ZLqy";
     private static final String LOG_FILE = "/var/log/project-g-api.log";
 
-    private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
+    private static final Logger logger = LoggerFactory.getLogger(LogControler.class);
 
     @GetMapping(path = "", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
