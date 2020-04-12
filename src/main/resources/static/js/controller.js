@@ -12,6 +12,8 @@ var stompClient_screen = null;
 var username = null;
 var userList = new Array();
 
+var isStarted = 0;
+
 var liberalPolicies = 0;
 var fascistPolicies = 0;
 
@@ -96,6 +98,7 @@ function startGame(event) {
 	};
 	stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
 
+    isStarted = 1;
 	event.preventDefault();
 }
 
@@ -104,43 +107,44 @@ function onMessageReceived(payload) {
 
 	if (message.type === 'JOIN' || message.type === 'LEAVE') {
 
-		var splitted = message.content.split(','), i;
+        if(started === 0) {
+            var splitted = message.content.split(','), i;
 
-		var element = document.getElementById('messageArea');
-		element.innerHTML = '';
+            var element = document.getElementById('messageArea');
+            element.innerHTML = '';
 
-		userList.length = 0;
+            userList.length = 0;
 
-		for (i = 0; i < splitted.length; i++) {
+            for (i = 0; i < splitted.length; i++) {
 
-			userList.push(splitted[i]);
+                userList.push(splitted[i]);
 
-			var messageElement = document.createElement('li');
+                var messageElement = document.createElement('li');
 
-			messageElement.classList.add('chat-message');
-			var avatarElement = document.createElement('i');
-			var avatarText = document.createTextNode(splitted[i][0]);
-			avatarElement.appendChild(avatarText);
-			avatarElement.style['background-color'] = getAvatarColor(splitted[i]);
+                messageElement.classList.add('chat-message');
+                var avatarElement = document.createElement('i');
+                var avatarText = document.createTextNode(splitted[i][0]);
+                avatarElement.appendChild(avatarText);
+                avatarElement.style['background-color'] = getAvatarColor(splitted[i]);
 
-			messageElement.appendChild(avatarElement);
+                messageElement.appendChild(avatarElement);
 
-			var usernameElement = document.createElement('span');
-			var usernameText = document.createTextNode(splitted[i]);
-			usernameElement.appendChild(usernameText);
-			messageElement.appendChild(usernameElement);
-			message.content = '';
+                var usernameElement = document.createElement('span');
+                var usernameText = document.createTextNode(splitted[i]);
+                usernameElement.appendChild(usernameText);
+                messageElement.appendChild(usernameElement);
+                message.content = '';
 
-			var textElement = document.createElement('p');
-			var messageText = document.createTextNode('');
-			textElement.appendChild(messageText);
+                var textElement = document.createElement('p');
+                var messageText = document.createTextNode('');
+                textElement.appendChild(messageText);
 
-			messageElement.appendChild(textElement);
+                messageElement.appendChild(textElement);
 
-			messageArea.appendChild(messageElement);
-			messageArea.scrollTop = messageArea.scrollHeight;
-		}
-
+                messageArea.appendChild(messageElement);
+                messageArea.scrollTop = messageArea.scrollHeight;
+            }
+        }
 
 		if (userList.length >= 2) {
 			startButton.classList.remove('hidden');
