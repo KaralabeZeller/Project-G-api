@@ -1,5 +1,8 @@
 package com.nter.projectg.common;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -8,6 +11,9 @@ import java.util.Map;
 
 @Component
 public class Lobby {
+
+    @Autowired
+    private SimpMessageSendingOperations messagingTemplate;
 
     private final Map<String, String> userSession = new HashMap<>();
     private final Map<String, String> sessionUser = new HashMap<>();
@@ -28,6 +34,16 @@ public class Lobby {
 
     public Collection<String> getUsers() {
         return userSession.keySet();
+    }
+
+    public void sendToUser(String user, Object message) {
+        String session = userSession.get(user);
+
+        // Unicast message
+        SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create();
+        headerAccessor.setSessionId(session);
+        headerAccessor.setLeaveMutable(true);
+        messagingTemplate.convertAndSendToUser(session, "/topic/public", message, headerAccessor.getMessageHeaders());
     }
 
     @Override

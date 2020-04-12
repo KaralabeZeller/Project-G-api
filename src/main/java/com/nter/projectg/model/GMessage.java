@@ -1,6 +1,7 @@
 package com.nter.projectg.model;
 
 public class GMessage {
+
     private MessageType type;
     private String content;
     private String sender;
@@ -9,7 +10,8 @@ public class GMessage {
         CHAT,
         JOIN,
         START,
-        LEAVE
+        LEAVE,
+        GAME
     }
 
     public MessageType getType() {

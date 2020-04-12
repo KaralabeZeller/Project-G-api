@@ -2,16 +2,17 @@ package com.nter.projectg.games.common;
 
 import com.nter.projectg.common.Lobby;
 import com.nter.projectg.controller.GameClient;
-import com.nter.projectg.games.secrethitler.SecretHitler;
+import com.nter.projectg.model.GMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
-public abstract class Game<Client extends GameClient> implements Runnable {
+public abstract class Game<Message extends GMessage, Client extends GameClient<Message>> implements Runnable {
 
-    private static final Logger logger = LoggerFactory.getLogger(SecretHitler.class);
+    private static final Logger logger = LoggerFactory.getLogger(Game.class);
 
     private final Lobby lobby;
 
@@ -51,15 +52,15 @@ public abstract class Game<Client extends GameClient> implements Runnable {
         return clients.size();
     }
 
-    protected Lobby getLobby() {
-        return lobby;
-    }
-
     protected List<Client> getPlayers() {
         return clients;
     }
 
     protected abstract Client createClient(String name);
+
+    protected Consumer<Message> sendToPlayer(String name) {
+        return message -> lobby.sendToUser(name, message);
+    }
 
     private void createClients() {
         logger.debug("Creating clients: {}", clients);

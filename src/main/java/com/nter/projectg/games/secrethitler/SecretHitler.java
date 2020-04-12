@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SecretHitler extends Game<UserSecretHitler> {
+public class SecretHitler extends Game<SHMessage, UserSecretHitler> {
 
     private static final Logger logger = LoggerFactory.getLogger(SecretHitler.class);
 
@@ -60,8 +60,6 @@ public class SecretHitler extends Game<UserSecretHitler> {
 
             if (f == Constants.Faction.HITLER)
                 hitlerID = i;
-
-            i++;
         }
         logger.info("Initialized factions: hitlerId={} {}", hitlerID, players);
 
@@ -70,7 +68,7 @@ public class SecretHitler extends Game<UserSecretHitler> {
 
     @Override
     protected UserSecretHitler createClient(String name) {
-        return new UserSecretHitler(name);
+        return new UserSecretHitler(name, sendToPlayer(name));
     }
 
     @Override

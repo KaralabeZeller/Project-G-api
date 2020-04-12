@@ -28,7 +28,7 @@ public class MessageController {
     @Autowired
     private Lobby lobby;
 
-    private Game<?> game;
+    private Game<? extends GMessage, ? extends GameClient<? extends GMessage>> game;
     private GMessage startMessage;
 
     @MessageMapping("/chat.sendMessage")
@@ -37,7 +37,7 @@ public class MessageController {
         logger.info("Handling message (sendMessage): {}", chatMessage);
 
         if (chatMessage.getType() == MessageType.START) {
-            game = new SecretHitler(lobby);
+            start();
             startMessage = chatMessage;
         } else {
             // TODO
@@ -70,6 +70,21 @@ public class MessageController {
         return chatMessage;
     }
 
+    private CompletableFuture<Void> start() {
+        // Fake asynchronous computation
+        return CompletableFuture.runAsync(() -> {
+            // Fake delay
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ignored) {
+
+            }
+
+            // TODO implement - game.start();
+            game = new SecretHitler(lobby);
+        });
+    }
+
     private CompletableFuture<Void> reconnect(String user, String session) {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
@@ -83,12 +98,11 @@ public class MessageController {
             if (game != null /* && startMessage != null &&  startMessageHeaderAccessor != null */) {
                 logger.info("User reconnected in new session: {} {}", user, session);
 
+                // TODO implement - game.reconnect(user);
                 // Unicast start message
                 GMessage reconnectMessage = startMessage;
-                SimpMessageHeaderAccessor reconnectMessageHeaderAccessor = SimpMessageHeaderAccessor.create();
-                reconnectMessageHeaderAccessor.setSessionId(session);
-                reconnectMessageHeaderAccessor.setLeaveMutable(true);
-                messagingTemplate.convertAndSendToUser(session, "/topic/public", reconnectMessage, reconnectMessageHeaderAccessor.getMessageHeaders());
+                lobby.sendToUser(user, reconnectMessage);
+
             }
         });
     }

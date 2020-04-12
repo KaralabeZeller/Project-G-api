@@ -4,7 +4,13 @@ import com.nter.projectg.model.GMessage;
 
 public class SHMessage extends GMessage {
 
-    public enum MessageType {
+    private GameMessageType gameMessageType;
+
+    public SHMessage() {
+        setType(MessageType.GAME);
+    }
+
+    public enum GameMessageType {
         FACTION,
         INVESTIGATE,
         SPECIAL_ELECTION,
@@ -15,4 +21,13 @@ public class SHMessage extends GMessage {
         VETO,
         POLICY
     }
+
+    public GameMessageType getGameMessageType() {
+        return gameMessageType;
+    }
+
+    public void setGameMessageType(GameMessageType gameMessageType) {
+        this.gameMessageType = gameMessageType;
+    }
+
 }

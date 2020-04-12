@@ -1,15 +1,25 @@
 package com.nter.projectg.controller;
 
 import com.nter.projectg.games.common.Constants;
+import com.nter.projectg.model.GMessage;
 
-public abstract class GameClient {
+import java.util.function.Consumer;
+
+public abstract class GameClient<Message extends GMessage> {
+
+    private final Consumer<Message> send;
 
     private volatile Constants.ClientState state;
-    private String name;
+    private final String name;
 
-    public GameClient(String name) {
+    public GameClient(String name, Consumer<Message> send) {
+        this.send = send;
         this.name = name;
         this.state = Constants.ClientState.ACCEPTED;
+    }
+
+    public String getName() {
+        return name;
     }
 
     private void setState(Constants.ClientState auth) {
@@ -20,18 +30,8 @@ public abstract class GameClient {
         return state;
     }
 
-    public String getName() {
-        return name;
-
-    }
-
-    public void sendCommand(String name) {
-        //TODO
-    }
-
-    public String sendQuery(String string) {
-        //TODO
-        return null;
+    protected void sendMessage(Message message) {
+        send.accept(message);
     }
 
     @Override
