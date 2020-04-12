@@ -31,7 +31,8 @@ mvn spring-boot:run
 ## Deployment
 
 ### Deploying the application to Google Cloud
-See [GitHub Actions](https://github.com/KaralabeZeller/Project-G-api/actions) and [build.yaml](https://github.com/KaralabeZeller/Project-G-api/blob/master/.github/workflows/build.yaml).
+* [GitHub Actions](https://github.com/KaralabeZeller/Project-G-api/actions)
+* [build.yaml](https://github.com/KaralabeZeller/Project-G-api/blob/master/.github/workflows/build.yaml)
 
 ![CI](https://github.com/KaralabeZeller/Project-G-api/workflows/CI/badge.svg)
 
