@@ -10,20 +10,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 public class MessageController {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
-
-    @Autowired
-    private SimpMessageSendingOperations messagingTemplate;
 
     @Autowired
     private Lobby lobby;
@@ -33,32 +30,35 @@ public class MessageController {
     private Message startMessage;
     private Message gameMessage;
 
-    // TODO replace @SendTo with SimpMessageSendingOperations or Lobby
     @MessageMapping("/chat.sendMessage")
-    @SendTo("/topic/public")
-    public Message sendMessage(@Payload Message message) {
-        logger.info("sendMessage: Received message: {}", message);
+    public void sendMessage(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
+        logger.info("sendMessage: Received message: {} {}", message, headerAccessor);
 
-        String user = message.getSender();
+        // TODO avoid storing username in WebSocket / STOMP session
+        String user = (String) headerAccessor.getSessionAttributes().get("username");
+
+        // Validate message
+        if (!Objects.equals(user, message.getSender())) {
+            logger.warn("sendMessage: Detected mismatch between user and sender: {} {}", user, message.getSender());
+        }
 
         if (message.getType() == MessageType.START) {
-            start(user);
+            start();
             startMessage = message;
         } else if (message.getType() == MessageType.GAME) {
+            process(message);
             gameMessage = message;
         } else {
             // TODO other messages
         }
 
         // Broadcast message to all sessions
-        return message;
+        lobby.sendToAll(message);
     }
 
-    // TODO replace @SendTo with SimpMessageSendingOperations or Lobby
     @MessageMapping("/chat.addUser")
-    @SendTo("/topic/public")
-    public Message addUser(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
-        logger.info("addUser: Received message: {}", message);
+    public void addUser(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
+        logger.info("addUser: Received message: {} {}", message, headerAccessor);
 
         String user = message.getSender();
         String session = headerAccessor.getSessionId();
@@ -66,26 +66,16 @@ public class MessageController {
         // TODO avoid storing username in WebSocket / STOMP session
         headerAccessor.getSessionAttributes().put("username", user);
 
-        // Update lobby
+        // Update lobby and broadcast notification message
         lobby.add(user, session);
 
-        // Handle reconnection
+        // Handle reconnection and restore state
         reconnect(user, session);
-
-        // Broadcast message to all sessions
-        message.setContent(String.join(",", lobby.getUsers()));
-        return message;
     }
 
-    private CompletableFuture<Void> start(String user) {
+    private CompletableFuture<Void> start() {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ignored) {
-
-            }
-
             logger.debug("Starting game: Secret Hitler {}", lobby);
 
             game = new SecretHitlerGame(lobby);
@@ -96,7 +86,7 @@ public class MessageController {
 
             // Fake timeout to reset Game
             try {
-                Thread.sleep(600000);
+                Thread.sleep(TimeUnit.MINUTES.toMillis(10));
             } catch (InterruptedException ignored) {
 
             }
@@ -104,21 +94,28 @@ public class MessageController {
             logger.debug("Stopping game: Secret Hitler {}", game);
 
             // TODO implement
+            // game.stop(user);
             game = null;
 
             logger.debug("Stopped game: Secret Hitler {}", lobby);
         });
     }
 
+    private CompletableFuture<Void> process(Message message) {
+        // Fake asynchronous computation
+        return CompletableFuture.runAsync(() -> {
+            logger.debug("Processing message: {} {}", message, game);
+
+            // TODO implement
+            // game.process(message);
+
+            logger.info("Processed message: {} {}", message, game);
+        });
+    }
+
     private CompletableFuture<Void> reconnect(String user, String session) {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ignored) {
-
-            }
-
             if (game != null) {
                 logger.debug("Reconnecting user in session: {} {}", user, session);
 

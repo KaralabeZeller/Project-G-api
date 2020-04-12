@@ -1,6 +1,7 @@
 package com.nter.projectg.common;
 
 import com.nter.projectg.controller.MessageController;
+import com.nter.projectg.model.common.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,13 @@ public class Lobby {
         userSession.put(user, session);
         sessionUser.put(session, user);
 
+        // Broadcast notification message message to all sessions
+        Message message = new Message();
+        message.setType(Message.MessageType.JOIN);
+        message.setSender(user);
+        message.setContent(String.join(",", getUsers()));
+        sendToAll(message);
+
         logger.info("User joined: {} {}", user, this);
     }
 
@@ -37,6 +45,13 @@ public class Lobby {
 
         userSession.remove(user);
         sessionUser.remove(session);
+
+        // Broadcast notification message message to all sessions
+        Message message = new Message();
+        message.setType(Message.MessageType.LEAVE);
+        message.setSender(user);
+        message.setContent(String.join(",", getUsers()));
+        sendToAll(message);
 
         logger.info("User left: {} {}", user, this);
     }

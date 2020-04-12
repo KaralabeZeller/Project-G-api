@@ -1,7 +1,6 @@
 package com.nter.projectg.controller;
 
 import com.nter.projectg.common.Lobby;
-import com.nter.projectg.model.common.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,15 +36,8 @@ public class WebSocketEventListener {
         if (user != null) {
             logger.debug("Disconnecting user from session: {} {}", user, session);
 
-            // Update lobby
+            // Update lobby and broadcast notification message
             lobby.remove(user, session);
-
-            // Broadcast message message to all sessions
-            Message message = new Message();
-            message.setType(Message.MessageType.LEAVE);
-            message.setSender(user);
-            message.setContent(String.join(",", lobby.getUsers()));
-            lobby.sendToAll(message);
 
             logger.info("Disconnected user from session: {} {}", user, session);
         }
