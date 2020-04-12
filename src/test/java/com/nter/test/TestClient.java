@@ -24,8 +24,13 @@ import java.util.concurrent.ExecutionException;
 public class TestClient {
 
     private static Logger logger = LoggerFactory.getLogger(TestClient.class);
+    private int port;
 
     private final static WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
+
+    public TestClient(int port) {
+        this.port = port;
+    }
 
     public ListenableFuture<StompSession> connect() {
 
@@ -38,7 +43,7 @@ public class TestClient {
         WebSocketStompClient stompClient = new WebSocketStompClient(sockJsClient);
 
         //String url = "wss://api.project-g.xyz:443/ws";
-        String url = "ws://localhost:8080/ws";
+        String url = "ws://localhost:" + port + "/ws";
         return stompClient.connect(url, headers, new MyHandler());
     }
 
