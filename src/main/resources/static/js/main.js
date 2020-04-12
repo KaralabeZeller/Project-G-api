@@ -195,8 +195,12 @@ function onMessageReceived(payload) {
 
 	} else if (message.type === 'START') {
 		playSecretHitler();
-	} else if (playSecretHitler(message.type === 'FACTION')) {
-	    displayFaction(payload);
+	} else if (message.type === 'GAME') {
+	    if (message.gameMessageType === 'FACTION') {
+	        displayFaction(message.content);
+	    } else {
+	      // TODO
+	    }
 	}
 
 }
@@ -323,17 +327,12 @@ function initController() {
     element.innerHTML = '';
 }
 
-function displayFaction(payload) {
-     var message = payload;
-
+function displayFaction(faction) {
 	 var messageElement = document.createElement('li');
-
-
 	 messageElement.classList.add('event-message');
-	 message.content = 'You are: ' + message;
 
 	 var textElement = document.createElement('p');
-	 var messageText = document.createTextNode(message.content);
+	 var messageText = document.createTextNode('You are: ' + faction);
 	 textElement.appendChild(messageText);
 
 	 messageElement.appendChild(textElement);
