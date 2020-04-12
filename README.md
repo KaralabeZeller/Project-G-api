@@ -1,8 +1,13 @@
 # Project-G API
 
+
 ## Development
 
-### Checking-out the project
+### Requirements
+* Java 8 JDK
+* Maven
+
+### Checking out the project
 ```bash
 git clone https://github.com/KaralabeZeller/Project-G-api.git
 ```
@@ -12,21 +17,28 @@ git clone https://github.com/KaralabeZeller/Project-G-api.git
 mvn verify
 ```
 
-### Running the application locally
+### Running the application
 ```bash
 mvn spring-boot:run
 ```
 
+### Project structure
+
+* [Backend API](https://github.com/KaralabeZeller/Project-G-api/tree/master/src/main/java/com/nter/projectg)
+* [Frontend UI](https://github.com/KaralabeZeller/Project-G-api/tree/master/src/main/resources/static)
+
+
 ## Deployment
 
-### Deploying the application
+### Deploying the application to Google Cloud
 See [GitHub Actions](https://github.com/KaralabeZeller/Project-G-api/actions) and [build.yaml](https://github.com/KaralabeZeller/Project-G-api/blob/master/.github/workflows/build.yaml).
 
+![CI](https://github.com/KaralabeZeller/Project-G-api/workflows/CI/badge.svg)
 
-### Other repos
-See [nTer](https://github.com/KaralabeZeller/nter)
 
-See [Project-G](https://github.com/KaralabeZeller/Project-G)
+## See also
 
-See [Project-G-web](https://github.com/KaralabeZeller/Project-G-web)
-
+### Other repositories
+* [nTer](https://github.com/KaralabeZeller/nter)  
+* [Project-G](https://github.com/KaralabeZeller/Project-G)  
+* [Project-G-web](https://github.com/KaralabeZeller/Project-G-web)
