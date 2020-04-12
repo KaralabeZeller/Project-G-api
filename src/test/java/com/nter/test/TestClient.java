@@ -37,7 +37,8 @@ public class TestClient {
 
         WebSocketStompClient stompClient = new WebSocketStompClient(sockJsClient);
 
-        String url = "wss://api.project-g.xyz:443/ws";
+        //String url = "wss://api.project-g.xyz:443/ws";
+        String url = "ws://localhost:8080/ws";
         return stompClient.connect(url, headers, new MyHandler());
     }
 
@@ -91,62 +92,6 @@ public class TestClient {
         public void afterConnected(StompSession stompSession, StompHeaders stompHeaders) {
             logger.info("Connected");
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-
-        //Create clients
-        logger.info("Creating clients");
-        TestClient client1 = new TestClient();
-        TestClient client2 = new TestClient();
-        TestClient client3 = new TestClient();
-        TestClient client4 = new TestClient();
-        TestClient client5 = new TestClient();
-
-        logger.info("Connecting clients");
-        ListenableFuture<StompSession> f1 = client1.connect();
-        ListenableFuture<StompSession> f2 = client1.connect();
-        ListenableFuture<StompSession> f3 = client1.connect();
-        ListenableFuture<StompSession> f4 = client1.connect();
-        ListenableFuture<StompSession> f5 = client1.connect();
-
-        logger.info("Creating sessions");
-        StompSession stompSession1 = f1.get();
-        StompSession stompSession2 = f2.get();
-        StompSession stompSession3 = f3.get();
-        StompSession stompSession4 = f4.get();
-        StompSession stompSession5 = f5.get();
-
-        logger.info("Subscribing to topic using sessions");
-        client1.subscribeChannels(stompSession1);
-        client2.subscribeChannels(stompSession2);
-        client3.subscribeChannels(stompSession3);
-        client4.subscribeChannels(stompSession4);
-        client5.subscribeChannels(stompSession5);
-
-        logger.info("Sending join messages");
-        int clientTimer = 100;
-        client1.sendJoin(stompSession1, "TESTER1");
-        Thread.sleep(clientTimer);
-        client2.sendJoin(stompSession2, "TESTER2");
-        Thread.sleep(clientTimer);
-        client3.sendJoin(stompSession3, "TESTER3");
-        Thread.sleep(clientTimer);
-        client4.sendJoin(stompSession4, "TESTER4");
-        Thread.sleep(clientTimer);
-        client5.sendJoin(stompSession5, "TESTER5");
-
-        int sleepTimer = 60000;
-        logger.info("Sleep for : " + sleepTimer);
-        Thread.sleep(sleepTimer);
-
-        logger.info("Disconnecting sessions");
-        stompSession1.disconnect();
-        stompSession2.disconnect();
-        stompSession3.disconnect();
-        stompSession4.disconnect();
-        stompSession5.disconnect();
-        logger.info("Akkor Heló!");
     }
 
 }
