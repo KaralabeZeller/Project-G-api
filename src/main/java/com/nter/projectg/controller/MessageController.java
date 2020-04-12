@@ -2,9 +2,9 @@ package com.nter.projectg.controller;
 
 import com.nter.projectg.common.Lobby;
 import com.nter.projectg.games.common.Game;
-import com.nter.projectg.games.secrethitler.SecretHitler;
-import com.nter.projectg.model.GMessage;
-import com.nter.projectg.model.GMessage.MessageType;
+import com.nter.projectg.games.secrethitler.SecretHitlerGame;
+import com.nter.projectg.model.common.Message;
+import com.nter.projectg.model.common.Message.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,31 +28,38 @@ public class MessageController {
     @Autowired
     private Lobby lobby;
 
-    private Game<? extends GMessage, ? extends GameClient<? extends GMessage>> game;
-    private GMessage startMessage;
+    private Game<?, ?> game;
+    private Message startMessage;
+    private Message gameMessage;
 
+    // TODO replace @SendTo with messagingTemplate or lobby
     @MessageMapping("/chat.sendMessage")
     @SendTo("/topic/public")
-    public GMessage sendMessage(@Payload GMessage chatMessage) {
-        logger.info("Handling message (sendMessage): {}", chatMessage);
+    public Message sendMessage(@Payload Message message) {
+        logger.info("sendMessage: Handling message: {}", message);
 
-        if (chatMessage.getType() == MessageType.START) {
-            start();
-            startMessage = chatMessage;
+        String user = message.getSender();
+
+        if (message.getType() == MessageType.START) {
+            start(user);
+            startMessage = message;
+        } else if (message.getType() == MessageType.GAME) {
+            gameMessage = message;
         } else {
             // TODO
         }
 
-        // Broadcast start or other message
-        return chatMessage;
+        // Broadcast START or GAME or other message
+        return message;
     }
 
+    // TODO replace @SendTo with messagingTemplate or lobby
     @MessageMapping("/chat.addUser")
     @SendTo("/topic/public")
-    public GMessage addUser(@Payload GMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
-        logger.info("Handling message (addUser): {}", chatMessage);
+    public Message addUser(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
+        logger.info("addUser: Handling message: {}", message);
 
-        String user = chatMessage.getSender();
+        String user = message.getSender();
         String session = headerAccessor.getSessionId();
 
         // TODO remove - username in web socket session
@@ -60,49 +67,56 @@ public class MessageController {
 
         // Update lobby
         lobby.add(user, session);
-        logger.info("User joined lobby: {} {}", user, lobby);
 
         // Handle reconnection
         reconnect(user, session);
 
-        // Broadcast join message
-        chatMessage.setContent(String.join(",", lobby.getUsers()));
-        return chatMessage;
+        // Broadcast JOIN message
+        message.setContent(String.join(",", lobby.getUsers()));
+        return message;
     }
 
-    private CompletableFuture<Void> start() {
+    private CompletableFuture<Void> start(String user) {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
-            // Fake delay
             try {
                 Thread.sleep(100);
             } catch (InterruptedException ignored) {
 
             }
 
-            // TODO implement - game.start();
-            game = new SecretHitler(lobby);
+            logger.debug("Starting Secret Hitler game: {}", lobby);
+
+            // TODO implement
+            game = new SecretHitlerGame(lobby);
+            // game.start(user);
+
+            logger.info("Started Secret Hitler game: {}", game);
         });
     }
 
     private CompletableFuture<Void> reconnect(String user, String session) {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
-            // Fake delay
             try {
                 Thread.sleep(100);
             } catch (InterruptedException ignored) {
 
             }
 
-            if (game != null /* && startMessage != null &&  startMessageHeaderAccessor != null */) {
-                logger.info("User reconnected in new session: {} {}", user, session);
+            if (game != null) {
+                logger.debug("Reconnecting user in new session: {} {}", user, session);
 
-                // TODO implement - game.reconnect(user);
-                // Unicast start message
-                GMessage reconnectMessage = startMessage;
-                lobby.sendToUser(user, reconnectMessage);
+                // TODO implement
+                // game.reconnect(user);
+                if (startMessage != null) {
+                    lobby.sendToUser(user, startMessage);
+                    if (gameMessage != null) {
+                        lobby.sendToUser(user, gameMessage);
+                    }
+                }
 
+                logger.info("Reconnected user in new session: {} {}", user, session);
             }
         });
     }

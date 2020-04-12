@@ -7,7 +7,7 @@
 git clone https://github.com/KaralabeZeller/Project-G-api.git
 ```
 
-### Running unit and itegration tests
+### Running unit and integration tests
 ```bash
 mvn verify
 ```

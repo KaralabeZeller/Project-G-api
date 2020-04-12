@@ -1,11 +1,9 @@
 package com.nter.projectg.games.secrethitler;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-
 
 public class Assets {
 
@@ -18,14 +16,14 @@ public class Assets {
     public List<Constants.Power> activePowers;
     public int[] nonElectables;
     public HashMap<Integer, Integer> playerMap;
-    public List<UserSecretHitler> players;
+    public List<SecretHitlerPlayer> players;
 
-    public Assets(List<UserSecretHitler> players) {
+    public Assets(List<SecretHitlerPlayer> players) {
         this.players = players;
         this.playerCount = players.size();
         nonElectables = new int[2];
         electionTracker = 0;
-        playerMap = new HashMap<Integer, Integer>();
+        playerMap = new HashMap<>();
 
         initPlayers();
         initFactions();
@@ -41,8 +39,8 @@ public class Assets {
     }
 
     private void initPowers() {
-        powers = new ArrayList<Constants.Power>();
-        activePowers = new ArrayList<Constants.Power>();
+        powers = new ArrayList<>();
+        activePowers = new ArrayList<>();
 
         if (playerCount < 7) {
             powers.add(Constants.Power.POLICY_PEEK);
@@ -68,8 +66,8 @@ public class Assets {
     }
 
     private void initPolicies() {
-        policies = new ArrayList<Constants.Policy>(18);
-        enactedPolicies = new ArrayList<Constants.Policy>();
+        policies = new ArrayList<>(18);
+        enactedPolicies = new ArrayList<>();
 
         for (int i = 0; i < 18; i++) {
             if (i < 11)
@@ -82,7 +80,7 @@ public class Assets {
 
 
     private void initFactions() {
-        factions = new ArrayList<Constants.Faction>(playerCount);
+        factions = new ArrayList<>(playerCount);
 
         factions.add(Constants.Faction.HITLER);
         factions.add(Constants.Faction.FASCIST);
@@ -137,7 +135,7 @@ public class Assets {
     }
 
     public List<Constants.Policy> getTopPolicies() {
-        List<Constants.Policy> returnPol = new ArrayList<Constants.Policy>();
+        List<Constants.Policy> returnPol = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             returnPol.add(policies.get(i));
         }
@@ -177,4 +175,3 @@ public class Assets {
     }
 
 }
-

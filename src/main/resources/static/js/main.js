@@ -23,7 +23,6 @@ var userList = new Array();
 var liberalPolicies = 0;
 var fascistPolicies = 0;
 
-
 var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107',
 		'#ff85af', '#FF9800', '#39bbb0' ];
 

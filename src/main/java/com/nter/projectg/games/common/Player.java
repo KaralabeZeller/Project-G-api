@@ -1,20 +1,20 @@
-package com.nter.projectg.controller;
+package com.nter.projectg.games.common;
 
-import com.nter.projectg.games.common.Constants;
-import com.nter.projectg.model.GMessage;
+import com.nter.projectg.model.common.Message;
 
 import java.util.function.Consumer;
 
-public abstract class GameClient<Message extends GMessage> {
+public abstract class Player<GameMessage extends Message> {
 
-    private final Consumer<Message> send;
-
-    private volatile Constants.ClientState state;
+    private final Consumer<GameMessage> send;
     private final String name;
 
-    public GameClient(String name, Consumer<Message> send) {
+    private volatile Constants.ClientState state;
+
+    public Player(String name, Consumer<GameMessage> send) {
         this.send = send;
         this.name = name;
+
         this.state = Constants.ClientState.ACCEPTED;
     }
 
@@ -30,16 +30,16 @@ public abstract class GameClient<Message extends GMessage> {
         return state;
     }
 
-    protected void sendMessage(Message message) {
+    protected void send(GameMessage message) {
         send.accept(message);
     }
 
     @Override
     public String toString() {
-        return "GameClient{" +
+        return "Player{" +
                 "name='" + name + '\'' +
+                "state='" + state + '\'' +
                 '}';
     }
 
 }
-

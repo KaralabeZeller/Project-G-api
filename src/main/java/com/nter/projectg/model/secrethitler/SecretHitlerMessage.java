@@ -1,12 +1,13 @@
-package com.nter.projectg.games.secrethitler;
+package com.nter.projectg.model.secrethitler;
 
-import com.nter.projectg.model.GMessage;
+import com.nter.projectg.model.common.Message;
 
-public class SHMessage extends GMessage {
+public class SecretHitlerMessage extends Message {
 
+    // TODO rename (maybe)
     private GameMessageType gameMessageType;
 
-    public SHMessage() {
+    public SecretHitlerMessage() {
         setType(MessageType.GAME);
     }
 
@@ -28,6 +29,14 @@ public class SHMessage extends GMessage {
 
     public void setGameMessageType(GameMessageType gameMessageType) {
         this.gameMessageType = gameMessageType;
+    }
+
+    @Override
+    public String toString() {
+        return "SecretHitlerMessage{" +
+                "super=" + super.toString() +
+                ", gameMessageType=" + gameMessageType +
+                '}';
     }
 
 }

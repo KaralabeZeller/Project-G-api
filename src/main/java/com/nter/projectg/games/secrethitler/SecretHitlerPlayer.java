@@ -1,25 +1,27 @@
 package com.nter.projectg.games.secrethitler;
 
-import com.nter.projectg.controller.GameClient;
+import com.nter.projectg.games.common.Player;
+import com.nter.projectg.model.secrethitler.SecretHitlerMessage;
 
 import java.util.function.Consumer;
 
-public class UserSecretHitler extends GameClient<SHMessage> {
+public class SecretHitlerPlayer extends Player<SecretHitlerMessage> {
 
     private Constants.Faction faction;
 
-    public UserSecretHitler(String name, Consumer<SHMessage> send) {
+    public SecretHitlerPlayer(String name, Consumer<SecretHitlerMessage> send) {
         super(name, send);
     }
 
     public void setFaction(Constants.Faction faction) {
         this.faction = faction;
 
-        SHMessage message = new SHMessage();
+        // Unicast GAME FACTION message
+        SecretHitlerMessage message = new SecretHitlerMessage();
         message.setSender(getName());
-        message.setGameMessageType(SHMessage.GameMessageType.FACTION);
+        message.setGameMessageType(SecretHitlerMessage.GameMessageType.FACTION);
         message.setContent(faction.name());
-        sendMessage(message);
+        send(message);
     }
 
     public Constants.Faction getFaction() {
@@ -28,7 +30,7 @@ public class UserSecretHitler extends GameClient<SHMessage> {
 
     @Override
     public String toString() {
-        return "UserSecretHitler{" +
+        return "SecretHitlerPlayer{" +
                 "super=" + super.toString() +
                 ", faction=" + faction +
                 '}';

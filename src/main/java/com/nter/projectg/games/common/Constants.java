@@ -11,11 +11,10 @@ public class Constants {
             "Taboo"
     ));
 
-    public static enum ClientState {
+    public enum ClientState {
         ACCEPTED,
         READY,
         AUTH
     }
-
 
 }
