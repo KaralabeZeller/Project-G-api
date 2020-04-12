@@ -39,7 +39,7 @@ public class LogControler {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("500 Internal Server Error");
             }
         } else {
-            logger.debug("Rejecting request with invalid api-key to read log file contents");
+            logger.debug("Not authorized to read log file contents: invalid api-key");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("401 Not Authorized");
         }
 
