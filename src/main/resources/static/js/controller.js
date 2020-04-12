@@ -107,7 +107,7 @@ function onMessageReceived(payload) {
 
 	if (message.type === 'JOIN' || message.type === 'LEAVE') {
 
-        if(started === 0) {
+        if(isStarted === 0) {
             var splitted = message.content.split(','), i;
 
             var element = document.getElementById('messageArea');
