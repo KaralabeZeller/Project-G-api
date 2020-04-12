@@ -13,8 +13,8 @@ public class Message {
     public enum MessageType {
         CHAT,
         JOIN,
-        START,
         LEAVE,
+        START,
         GAME
     }
 

@@ -17,6 +17,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     private List<SecretHitlerPlayer> playersShuffled;
     private Assets assets;
 
+    // TODO refactor to use methods instead of fields
     private int hitlerID;
     private int chancellorID;
     private int presidentID;
@@ -26,7 +27,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
         logger.debug("Initializing Secret Hitler: {}", this);
         initializeAssets();
-        assignFactions();
+        initializeFactions();
         logger.info("Initialized Secret Hitler: {}", this);
     }
 
@@ -46,9 +47,10 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         logger.info("Initialized players and assets: {} {}", playersShuffled, assets);
     }
 
-    private void assignFactions() {
+    private void initializeFactions() {
         logger.debug("Initializing factions: {}", playersShuffled);
 
+        // TODO refactor to avoid array indexing
         for (int i = 0; i < playersShuffled.size(); i++) {
             SecretHitlerPlayer player = playersShuffled.get(i);
 
@@ -57,12 +59,12 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
             if (faction == Constants.Faction.HITLER) {
                 hitlerID = i;
+                // TODO implement
+                // sendHitlerToFascists();
             }
         }
-        logger.info("Initialized factions: {}", playersShuffled);
 
-        // TODO implement
-        // sendHitlerToFascists();
+        logger.info("Initialized factions: {}", playersShuffled);
     }
 
     @Override
@@ -85,4 +87,5 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
                 ", presidentID=" + presidentID +
                 '}';
     }
+
 }

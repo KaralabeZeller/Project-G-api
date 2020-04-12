@@ -1,5 +1,6 @@
 package com.nter.projectg.model;
 
+// TODO remove greetings
 public class GreetingMessage {
 
     private String content;

@@ -13,19 +13,19 @@ public class SecretHitlerPlayer extends Player<SecretHitlerMessage> {
         super(name, send);
     }
 
+    public Constants.Faction getFaction() {
+        return faction;
+    }
+
     public void setFaction(Constants.Faction faction) {
         this.faction = faction;
 
-        // Unicast GAME FACTION message
+        // Send message to session
         SecretHitlerMessage message = new SecretHitlerMessage();
         message.setSender(getName());
         message.setGameMessageType(SecretHitlerMessage.GameMessageType.FACTION);
         message.setContent(faction.name());
         send(message);
-    }
-
-    public Constants.Faction getFaction() {
-        return faction;
     }
 
     @Override
@@ -35,4 +35,5 @@ public class SecretHitlerPlayer extends Player<SecretHitlerMessage> {
                 ", faction=" + faction +
                 '}';
     }
+
 }

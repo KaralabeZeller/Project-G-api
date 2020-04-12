@@ -4,8 +4,8 @@
 ## Development
 
 ### Requirements
-* Java 8 JDK
-* Maven
+* [Java 8 JDK](https://adoptopenjdk.net/)
+* [Maven](https://maven.apache.org/)
 
 ### Checking out the project
 ```bash

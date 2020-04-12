@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -29,7 +30,7 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
         this.maxPlayers = maxPlayers;
 
         logger.debug("Initializing game: {}", this);
-        createPlayers();
+        initializePlayers();
         logger.info("Initialized game: {}", this);
     }
 
@@ -38,11 +39,11 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
     }
 
     protected List<GamePlayer> getPlayers() {
-        return players;
+        return Collections.unmodifiableList(players);
     }
 
-    private void createPlayers() {
-        logger.debug("Creating players: {}", players);
+    private void initializePlayers() {
+        logger.debug("Initializing players: {}", players);
 
         int userCount = lobby.getUsers().size();
         if (userCount < minPlayers || userCount >= maxPlayers) {
@@ -53,7 +54,7 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
             players.add(createPlayer(user));
         }
 
-        logger.info("Created players: {}", players);
+        logger.info("Initialized players: {}", players);
     }
 
     protected abstract GamePlayer createPlayer(String name);
@@ -79,6 +80,7 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
         // TODO
     }
 
+    // TODO maybe remove lobby
     @Override
     public String toString() {
         return "Game{" +

@@ -4,7 +4,7 @@ import com.nter.projectg.model.common.Message;
 
 public class SecretHitlerMessage extends Message {
 
-    // TODO rename (maybe)
+    // TODO maybe rename to gameType
     private GameMessageType gameMessageType;
 
     public SecretHitlerMessage() {

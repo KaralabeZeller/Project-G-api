@@ -24,14 +24,20 @@ public class Lobby {
     private final Map<String, String> sessionUser = new HashMap<>();
 
     public void add(String user, String session) {
+        logger.debug("User joining: {} {}", user, this);
+
         userSession.put(user, session);
         sessionUser.put(session, user);
+
         logger.info("User joined: {} {}", user, this);
     }
 
     public void remove(String user, String session) {
+        logger.debug("User leaving: {} {}", user, this);
+
         userSession.remove(user);
         sessionUser.remove(session);
+
         logger.info("User left: {} {}", user, this);
     }
 
@@ -40,11 +46,9 @@ public class Lobby {
     }
 
     public void sendToAll(Object message) {
-
-
         logger.debug("sendToAll: {}", message);
 
-        // Broadcast message
+        // Broadcast message to all sessions
         messagingTemplate.convertAndSend("/topic/public", message);
     }
 
@@ -53,7 +57,7 @@ public class Lobby {
 
         String session = userSession.get(user);
 
-        // Unicast message
+        // Send message to session
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create();
         headerAccessor.setSessionId(session);
         headerAccessor.setLeaveMutable(true);
@@ -67,4 +71,5 @@ public class Lobby {
                 ", sessionUser=" + sessionUser +
                 '}';
     }
+
 }

@@ -3,54 +3,56 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <title>Demo | Project-G</title>
-    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/main.css"/>
 </head>
 <body>
-	<noscript>
-		<h2>Sorry! Your browser doesn't support Javascript</h2>
-	</noscript>
 
-	<div id="username-page">
-		<div class="username-page-container">
-			<h1 class="title">Type your username</h1>
-			<form id="usernameForm" name="usernameForm">
-				<div class="form-group">
-					<input type="text" id="name" placeholder="Username" autocomplete="off" class="form-control" />
-				</div>
-				<div class="form-group">
-					<button type="submit" class="accent username-submit">Start lobby</button>
-				</div>
-			</form>
-		</div>
-	</div>
+<noscript>
+    <h2>Sorry! Your browser doesn't support Javascript</h2>
+</noscript>
 
-	<div id="chat-page" class="hidden">
-		<div>
-			<canvas id="gameCanvasLiberal" class="game-canvas-liberal"></canvas>
-		</div>
-		<div>
-			<canvas id="gameCanvasFascist" class="game-canvas-fascist"></canvas>
-		</div>
-		<div class="chat-container">
-			<div class="chat-header">
-				<h2 id="LobbyText">Project-G lobby</h2>
-			</div>
-			<div class="connecting">Connecting...</div>
-			<ul id="messageArea">
+<div id="username-page">
+    <div class="username-page-container">
+        <h1 class="title">Type your username</h1>
+        <form id="usernameForm" name="usernameForm">
+            <div class="form-group">
+                <input type="text" id="name" placeholder="Username" autocomplete="off" class="form-control"/>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="accent username-submit">Start lobby</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-			</ul>
-			<form id="messageForm" name="messageForm">
-				<div class="form-group">
-					<div class="input-group clearfix">
-						<button id="startButton" type="submit" class="primary">Start</button>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
+<div id="chat-page" class="hidden">
+    <div>
+        <canvas id="gameCanvasLiberal" class="game-canvas-liberal"></canvas>
+    </div>
+    <div>
+        <canvas id="gameCanvasFascist" class="game-canvas-fascist"></canvas>
+    </div>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2 id="LobbyText">Project-G lobby</h2>
+        </div>
+        <div class="connecting">Connecting...</div>
+        <ul id="messageArea">
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-	<script src="/js/main.js"></script>
+        </ul>
+        <form id="messageForm" name="messageForm">
+            <div class="form-group">
+                <div class="input-group clearfix">
+                    <button id="startButton" type="submit" class="primary">Start</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="/js/main.js"></script>
+
 </body>
 </html>

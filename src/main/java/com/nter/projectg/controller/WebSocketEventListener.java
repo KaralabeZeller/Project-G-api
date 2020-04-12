@@ -20,31 +20,36 @@ public class WebSocketEventListener {
     private Lobby lobby;
 
     @EventListener
-    public void handleWebSocketConnectListener(SessionConnectedEvent event) {
-        logger.info("Received a new WebSocket connection: {}", event);
+    public void handleWebSocketConnect(SessionConnectedEvent event) {
+        logger.info("handleWebSocketConnect: Received WebSocket event: {}", event);
     }
 
     @EventListener
-    public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-        logger.info("Received a WebSocket disconnection: {}", event);
+    public void handleWebSocketDisconnect(SessionDisconnectEvent event) {
+        logger.info("handleWebSocketDisconnect: Received WebSocket event: {}", event);
 
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
-        // TODO remove - username in web socket session
+        // TODO avoid storing username in WebSocket / STOMP session
         String user = (String) headerAccessor.getSessionAttributes().get("username");
         String session = headerAccessor.getSessionId(); // event.getSessionId()
 
         if (user != null) {
+            logger.debug("Disconnecting user from session: {} {}", user, session);
+
             // Update lobby
             lobby.remove(user, session);
 
-            // Broadcast LEAVE message
+            // Broadcast message message to all sessions
             Message message = new Message();
             message.setType(Message.MessageType.LEAVE);
             message.setSender(user);
             message.setContent(String.join(",", lobby.getUsers()));
             lobby.sendToAll(message);
+
+            logger.info("Disconnected user from session: {} {}", user, session);
         }
 
     }
+
 }

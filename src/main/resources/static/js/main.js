@@ -82,6 +82,7 @@ function onConnected() {
 
 function onConnectedScreen() {
 	// Subscribe to the Public Topic
+	// TODO remove greetings
 	stompClient_screen.subscribe('/topic/greetings', onMessageReceivedScreen);
 
 	// Tell your username to the server
@@ -198,7 +199,7 @@ function onMessageReceived(payload) {
 	    if (message.gameMessageType === 'FACTION') {
 	        displayFaction(message.content);
 	    } else {
-	      // TODO
+	      // TODO other messages
 	    }
 	}
 

@@ -27,4 +27,5 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setUserDestinationPrefix("/user")
                 .enableSimpleBroker("/topic", "/user");
     }
+
 }

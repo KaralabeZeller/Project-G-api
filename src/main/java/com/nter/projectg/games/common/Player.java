@@ -6,14 +6,14 @@ import java.util.function.Consumer;
 
 public abstract class Player<GameMessage extends Message> {
 
-    private final Consumer<GameMessage> send;
     private final String name;
+    private final Consumer<GameMessage> send;
 
-    private volatile Constants.ClientState state;
+    private Constants.ClientState state;
 
     public Player(String name, Consumer<GameMessage> send) {
-        this.send = send;
         this.name = name;
+        this.send = send;
 
         this.state = Constants.ClientState.ACCEPTED;
     }
@@ -22,12 +22,12 @@ public abstract class Player<GameMessage extends Message> {
         return name;
     }
 
-    private void setState(Constants.ClientState auth) {
-        state = Constants.ClientState.AUTH;
-    }
-
     public Constants.ClientState getState() {
         return state;
+    }
+
+    private void setState(Constants.ClientState state) {
+        this.state = state;
     }
 
     protected void send(GameMessage message) {
@@ -38,7 +38,6 @@ public abstract class Player<GameMessage extends Message> {
     public String toString() {
         return "Player{" +
                 "name='" + name + '\'' +
-                "state='" + state + '\'' +
                 '}';
     }
 

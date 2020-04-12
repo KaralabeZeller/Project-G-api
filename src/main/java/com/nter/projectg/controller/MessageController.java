@@ -29,14 +29,15 @@ public class MessageController {
     private Lobby lobby;
 
     private Game<?, ?> game;
+    // TODO move to Game from MessageController
     private Message startMessage;
     private Message gameMessage;
 
-    // TODO replace @SendTo with messagingTemplate or lobby
+    // TODO replace @SendTo with SimpMessageSendingOperations or Lobby
     @MessageMapping("/chat.sendMessage")
     @SendTo("/topic/public")
     public Message sendMessage(@Payload Message message) {
-        logger.info("sendMessage: Handling message: {}", message);
+        logger.info("sendMessage: Received message: {}", message);
 
         String user = message.getSender();
 
@@ -46,23 +47,23 @@ public class MessageController {
         } else if (message.getType() == MessageType.GAME) {
             gameMessage = message;
         } else {
-            // TODO
+            // TODO other messages
         }
 
-        // Broadcast START or GAME or other message
+        // Broadcast message to all sessions
         return message;
     }
 
-    // TODO replace @SendTo with messagingTemplate or lobby
+    // TODO replace @SendTo with SimpMessageSendingOperations or Lobby
     @MessageMapping("/chat.addUser")
     @SendTo("/topic/public")
     public Message addUser(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
-        logger.info("addUser: Handling message: {}", message);
+        logger.info("addUser: Received message: {}", message);
 
         String user = message.getSender();
         String session = headerAccessor.getSessionId();
 
-        // TODO remove - username in web socket session
+        // TODO avoid storing username in WebSocket / STOMP session
         headerAccessor.getSessionAttributes().put("username", user);
 
         // Update lobby
@@ -71,7 +72,7 @@ public class MessageController {
         // Handle reconnection
         reconnect(user, session);
 
-        // Broadcast JOIN message
+        // Broadcast message to all sessions
         message.setContent(String.join(",", lobby.getUsers()));
         return message;
     }
@@ -85,13 +86,27 @@ public class MessageController {
 
             }
 
-            logger.debug("Starting Secret Hitler game: {}", lobby);
+            logger.debug("Starting game: Secret Hitler {}", lobby);
 
-            // TODO implement
             game = new SecretHitlerGame(lobby);
+            // TODO implement
             // game.start(user);
 
-            logger.info("Started Secret Hitler game: {}", game);
+            logger.info("Started game: Secret Hitler {}", game);
+
+            // Fake timeout to reset Game
+            try {
+                Thread.sleep(600000);
+            } catch (InterruptedException ignored) {
+
+            }
+
+            logger.debug("Stopping game: Secret Hitler {}", game);
+
+            // TODO implement
+            game = null;
+
+            logger.debug("Stopped game: Secret Hitler {}", lobby);
         });
     }
 
@@ -105,7 +120,7 @@ public class MessageController {
             }
 
             if (game != null) {
-                logger.debug("Reconnecting user in new session: {} {}", user, session);
+                logger.debug("Reconnecting user in session: {} {}", user, session);
 
                 // TODO implement
                 // game.reconnect(user);
@@ -116,7 +131,7 @@ public class MessageController {
                     }
                 }
 
-                logger.info("Reconnected user in new session: {} {}", user, session);
+                logger.info("Reconnected user in session: {} {}", user, session);
             }
         });
     }
