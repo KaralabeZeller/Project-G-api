@@ -64,7 +64,7 @@
 
          var message = {
                 type : 'PING',
-                sender : username,
+                sender : "screen",
          };
 
          stompClient.send("/app/ping", {}, JSON.stringify(message));
