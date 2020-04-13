@@ -41,7 +41,7 @@ jobs:
         run: mvn -B verify --file pom.xml
 
       - name: Publish artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2-preview
         with:
           name: project-g-api.jar
-          path: target/*.jar
+          path: ./target/*.jar
