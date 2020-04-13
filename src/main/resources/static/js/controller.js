@@ -35,6 +35,7 @@
     function connect() {
         var socket = new SockJS('/ws');
         stompClient = Stomp.over(socket);
+        stompClient.reconnect_delay = 500;
         stompClient.connect({}, onConnected, onError);
     }
 
