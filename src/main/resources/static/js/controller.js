@@ -52,12 +52,25 @@
         stompClient.send("/app/chat.addUser", {}, JSON.stringify(message));
 
         connectingElement.classList.add('hidden');
+        setInterval(keepAlive, 10000);
     }
 
     function onError(error) {
         connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
         connectingElement.style.color = 'red';
     }
+
+    function keepAlive() {
+
+         var message = {
+                type : 'PING',
+                sender : username,
+         };
+
+         stompClient.send("/app/ping", {}, JSON.stringify(message));
+
+    }
+
 
     function sendMessage(event) {
         var messageContent = messageInput.value.trim();
