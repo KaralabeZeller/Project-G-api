@@ -3,9 +3,11 @@ const canvasLiberal = document.getElementById('gameCanvasLiberal');
 const ctxLiberal = canvasLiberal.getContext('2d');
 const canvasFascist = document.getElementById('gameCanvasFascist');
 const ctxFascist = canvasFascist.getContext('2d');
+const playerDiv = document.getElementById('players');
 
 var stompClient = null;
 var userList = new Array();
+var president = null;
 
 var liberalPolicies = 0;
 var fascistPolicies = 0;
@@ -50,6 +52,10 @@ function onMessageReceivedScreen(payload) {
     } else if (message.type === 'GAME') {
         if (message.gameMessageType === 'FACTION') {
             displayFaction(message.content);
+         }else if (message.gameMessageType === 'PRESIDENT') {
+            setPresident(message.content)
+
+
         } else {
           // TODO other messages
         }
@@ -60,9 +66,32 @@ function onError(error) {
 	console.log('Could not connect to WebSocket server. Please refresh this page to try again!');
 }
 
+function setPresident (playerName) {
+
+      if (president !== null)
+      {
+      var player = document.getElementById(president);
+          player.innerHTML = ""
+      }
+
+      var player = document.getElementById(playerName);
+      player.innerHTML = "PRESIDENT"
+
+      president = playerName
+
+}
+
+
+function clearPlayers(value) {
+  var player = document.getElementById(value);
+      player.innerHTML = ""
+
+}
+
 
 function playSecretHitler() {
 	drawBoards();
+	userList.forEach(drawPlayers)
 
 	setTimeout(() => { addLiberalPolicy(); addFascistPolicy();}, 1000);
 	setTimeout(() => { addLiberalPolicy(); addFascistPolicy();}, 2000);
@@ -70,6 +99,16 @@ function playSecretHitler() {
 	setTimeout(() => { addLiberalPolicy(); addFascistPolicy();}, 4000);
 	setTimeout(() => { addLiberalPolicy(); addFascistPolicy();}, 5000);
 	setTimeout(() => { addFascistPolicy(); }, 6000);
+
+}
+
+function drawPlayers(value) {
+  const div = document.createElement('fieldset');
+  div.id= 'fieldset-'+ value;
+
+  div.innerHTML = ' <legend class="player-legend">'+ value + '</legend> <table> <tbody> <tr> <td height="20" id="'+ value + '" class="player-role"></td> </tr> </tbody> </table> ';
+
+  playerDiv.appendChild(div);
 
 }
 

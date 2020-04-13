@@ -20,7 +20,8 @@ public class SecretHitlerMessage extends Message {
         POLICIES,
         VOTE,
         VETO,
-        POLICY
+        POLICY,
+        PRESIDENT
     }
 
     public GameMessageType getGameMessageType() {

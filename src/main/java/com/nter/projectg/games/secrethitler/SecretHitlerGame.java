@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlayer> {
 
@@ -17,18 +18,68 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     private List<SecretHitlerPlayer> playersShuffled;
     private Assets assets;
 
+    private Constants.SHState gameState;
+
     // TODO refactor to use methods instead of fields
     private int hitlerID;
     private int chancellorID;
     private int presidentID;
+    private int lastNormalPresident;
+    private int playerCount;
 
     public SecretHitlerGame(Lobby lobby) {
         super(lobby, "Secret Hitler", 5, 10);
 
         logger.debug("Initializing Secret Hitler: {}", this);
+
         initializeAssets();
+        playerCount = playersShuffled.size();
         initializeFactions();
+        electPresident();
         logger.info("Initialized Secret Hitler: {}", this);
+    }
+
+    private void electPresident() {
+
+        if (presidentID == -1) {
+            Random rand = new Random();
+            presidentID = rand.nextInt(playersShuffled.size());
+        } else {
+
+            if (presidentID == -1) {
+                Random rand = new Random();
+                presidentID = rand.nextInt(playerCount);
+            } else {
+
+                int nextPresident = -1;
+                int candidate = lastNormalPresident + 1;
+
+                while (nextPresident < 0) {
+                    if (candidate >= playerCount)
+                        candidate = 0;
+
+                    if (assets.playerMap.get(candidate) == 1)
+                        nextPresident = candidate;
+                    else
+                        candidate++;
+                }
+
+                presidentID = candidate;
+
+            }
+            lastNormalPresident = presidentID;
+        }
+        gameState = Constants.SHState.NOMINATION;
+
+        // Send message to session
+        SecretHitlerMessage message = new SecretHitlerMessage();
+        message.setSender(getName());
+        message.setGameMessageType(SecretHitlerMessage.GameMessageType.PRESIDENT);
+        message.setContent(playersShuffled.get(presidentID).getName());
+        sendToAll(message);
+
+        logger.info("President: " + playersShuffled.get(presidentID).getName());
+
     }
 
     private void initializeAssets() {

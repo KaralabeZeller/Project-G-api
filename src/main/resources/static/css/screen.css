@@ -1,0 +1,75 @@
+* {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+html, body {
+	height: 100%;
+	overflow: hidden;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	font-weight: 400;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 1rem;
+	line-height: 1.58;
+	color: #333;
+	background-color: #c9ccce;
+	height: 100%;
+}
+
+.clearfix:after {
+	display: block;
+	content: "";
+	clear: both;
+}
+
+.hidden {
+	display: none;
+}
+
+.game-canvas-liberal {
+	width: 60%;
+	height: 40%;
+
+	background-color: #fff;
+	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+	position: absolute;
+	top: 5%;
+	left: 1%;
+	image-rendering: optimizeQuality; /* Awesome future-browsers       */
+
+}
+
+.game-canvas-fascist {
+	width: 60%;
+	height: 40%;
+
+	background-color: #fff;
+	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+	position: absolute;
+	top: 50%;
+	left: 1%;
+	image-rendering: optimizeQuality; /* Awesome future-browsers       */
+}
+
+.players {
+	width: 12%;
+	min-width: 130px
+	height: auto;
+
+	background-color: #d8d8de;
+	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+	position: absolute;
+	top: 5%;
+	left: 62%;
+	image-rendering: optimizeQuality; /* Awesome future-browsers       */
+	padding: 0px 0px 5px 0px;
+}
+
+.player-role {
+    font-weight:bold;
+}
