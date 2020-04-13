@@ -78,7 +78,6 @@ public class Assets {
         Collections.shuffle(policies);
     }
 
-
     private void initFactions() {
         factions = new ArrayList<>(playerCount);
 

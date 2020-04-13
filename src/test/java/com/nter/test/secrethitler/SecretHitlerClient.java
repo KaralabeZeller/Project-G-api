@@ -2,7 +2,7 @@ package com.nter.test.secrethitler;
 
 import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.secrethitler.SecretHitlerMessage;
-import com.nter.test.Client;
+import com.nter.test.common.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.stomp.StompHeaders;

@@ -159,6 +159,15 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     }
 
     @Override
+    protected void processMessage(SecretHitlerMessage message) {
+        if (message.getGameMessageType() == SecretHitlerMessage.GameMessageType.FACTION) {
+            // nothing to do
+        } else {
+            // TODO other messages
+        }
+    }
+
+    @Override
     public void run() {
         // TODO
     }

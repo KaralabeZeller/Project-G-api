@@ -75,6 +75,22 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
         return message -> sendToPlayer(name, message);
     }
 
+    public void process(Message message) {
+        if (message.getType() == Message.MessageType.GAME /* && message instanceof GameMessage */) {
+            logger.debug("Processing message: {}", message);
+            GameMessage gameMessage = (GameMessage) message;
+            processMessage(gameMessage);
+        } else {
+            logger.debug("Ignoring message: {}", message);
+        }
+    }
+
+    protected abstract void processMessage(GameMessage message);
+
+    public void reconnect(String user) {
+        // TODO implement
+    }
+
     @Override
     public void run() {
         // TODO
@@ -90,5 +106,3 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
                 '}';
     }
 }
-
-

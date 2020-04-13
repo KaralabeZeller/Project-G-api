@@ -1,204 +1,182 @@
-'use strict';
+(function () {
+    'use strict';
 
-var chatPage = document.querySelector('#chat-page');
-var messageForm = document.querySelector('#messageForm');
-var messageInput = document.querySelector('#message');
-var messageArea = document.querySelector('#messageArea');
-var connectingElement = document.querySelector('.connecting');
-var lobbyText =document.getElementById("LobbyText");
+    var chatPage = document.querySelector('#chat-page'),
+        messageForm = document.querySelector('#messageForm'),
+        messageInput = document.querySelector('#message'),
+        messageArea = document.querySelector('#messageArea'),
+        connectingElement = document.querySelector('.connecting'),
+        lobbyText = document.getElementById("LobbyText");
 
-var stompClient = null;
-var stompClient_screen = null;
-var username = null;
-var userList = new Array();
+    var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107',
+            '#ff85af', '#FF9800', '#39bbb0' ];
 
-var isStarted = 0;
+    var stompClient = null;
 
-var liberalPolicies = 0;
-var fascistPolicies = 0;
+    var username = null;
+    var userList = [];
 
-var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107',
-		'#ff85af', '#FF9800', '#39bbb0' ];
+    var isStarted = false;
 
+    var liberalPolicies = 0;
+    var fascistPolicies = 0;
 
-var stringData = localStorage.getItem("name");
-var obj = JSON.parse(stringData);
-
-connect();
-
-if(obj !== null) {
-    username = obj;
-    chatPage.classList.remove('hidden');
-
-    var socket = new SockJS('/ws');
-    stompClient = Stomp.over(socket);
-
-    stompClient.connect({}, onConnected, onError);
-    localStorage.setItem("name",JSON.stringify(username));
-}
-
-function connect() {
-
-	if (username) {
-		usernamePage.classList.add('hidden');
-		chatPage.classList.remove('hidden');
-
-		var socket = new SockJS('/ws');
-		var sock_screen = new SockJS('/ws');
-		stompClient = Stomp.over(socket);
-		stompClient_screen = Stomp.over(sock_screen);
-
-		stompClient.connect({}, onConnected, onError);
-		stompClient_screen.connect({}, onConnectedScreen, onError);
-        localStorage.setItem("name",JSON.stringify(username));
-
+    //TODO implement - url parameters for screen - lobby id and controller - username
+    var stringData = localStorage.getItem("name");
+    var obj = JSON.parse(stringData);
+    if(obj !== null) {
+        username = obj;
+        chatPage.classList.remove('hidden');
+        chatPage.classList.remove('hidden');
     }
 
-}
+    connect();
 
-function onConnected() {
-	// Subscribe to the Public Topic
-	stompClient.subscribe('/topic/public', onMessageReceived);
-	stompClient.subscribe('/user/topic/public', onMessageReceived);
+    function connect() {
+        var socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, onConnected, onError);
+    }
 
-	// Tell your username to the server
-	stompClient.send("/app/chat.addUser", {}, JSON.stringify({
-		sender : username,
-		type : 'JOIN'
-	}))
+    function onConnected() {
+        // Subscribe to the Public Topic
+        stompClient.subscribe('/topic/public', onMessageReceived);
+        stompClient.subscribe('/user/topic/public', onMessageReceived);
 
-	connectingElement.classList.add('hidden');
-}
+        // Tell your username to the server
+        var message = {
+            sender : username,
+            type : 'JOIN',
+        };
+        stompClient.send("/app/chat.addUser", {}, JSON.stringify(message));
 
-function onError(error) {
-	connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
-	connectingElement.style.color = 'red';
-}
+        connectingElement.classList.add('hidden');
+    }
 
-function sendMessage(event) {
-	var messageContent = messageInput.value.trim();
-	if (messageContent && stompClient) {
-		var chatMessage = {
-			sender : username,
-			content : messageInput.value,
-			type : 'CHAT'
-		};
-		stompClient.send("/app/chat.sendMessage", {}, JSON
-				.stringify(chatMessage));
-		messageInput.value = '';
-	}
-	event.preventDefault();
-}
+    function onError(error) {
+        connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
+        connectingElement.style.color = 'red';
+    }
 
-function startGame(event) {
-	var chatMessage = {
-		sender : username,
-		content : 'SecretHitler',
-		type : 'START'
-	};
-	stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+    function sendMessage(event) {
+        var messageContent = messageInput.value.trim();
+        if (messageContent) {
+            var message = {
+                type : 'CHAT',
+                sender : username,
+                content : messageInput.value,
+            };
+            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(message));
 
-    isStarted = 1;
-	event.preventDefault();
-}
+            messageInput.value = '';
+        }
 
-function onMessageReceived(payload) {
-	var message = JSON.parse(payload.body);
+        event.preventDefault();
+    }
 
-	if (message.type === 'JOIN' || message.type === 'LEAVE') {
+    function startGame(event) {
+        var message = {
+            type : 'START',
+            sender : username,
+            content : 'SecretHitler',
+        };
+        stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(message));
 
-        if(isStarted === 0) {
-            var splitted = message.content.split(','), i;
+        isStarted = true;
 
-            var element = document.getElementById('messageArea');
-            element.innerHTML = '';
+        event.preventDefault();
+    }
 
-            userList.length = 0;
+    function onMessageReceived(payload) {
+        var message = JSON.parse(payload.body);
+        if (message.type === 'JOIN' || message.type === 'LEAVE') {
+            if (!isStarted) {
+                var splitted = message.content.split(','),
+                    i = 0;
 
-            for (i = 0; i < splitted.length; i++) {
+                var element = document.getElementById('messageArea');
+                element.innerHTML = '';
 
-                userList.push(splitted[i]);
+                userList.length = 0;
+                for (i = 0; i < splitted.length; i++) {
+                    userList.push(splitted[i]);
 
-                var messageElement = document.createElement('li');
+                    var messageElement = document.createElement('li');
+                    messageElement.classList.add('chat-message');
 
-                messageElement.classList.add('chat-message');
-                var avatarElement = document.createElement('i');
-                var avatarText = document.createTextNode(splitted[i][0]);
-                avatarElement.appendChild(avatarText);
-                avatarElement.style['background-color'] = getAvatarColor(splitted[i]);
+                    var avatarElement = document.createElement('i');
+                    var avatarText = document.createTextNode(splitted[i][0]);
+                    avatarElement.appendChild(avatarText);
+                    avatarElement.style['background-color'] = getAvatarColor(splitted[i]);
+                    messageElement.appendChild(avatarElement);
 
-                messageElement.appendChild(avatarElement);
+                    var usernameElement = document.createElement('span');
+                    var usernameText = document.createTextNode(splitted[i]);
+                    usernameElement.appendChild(usernameText);
+                    messageElement.appendChild(usernameElement);
 
-                var usernameElement = document.createElement('span');
-                var usernameText = document.createTextNode(splitted[i]);
-                usernameElement.appendChild(usernameText);
-                messageElement.appendChild(usernameElement);
-                message.content = '';
+                    var textElement = document.createElement('p');
+                    var messageText = document.createTextNode('');
+                    textElement.appendChild(messageText);
+                    messageElement.appendChild(textElement);
 
-                var textElement = document.createElement('p');
-                var messageText = document.createTextNode('');
-                textElement.appendChild(messageText);
+                    messageArea.appendChild(messageElement);
+                    messageArea.scrollTop = messageArea.scrollHeight;
+                }
+            }
 
-                messageElement.appendChild(textElement);
-
-                messageArea.appendChild(messageElement);
-                messageArea.scrollTop = messageArea.scrollHeight;
+            if (userList.length >= 2) {
+                startButton.classList.remove('hidden');
+            } else {
+                startButton.classList.add('hidden');
+            }
+        } else if (message.type === 'START') {
+            playSecretHitler();
+        } else if (message.type === 'GAME') {
+            if (message.gameMessageType === 'FACTION') {
+                displayFaction(message.content);
+            } else {
+              // TODO other messages
             }
         }
 
-		if (userList.length >= 2) {
-			startButton.classList.remove('hidden');
-		} else {
-			startButton.classList.add('hidden');
-		}
+    }
 
-	} else if (message.type === 'START') {
-		playSecretHitler();
-	} else if (message.type === 'GAME') {
-	    if (message.gameMessageType === 'FACTION') {
-	        displayFaction(message.content);
-	    } else {
-	      // TODO other messages
-	    }
-	}
+    function getAvatarColor(messageSender) {
+        var hash = 0;
+        for (var i = 0; i < messageSender.length; i++) {
+            hash = 31 * hash + messageSender.charCodeAt(i);
+        }
+        var index = Math.abs(hash % colors.length);
+        return colors[index];
+    }
 
-}
+    function playSecretHitler() {
+        startButton.classList.add('hidden');
 
-function getAvatarColor(messageSender) {
-	var hash = 0;
-	for (var i = 0; i < messageSender.length; i++) {
-		hash = 31 * hash + messageSender.charCodeAt(i);
-	}
-	var index = Math.abs(hash % colors.length);
-	return colors[index];
-}
+        initController();
+    }
 
-function playSecretHitler() {
-	startButton.classList.add('hidden');
+    function initController() {
+        lobbyText.innerHTML = username;
+        var element = document.getElementById('messageArea');
+        element.innerHTML = '';
+    }
 
-	initController();
+    function displayFaction(faction) {
+         var messageElement = document.createElement('li');
+         messageElement.classList.add('event-message');
 
-}
+         var textElement = document.createElement('p');
+         var messageText = document.createTextNode('You are: ' + faction);
+         textElement.appendChild(messageText);
 
-function initController() {
-    lobbyText.innerHTML = username;
-    var element = document.getElementById('messageArea');
-    element.innerHTML = '';
-}
+         messageElement.appendChild(textElement);
 
-function displayFaction(faction) {
-	 var messageElement = document.createElement('li');
-	 messageElement.classList.add('event-message');
+         messageArea.appendChild(messageElement);
+         messageArea.scrollTop = messageArea.scrollHeight;
+    }
 
-	 var textElement = document.createElement('p');
-	 var messageText = document.createTextNode('You are: ' + faction);
-	 textElement.appendChild(messageText);
+    messageForm.addEventListener('submit', startGame, true)
 
-	 messageElement.appendChild(textElement);
-
-	 messageArea.appendChild(messageElement);
-	 messageArea.scrollTop = messageArea.scrollHeight;
-
-}
-
-messageForm.addEventListener('submit', startGame, true)
+}());

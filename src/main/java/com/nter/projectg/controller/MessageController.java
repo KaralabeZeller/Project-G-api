@@ -105,11 +105,13 @@ public class MessageController {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
             logger.debug("Processing message: {} {}", message, game);
-
-            // TODO implement
-            // game.process(message);
-
-            logger.info("Processed message: {} {}", message, game);
+            try {
+                game.process(message);
+                logger.info("Processed message: {} {}", message, game);
+            } catch (Exception exception) {
+                logger.error("Failed to process message: {} {}", message, game, exception);
+                throw exception;
+            }
         });
     }
 
@@ -119,14 +121,15 @@ public class MessageController {
             if (game != null) {
                 logger.debug("Reconnecting user in session: {} {}", user, session);
 
-                // TODO implement
-                // game.reconnect(user);
+                // TODO implement restore state / messages on reconnect
                 if (startMessage != null) {
                     lobby.sendToUser(user, startMessage);
                     if (gameMessage != null) {
                         lobby.sendToUser(user, gameMessage);
                     }
                 }
+
+                game.reconnect(user);
 
                 logger.info("Reconnected user in session: {} {}", user, session);
             }
