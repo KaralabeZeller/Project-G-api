@@ -24,7 +24,7 @@ public class SecretHitlerClient extends Client {
             @Override
             public void handleFrame(StompHeaders headers, Object payload) {
                 Message message = (Message) payload;
-                logger.info("Received message: {} {}", message, headers);
+                logger.debug("Received message: {} {}", message, headers);
             }
         });
 
@@ -32,7 +32,7 @@ public class SecretHitlerClient extends Client {
             @Override
             public void handleFrame(StompHeaders headers, Object payload) {
                 Message message = (Message) payload;
-                logger.info("Received message: {} {}", message, headers);
+                logger.debug("Received message: {} {}", message, headers);
 
                 Message.MessageType type = message.getType();
                 String content = message.getContent();
