@@ -57,10 +57,10 @@ function onMessageReceivedScreen(payload) {
     } else if (message.type === 'GAME') {
         if (message.gameMessageType === 'FACTION') {
             displayFaction(message.content);
-         }else if (message.gameMessageType === 'PRESIDENT') {
-            setPresident(message.content)
-
-
+        }else if (message.gameMessageType === 'PRESIDENT') {
+            setPresident(message.content);
+        }else if (message.gameMessageType === 'QUERY_CHANCELLOR') {
+            nominateChancellor(message.content);
         } else {
           // TODO other messages
         }
@@ -80,11 +80,16 @@ function onError(error) {
 	console.log('Could not connect to WebSocket server. Please refresh this page to try again!');
 }
 
+function nominateChancellor(players) {
+
+
+}
+
 function setPresident (playerName) {
 
       if (president !== null)
       {
-      var player = document.getElementById(president);
+          var player = document.getElementById(president);
           player.innerHTML = ""
       }
 

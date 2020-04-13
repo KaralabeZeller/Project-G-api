@@ -21,7 +21,8 @@ public class SecretHitlerMessage extends Message {
         VOTE,
         VETO,
         POLICY,
-        PRESIDENT
+        PRESIDENT,
+        QUERY_CHANCELLOR
     }
 
     public GameMessageType getGameMessageType() {

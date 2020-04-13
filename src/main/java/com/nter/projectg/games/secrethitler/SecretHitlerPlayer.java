@@ -28,6 +28,14 @@ public class SecretHitlerPlayer extends Player<SecretHitlerMessage> {
         send(message);
     }
 
+    public void sendCommand(SecretHitlerMessage.GameMessageType type, String content) {
+        SecretHitlerMessage message = new SecretHitlerMessage();
+        message.setSender(getName());
+        message.setGameMessageType(type);
+        message.setContent(content);
+        send(message);
+    }
+
     @Override
     public String toString() {
         return "SecretHitlerPlayer{" +
