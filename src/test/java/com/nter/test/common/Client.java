@@ -1,4 +1,4 @@
-package com.nter.test;
+package com.nter.test.common;
 
 import com.nter.projectg.model.common.Message;
 import org.slf4j.Logger;

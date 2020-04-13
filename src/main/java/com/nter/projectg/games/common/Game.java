@@ -87,6 +87,10 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
 
     protected abstract void processMessage(GameMessage message);
 
+    public void reconnect(String user) {
+        // TODO implement
+    }
+
     @Override
     public void run() {
         // TODO
@@ -101,7 +105,4 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
                 ", lobby=" + lobby +
                 '}';
     }
-
 }
-
-
