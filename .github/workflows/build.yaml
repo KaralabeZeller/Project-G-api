@@ -42,9 +42,9 @@ jobs:
 
       - name: Publish artifact
         uses: actions/upload-artifact@v1
-          with:
-            name: project-g-api.jar
-            path: ./target/*.jar
+        with:
+          name: project-g-api.jar
+          path: target/*.jar
 
   deploy:
     needs: build
@@ -70,9 +70,8 @@ jobs:
 
       - name: Download artifact
         uses: actions/download-artifact@v1
-          with:
-            name: project-g-api.jar
-            path: ./
+        with:
+          name: project-g-api.jar
 
       - name: Find application artifact
         run: echo ::set-env name=JAR::$(basename *.jar)

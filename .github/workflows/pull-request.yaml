@@ -42,6 +42,6 @@ jobs:
 
       - name: Publish artifact
         uses: actions/upload-artifact@v1
-          with:
-            name: project-g-api.jar
-            path: target/*.jar
+        with:
+          name: project-g-api.jar
+          path: target/*.jar
