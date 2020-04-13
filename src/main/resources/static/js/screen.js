@@ -16,6 +16,10 @@ var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107',
 		'#ff85af', '#FF9800', '#39bbb0' ];
 
 
+canvasLiberal.classList.add('hidden');
+canvasFascist.classList.add('hidden');
+playerDiv.classList.add('hidden');
+
 connect();
 
 
@@ -48,6 +52,7 @@ function onMessageReceivedScreen(payload) {
         }
 
     } else if (message.type === 'START') {
+        initScreen();
         playSecretHitler();
     } else if (message.type === 'GAME') {
         if (message.gameMessageType === 'FACTION') {
@@ -60,6 +65,15 @@ function onMessageReceivedScreen(payload) {
           // TODO other messages
         }
     }
+}
+
+function initScreen() {
+    canvasLiberal.classList.remove('hidden');
+    canvasFascist.classList.remove('hidden');
+    playerDiv.classList.remove('hidden');
+    var splash = document.getElementById('splashScreen');
+    splash.classList.add('hidden');
+
 }
 
 function onError(error) {
