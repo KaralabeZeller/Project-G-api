@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -18,16 +17,16 @@ import java.util.Objects;
 @Controller
 @RestController
 @RequestMapping(path = "/log")
-public class LogControler {
+public class LogController {
 
     private static final String API_KEY = "N7WxsJLRePC4ZLqy";
     private static final String LOG_FILE = "/var/log/project-g-api.log";
 
-    private static final Logger logger = LoggerFactory.getLogger(LogControler.class);
+    private static final Logger logger = LoggerFactory.getLogger(LogController.class);
 
     @GetMapping(path = "", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public ResponseEntity<String> get(@RequestParam(name = "api-key", required = false) String apiKey) throws IOException {
+    public ResponseEntity<String> get(@RequestParam(name = "api-key", required = false) String apiKey) {
         if (authenticate(apiKey)) {
             try {
                 logger.debug("Reading log file contents: {}", LOG_FILE);

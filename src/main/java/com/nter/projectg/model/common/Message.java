@@ -44,7 +44,7 @@ public class Message {
 
     @Override
     public String toString() {
-        return "GMessage{" +
+        return "Message{" +
                 "type=" + type +
                 ", sender='" + sender + '\'' +
                 ", content='" + content + '\'' +
