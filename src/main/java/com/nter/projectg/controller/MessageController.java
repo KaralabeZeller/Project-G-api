@@ -28,7 +28,6 @@ public class MessageController {
     private Game<?, ?> game;
     // TODO move to Game from MessageController
     private Message startMessage;
-    private Message gameMessage;
 
     @MessageMapping("/chat.sendMessage")
     public void sendMessage(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
@@ -47,7 +46,6 @@ public class MessageController {
             startMessage = message;
         } else if (message.getType() == MessageType.GAME) {
             process(message);
-            gameMessage = message;
         } else {
             // TODO other messages
         }
@@ -105,11 +103,13 @@ public class MessageController {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
             logger.debug("Processing message: {} {}", message, game);
-
-            // TODO implement
-            // game.process(message);
-
-            logger.info("Processed message: {} {}", message, game);
+            try {
+                game.process(message);
+                logger.info("Processed message: {} {}", message, game);
+            } catch (Exception exception) {
+                logger.error("Failed to process message: {} {}", message, game, exception);
+                throw exception;
+            }
         });
     }
 
@@ -123,9 +123,6 @@ public class MessageController {
                 // game.reconnect(user);
                 if (startMessage != null) {
                     lobby.sendToUser(user, startMessage);
-                    if (gameMessage != null) {
-                        lobby.sendToUser(user, gameMessage);
-                    }
                 }
 
                 logger.info("Reconnected user in session: {} {}", user, session);
