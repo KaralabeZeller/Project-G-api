@@ -11,7 +11,7 @@
     <h2>Sorry! Your browser doesn't support Javascript</h2>
 </noscript>
 
-<div id="chat-page" class="hidden">
+<div id="chat-page">
     <div class="chat-container">
         <div class="chat-header">
             <h2 id="LobbyText">Lobby | Secret Hitler</h2>
@@ -30,18 +30,15 @@
     </div>
 </div>
 
-
 <dialog id="userDialog">
     <form method="dialog">
         <p>
-            <label id="labelDialog">
-            </label>
+            <label id="userDialogLabel"></label>
         </p>
-        <select id="selector">
-        </select>
+        <select id="userDialogSelector"></select>
         <menu>
             <button value="cancel">Cancel</button>
-            <button id="confirmDialog" value="default">Confirm</button>
+            <button id="confirmButton" value="default">Confirm</button>
         </menu>
     </form>
 </dialog>
@@ -49,7 +46,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="/js/controller.js"></script>
-
 
 </body>
 </html>

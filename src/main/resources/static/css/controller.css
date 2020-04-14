@@ -122,14 +122,11 @@ button.accent {
 }
 
 .chat-container {
-
 	background-color: #fff;
 	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
 	position: absolute;
-
     top: 5%;
 	left: 1%;
-
 	height: 80%;
 	width: 98%;
 }

@@ -34,20 +34,17 @@ body {
 .game-canvas-liberal {
 	width: 60%;
 	height: 40%;
-
 	background-color: #fff;
 	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
 	position: absolute;
 	top: 5%;
 	left: 1%;
 	image-rendering: optimizeQuality; /* Awesome future-browsers       */
-
 }
 
 .game-canvas-fascist {
 	width: 60%;
 	height: 40%;
-
 	background-color: #fff;
 	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
 	position: absolute;
@@ -60,14 +57,12 @@ body {
 	width: 12%;
     min-width: 100px
     height: auto;
-
     background-color: #d8d8de;
     box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
     position: absolute;
     top: 50%;
     transform: translate(0, -50%);
     left: 62%;
-
     padding: 0px 0px 5px 0px;
  }
 
@@ -79,6 +74,5 @@ body {
      position: fixed;
      top: 50%;
      left: 50%;
-
      transform: translate(-50%, -50%);
 }

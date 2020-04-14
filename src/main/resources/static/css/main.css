@@ -102,16 +102,12 @@ button.accent {
 	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
 	border-radius: 2px;
 	display: inline-block;
-
 	position: absolute;
-
 	top: 5%;
 	left: 1%;
-
 	height: 25%;
 	min-height: 300px;
 	width: 100%;
-
     padding: 35px 55px 35px;
 }
 
