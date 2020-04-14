@@ -35,7 +35,7 @@ mvn spring-boot:run
 * [build.yaml](https://github.com/KaralabeZeller/Project-G-api/blob/master/.github/workflows/build.yaml)
 
 ![CI](https://github.com/KaralabeZeller/Project-G-api/workflows/CI/badge.svg)
-![.github/workflows/pull-request.yaml](https://github.com/KaralabeZeller/Project-G-api/workflows/.github/workflows/pull-request.yaml/badge.svg)
+![CI - Pull Request](https://github.com/KaralabeZeller/Project-G-api/workflows/CI%20-%20Pull%20Request/badge.svg)
 
 ## See also
 
