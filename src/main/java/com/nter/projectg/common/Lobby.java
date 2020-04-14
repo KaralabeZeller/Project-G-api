@@ -10,8 +10,8 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class Lobby {
@@ -21,8 +21,8 @@ public class Lobby {
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
 
-    private final Map<String, String> userSession = new HashMap<>();
-    private final Map<String, String> sessionUser = new HashMap<>();
+    private final Map<String, String> userSession = new ConcurrentHashMap<>();
+    private final Map<String, String> sessionUser = new ConcurrentHashMap<>();
 
     public void add(String user, String session) {
         logger.debug("User joining: {} {}", user, this);
