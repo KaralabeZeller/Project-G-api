@@ -2,7 +2,6 @@ package com.nter.projectg.games.secrethitler;
 
 import com.nter.projectg.common.Lobby;
 import com.nter.projectg.games.common.Game;
-import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.secrethitler.SecretHitlerMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,25 +80,27 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
         gameState = Constants.SHState.NOMINATION;
         nominate();
-        
-        logger.info("Elected president: " + players.get(presidentID).getName());
 
+        logger.info("Elected president: " + players.get(presidentID).getName());
     }
 
+    // TODO bug message is null
+    //    c.n.p.g.secrethitler.SecretHitlerGame    : President [1] nominating a chancelloror
+    //    c.n.p.g.secrethitler.SecretHitlerGame    : Nominable players for chancellor
     private void nominate() {
 
         logger.info("President [{}] nominating a chancellor", players.get(presidentID).getName());
         List<String> playerList = new ArrayList<>();
 
         for (int i = 0; i < players.size(); i++) {
-            if(alivePlayers <= 5) {
+            if (alivePlayers <= 5) {
                 if (i != assets.nonElectables[1] && i != presidentID) {
                     if (assets.playerMap.get(i) == 1) {
                         SecretHitlerPlayer u = players.get(i);
                         playerList.add(u.getName());
                     }
                 }
-            }else {
+            } else {
                 if (i != assets.nonElectables[0] && i != assets.nonElectables[1] && i != presidentID) {
                     if (assets.playerMap.get(i) == 1) {
                         SecretHitlerPlayer u = players.get(i);
@@ -124,10 +125,10 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         assets = new Assets(players);
         assets.updateNotElect(presidentID, chancellorID);
 
-        hitlerID     = -1;
+        hitlerID = -1;
         chancellorID = -1;
-        presidentID  = -1;
-        playerCount  = players.size();
+        presidentID = -1;
+        playerCount = players.size();
         alivePlayers = playerCount;
 
         logger.info("Initialized players and assets: {} {}", players, assets);

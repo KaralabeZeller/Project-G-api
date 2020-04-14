@@ -1,5 +1,19 @@
 package com.nter.projectg.model.common;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.nter.projectg.model.secrethitler.SecretHitlerMessage;
+
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.EXISTING_PROPERTY,
+        property = "type",
+        visible = true,
+        defaultImpl = Message.class
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = SecretHitlerMessage.class, name = "GAME"),
+})
 public class Message {
 
     private MessageType type;
