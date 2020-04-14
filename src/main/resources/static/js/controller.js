@@ -8,6 +8,10 @@
         connectingElement = document.querySelector('.connecting'),
         lobbyText = document.getElementById("LobbyText");
 
+    var userDialog = document.getElementById('userDialog'),
+        selectEl = document.getElementById('selector'),
+        confirmBtn = document.getElementById('confirmDialog');
+
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107',
             '#ff85af', '#FF9800', '#39bbb0' ];
 
@@ -22,7 +26,7 @@
     var fascistPolicies = 0;
 
     //TODO implement - url parameters for screen - lobby id and controller - username
-    var stringData = localStorage.getItem("name");
+    var stringData = sessionStorage.getItem("name");
     var obj = JSON.parse(stringData);
     if(obj !== null) {
         username = obj;
@@ -52,23 +56,12 @@
         stompClient.send("/app/chat.addUser", {}, JSON.stringify(message));
 
         connectingElement.classList.add('hidden');
-        setInterval(keepAlive, 10000);
+
     }
 
     function onError(error) {
         connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
         connectingElement.style.color = 'red';
-    }
-
-    function keepAlive() {
-
-         var message = {
-                type : 'PING',
-                sender : username,
-         };
-
-         stompClient.send("/app/ping", {}, JSON.stringify(message));
-
     }
 
 
@@ -149,11 +142,55 @@
         } else if (message.type === 'GAME') {
             if (message.gameMessageType === 'FACTION') {
                 displayFaction(message.content);
+            } else if (message.gameMessageType === 'QUERY_CHANCELLOR') {
+                nominateChancellor(message.content);
             } else {
               // TODO other messages
             }
         }
+    }
 
+    function nominateChancellor(players) {
+         var splitted = players.split(','),
+             i = 0,
+             output = '',
+             techSelectOptions = document.querySelector("select");
+
+         document.getElementById('labelDialog').innerHTML = 'Choose a chancellor: ';
+
+         for (i = 0; i < splitted.length; i++) {
+              output += '<option>'+ splitted[i] + '</option>';
+         }
+
+         selectEl.innerHTML = output;
+
+         userDialog.showModal();
+    }
+
+    selectEl.addEventListener('change', function onSelect(e) {
+      confirmBtn.value = selectEl.value;
+    });
+
+    userDialog.addEventListener('close', function onClose() {
+      var value = 'Chancellor selected: ' +userDialog.returnValue;
+      console.log(value);
+      sendReply('QUERY_CHANCELLOR', userDialog.returnValue);
+    });
+
+    function sendReply(type, value) {
+        var messageContent = value;
+
+        if (messageContent) {
+            var message = {
+                type : 'GAME',
+                sender : username,
+                content : value,
+                gameMessageType : type,
+            };
+
+            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(message));
+
+        }
     }
 
     function getAvatarColor(messageSender) {
@@ -193,4 +230,5 @@
 
     messageForm.addEventListener('submit', startGame, true)
 
+    //TODO implement- add css for the Modal panel
 }());

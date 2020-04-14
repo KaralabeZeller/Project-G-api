@@ -33,19 +33,7 @@
 
     function onConnectedScreen() {
         stompClient.subscribe('/topic/public', onMessageReceivedScreen);
-        setInterval(keepAlive, 10000);
     }
-
-    function keepAlive() {
-
-         var message = {
-                type : 'PING',
-                sender : "screen",
-         };
-
-         stompClient.send("/app/ping", {}, JSON.stringify(message));
-
-     }
 
     function onError(error) {
         console.log('Could not connect to WebSocket server. Please refresh this page to try again!');
@@ -65,12 +53,8 @@
             initScreen();
             playSecretHitler();
         } else if (message.type === 'GAME') {
-            if (message.gameMessageType === 'FACTION') {
-                displayFaction(message.content);
-            } else if (message.gameMessageType === 'PRESIDENT') {
+            if (message.gameMessageType === 'PRESIDENT') {
                 setPresident(message.content);
-            } else if (message.gameMessageType === 'QUERY_CHANCELLOR') {
-                nominateChancellor(message.content);
             } else {
               // TODO other messages
             }
@@ -85,10 +69,6 @@
         splash.classList.add('hidden');
     }
 
-    function nominateChancellor(players) {
-
-
-    }
 
     function setPresident(playerName) {
         if (president !== null) {

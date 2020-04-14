@@ -9,7 +9,7 @@
 
     //TODO implement - url parameters for screen - lobby id and controller - username
     var username = null;
-    var stringData = localStorage.getItem('name');
+    var stringData = sessionStorage.getItem('name');
     var obj = JSON.parse(stringData);
     if (obj !== null) {
         username = obj;
@@ -18,7 +18,7 @@
     function startController() {
         if (username === null) {
             username = document.getElementById('name').value.trim();
-            localStorage.setItem('name', JSON.stringify(username));
+            sessionStorage.setItem('name', JSON.stringify(username));
         }
         window.location.href = './controller.html';
     }
