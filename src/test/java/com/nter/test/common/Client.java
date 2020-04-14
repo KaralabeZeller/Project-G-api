@@ -16,19 +16,29 @@ import org.springframework.web.socket.sockjs.frame.Jackson2SockJsMessageCodec;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-public class Client {
+// TODO extract generic functionality into Client from SecretHitlerClient
+public abstract class Client {
 
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
 
     private final String url;
+
+    private StompSession session;
 
     public Client(int port) {
         // this.url = "wss://api.project-g.xyz:443/ws";
         this.url = "ws://localhost:" + port + "/ws";
     }
 
-    public ListenableFuture<StompSession> connect() {
+    protected StompSession getSession() {
+        return session;
+    }
+
+    public void connect() throws ExecutionException, InterruptedException {
+        logger.debug("Connecting: {}", session);
+
         StandardWebSocketClient webSocketClient = new StandardWebSocketClient();
         Transport webSocketTransport = new WebSocketTransport(webSocketClient);
         List<Transport> transports = Collections.singletonList(webSocketTransport);
@@ -40,7 +50,30 @@ public class Client {
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
         ListenableFuture<StompSession> stompSession = stompClient.connect(url, new SessionHandler());
-        return stompSession;
+        session = stompSession.get();
+
+        logger.info("Connected: {}", session);
+    }
+
+    public void disconnect() {
+        logger.debug("Disconnecting: {}", session);
+        try {
+            session.disconnect();
+            logger.info("Disconnected: {}", session);
+        } catch (IllegalStateException ex) {
+            logger.warn("Failed to disconnect: {}", session, ex);
+        }
+    }
+
+    public abstract void subscribe();
+
+    public abstract void unsubscribe();
+
+    // TODO refactor
+    protected void send(Message message) {
+        logger.debug("send: {} {}", session.getSessionId(), message);
+
+        session.send("/app/chat.addUser", message);
     }
 
     protected static class SessionHandler extends StompSessionHandlerAdapter {
@@ -52,12 +85,12 @@ public class Client {
 
         @Override
         public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload, Throwable exception) {
-            logger.info("Exception in session: {} {} {} {} {}", session.getSessionId(), session, command, headers, exception);
+            logger.warn("Exception in session: {} {} {} {} {}", session.getSessionId(), session, command, headers, exception);
         }
 
         @Override
         public void handleTransportError(StompSession session, Throwable exception) {
-            logger.info("Error in session: {} {} {}", session.getSessionId(), session, exception);
+            logger.warn("Error in session: {} {} {}", session.getSessionId(), session, exception);
         }
 
     }

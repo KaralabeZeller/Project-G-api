@@ -1,17 +1,20 @@
 package com.nter.projectg;
 
 import com.nter.test.secrethitler.SecretHitlerClient;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.concurrent.ListenableFuture;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -22,6 +25,8 @@ public class DemoApplicationTests {
     @LocalServerPort
     private int port;
 
+    private final long sleepTimer = TimeUnit.SECONDS.toMillis(1);
+
     @Test
     public void testClients() throws ExecutionException, InterruptedException {
         logger.info("Creating clients");
@@ -31,59 +36,58 @@ public class DemoApplicationTests {
         SecretHitlerClient client4 = new SecretHitlerClient(port);
         SecretHitlerClient client5 = new SecretHitlerClient(port);
 
-        logger.info("Connecting clients");
-        ListenableFuture<StompSession> f1 = client1.connect();
-        ListenableFuture<StompSession> f2 = client1.connect();
-        ListenableFuture<StompSession> f3 = client1.connect();
-        ListenableFuture<StompSession> f4 = client1.connect();
-        ListenableFuture<StompSession> f5 = client1.connect();
+        logger.info("Connecting clients and creating sessions");
+        client1.connect();
+        client2.connect();
+        client3.connect();
+        client4.connect();
+        client5.connect();
 
-        logger.info("Creating sessions");
-        StompSession session1 = f1.get();
-        StompSession session2 = f2.get();
-        StompSession session3 = f3.get();
-        StompSession session4 = f4.get();
-        StompSession session5 = f5.get();
-
-        logger.info("Subscribing to topic using sessions");
-        client1.subscribe(session1);
-        client2.subscribe(session2);
-        client3.subscribe(session3);
-        client4.subscribe(session4);
-        client5.subscribe(session5);
+        logger.info("Subscribing to topics");
+        client1.subscribe();
+        client2.subscribe();
+        client3.subscribe();
+        client4.subscribe();
+        client5.subscribe();
 
         logger.info("Sending join messages");
-        int clientTimer = 100;
-        client1.sendJoin(session1, "TESTER1");
-        Thread.sleep(clientTimer);
-        client2.sendJoin(session2, "TESTER2");
-        Thread.sleep(clientTimer);
-        client3.sendJoin(session3, "TESTER3");
-        Thread.sleep(clientTimer);
-        client4.sendJoin(session4, "TESTER4");
-        Thread.sleep(clientTimer);
-        client5.sendJoin(session5, "TESTER5");
+        client1.sendJoin("TESTER1");
+        client2.sendJoin("TESTER2");
+        client3.sendJoin("TESTER3");
+        client4.sendJoin("TESTER4");
+        client5.sendJoin("TESTER5");
 
-        int sleepTimer = 1000;
-        logger.info("Sleep for: {} milliseconds", sleepTimer);
+        // TODO avoid sleeping in tests
+        logger.info("Sleeping for: {} milliseconds", sleepTimer);
         Thread.sleep(sleepTimer);
 
-        logger.info("Disconnecting sessions");
-        disconnect(session1);
-        disconnect(session2);
-        disconnect(session3);
-        disconnect(session4);
-        disconnect(session5);
+        logger.info("Expecting join messages");
+        Set<String> expectedJoin = new HashSet<>(Arrays.asList("TESTER1", "TESTER2", "TESTER3", "TESTER4", "TESTER5"));
+        Assert.assertEquals(expectedJoin, client1.expectJoin());
+        Assert.assertEquals(expectedJoin, client2.expectJoin());
+        Assert.assertEquals(expectedJoin, client3.expectJoin());
+        Assert.assertEquals(expectedJoin, client4.expectJoin());
+        Assert.assertEquals(expectedJoin, client5.expectJoin());
+
+        // TODO avoid sleeping in tests
+        logger.info("Sleeping for: {} milliseconds", sleepTimer);
+        Thread.sleep(sleepTimer);
+
+        logger.info("Unsubscribing from topics");
+        client1.unsubscribe();
+        client2.unsubscribe();
+        client3.unsubscribe();
+        client4.unsubscribe();
+        client5.unsubscribe();
+
+        logger.info("Disconnecting sessions and clients");
+        client1.disconnect();
+        client2.disconnect();
+        client3.disconnect();
+        client4.disconnect();
+        client5.disconnect();
 
         logger.info("Akkor Heló!");
-    }
-
-    private void disconnect(StompSession session) {
-        try {
-            session.disconnect();
-        } catch (IllegalStateException ex) {
-            logger.warn("Failed to disconnect session", ex);
-        }
     }
 
 }
