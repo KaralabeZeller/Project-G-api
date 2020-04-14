@@ -230,5 +230,5 @@
 
     messageForm.addEventListener('submit', startGame, true)
 
-    //TODO implement- add css for the Modal panel
+    //TODO implement - add css for the Modal panel
 }());
