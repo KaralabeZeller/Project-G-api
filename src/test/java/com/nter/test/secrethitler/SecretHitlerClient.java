@@ -5,8 +5,6 @@ import com.nter.projectg.model.secrethitler.SecretHitlerMessage;
 import com.nter.test.common.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.messaging.simp.stomp.StompHeaders;
-import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -18,8 +16,6 @@ public class SecretHitlerClient extends Client {
 
     private static final Logger logger = LoggerFactory.getLogger(SecretHitlerClient.class);
 
-    private StompSession.Subscription subscriptionPublic;
-    private StompSession.Subscription subscriptionUser;
     private FrameHandlerPublic handlerPublic;
     private FrameHandlerUser handlerUser;
 
@@ -28,17 +24,15 @@ public class SecretHitlerClient extends Client {
     }
 
     @Override
-    public void subscribe() {
+    protected FrameHandler createHandlerPublic() {
         handlerPublic = new FrameHandlerPublic();
-        handlerUser = new FrameHandlerUser();
-        subscriptionPublic = getSession().subscribe("/topic/public", handlerPublic);
-        subscriptionUser = getSession().subscribe("/user/topic/public", handlerUser);
+        return handlerPublic;
     }
 
     @Override
-    public void unsubscribe() {
-        subscriptionPublic.unsubscribe();
-        subscriptionUser.unsubscribe();
+    protected FrameHandler createHandlerUser() {
+        handlerUser = new FrameHandlerUser();
+        return handlerUser;
     }
 
     public void sendJoin(String user) {
@@ -60,9 +54,8 @@ public class SecretHitlerClient extends Client {
         private volatile Message joinMesage;
 
         @Override
-        public void handleFrame(StompHeaders headers, Object payload) {
-            Message message = (Message) payload;
-            logger.info("Received public message: {} {}", message, headers);
+        protected void handleMessage(Message message) {
+            logger.info("Received public message: {}", message);
 
             Message.MessageType type = message.getType();
             String content = message.getContent();
@@ -76,13 +69,14 @@ public class SecretHitlerClient extends Client {
         public Message peekJoin() {
             return joinMesage;
         }
+
     }
 
     private static class FrameHandlerUser extends FrameHandler {
+
         @Override
-        public void handleFrame(StompHeaders headers, Object payload) {
-            Message message = (Message) payload;
-            logger.info("Received user message: {} {}", message, headers);
+        protected void handleMessage(Message message) {
+            logger.info("Received user message: {}", message);
 
             Message.MessageType type = message.getType();
             String content = message.getContent();
@@ -105,5 +99,7 @@ public class SecretHitlerClient extends Client {
                 // TODO other messages
             }
         }
+
     }
+
 }

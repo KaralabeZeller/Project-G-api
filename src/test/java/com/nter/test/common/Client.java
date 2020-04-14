@@ -26,14 +26,12 @@ public abstract class Client {
     private final String url;
 
     private StompSession session;
+    private StompSession.Subscription subscriptionPublic;
+    private StompSession.Subscription subscriptionUser;
 
     public Client(int port) {
         // this.url = "wss://api.project-g.xyz:443/ws";
         this.url = "ws://localhost:" + port + "/ws";
-    }
-
-    protected StompSession getSession() {
-        return session;
     }
 
     public void connect() throws ExecutionException, InterruptedException {
@@ -65,9 +63,19 @@ public abstract class Client {
         }
     }
 
-    public abstract void subscribe();
+    public void subscribe() {
+        subscriptionPublic = session.subscribe("/topic/public", createHandlerPublic());
+        subscriptionUser = session.subscribe("/user/topic/public", createHandlerUser());
+    }
 
-    public abstract void unsubscribe();
+    public void unsubscribe() {
+        subscriptionPublic.unsubscribe();
+        subscriptionUser.unsubscribe();
+    }
+
+    protected abstract FrameHandler createHandlerPublic();
+
+    protected abstract FrameHandler createHandlerUser();
 
     // TODO refactor
     protected void send(Message message) {
@@ -97,10 +105,27 @@ public abstract class Client {
 
     protected static abstract class FrameHandler implements StompFrameHandler {
 
+        private volatile Message message;
+
         @Override
         public Type getPayloadType(StompHeaders headers) {
             return Message.class;
         }
+
+        @Override
+        public void handleFrame(StompHeaders headers, Object payload) {
+            Message message = (Message) payload;
+            logger.debug("Received message: {} {}", message, headers);
+
+            this.message = message;
+            handleMessage(message);
+        }
+
+        public Message peekMessage() {
+            return message;
+        }
+
+        protected abstract void handleMessage(Message message);
 
     }
 
