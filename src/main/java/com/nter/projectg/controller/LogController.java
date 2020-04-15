@@ -2,6 +2,7 @@ package com.nter.projectg.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,12 @@ import java.util.Objects;
 @RequestMapping(path = "/log")
 public class LogController {
 
-    // TODO move configuration to application.properties
-    private static final String API_KEY = "N7WxsJLRePC4ZLqy";
-    private static final String LOG_FILE = "/var/log/project-g-api.log";
-    private static final int LOG_LINES = 10000;
+    @Value("${log-controller.api-key}")
+    private String API_KEY = "";
+    @Value("${log-controller.log-file}")
+    private String LOG_FILE = "";
+    @Value("${log-controller.log-lines}")
+    private int LOG_LINES = 10000;
 
     private static final Logger logger = LoggerFactory.getLogger(LogController.class);
 
