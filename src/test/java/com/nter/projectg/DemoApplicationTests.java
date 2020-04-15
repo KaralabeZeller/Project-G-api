@@ -25,10 +25,11 @@ public class DemoApplicationTests {
     @LocalServerPort
     private int port;
 
-    private final long sleepTimer = TimeUnit.SECONDS.toMillis(1);
+    private final long sleepMillis = TimeUnit.SECONDS.toMillis(1);
 
     @Test
     public void testClients() throws ExecutionException, InterruptedException {
+        // TODO extract test initialization to methods
         logger.info("Creating clients");
         SecretHitlerClient client1 = new SecretHitlerClient(port);
         SecretHitlerClient client2 = new SecretHitlerClient(port);
@@ -49,6 +50,7 @@ public class DemoApplicationTests {
         client3.subscribe();
         client4.subscribe();
         client5.subscribe();
+        // END extract test initialization to methods
 
         logger.info("Sending join messages");
         client1.sendJoin("TESTER1");
@@ -58,8 +60,8 @@ public class DemoApplicationTests {
         client5.sendJoin("TESTER5");
 
         // TODO avoid sleeping in tests
-        logger.info("Sleeping for: {} milliseconds", sleepTimer);
-        Thread.sleep(sleepTimer);
+        logger.info("Sleeping for: {} milliseconds", sleepMillis);
+        Thread.sleep(sleepMillis);
 
         logger.info("Expecting join messages");
         Set<String> expectedJoin = new HashSet<>(Arrays.asList("TESTER1", "TESTER2", "TESTER3", "TESTER4", "TESTER5"));
@@ -70,9 +72,10 @@ public class DemoApplicationTests {
         Assert.assertEquals(expectedJoin, client5.expectJoin());
 
         // TODO avoid sleeping in tests
-        logger.info("Sleeping for: {} milliseconds", sleepTimer);
-        Thread.sleep(sleepTimer);
+        logger.info("Sleeping for: {} milliseconds", sleepMillis);
+        Thread.sleep(sleepMillis);
 
+        // TODO extract test cleanup to methods
         logger.info("Unsubscribing from topics");
         client1.unsubscribe();
         client2.unsubscribe();
@@ -86,6 +89,7 @@ public class DemoApplicationTests {
         client3.disconnect();
         client4.disconnect();
         client5.disconnect();
+        // END extract test cleanup to methods
 
         logger.info("Akkor Heló!");
     }

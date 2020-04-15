@@ -35,7 +35,7 @@ public abstract class Client {
     }
 
     public void connect() throws ExecutionException, InterruptedException {
-        logger.debug("Connecting: {}", session);
+        logger.debug("Connecting: {} {}", url, session);
 
         StandardWebSocketClient webSocketClient = new StandardWebSocketClient();
         Transport webSocketTransport = new WebSocketTransport(webSocketClient);
@@ -50,7 +50,7 @@ public abstract class Client {
         ListenableFuture<StompSession> stompSession = stompClient.connect(url, new SessionHandler());
         session = stompSession.get();
 
-        logger.info("Connected: {}", session);
+        logger.info("Connected: {} {}", url, session);
     }
 
     public void disconnect() {
@@ -78,10 +78,17 @@ public abstract class Client {
     protected abstract FrameHandler createHandlerUser();
 
     // TODO refactor
-    protected void send(Message message) {
+    protected void sendAddUser(Message message) {
         logger.debug("send: {} {}", session.getSessionId(), message);
 
         session.send("/app/chat.addUser", message);
+    }
+
+    // TODO refactor
+    protected void sendMessage(Message message) {
+        logger.debug("send: {} {}", session.getSessionId(), message);
+
+        session.send("/app/chat.sendMessage", message);
     }
 
     protected static class SessionHandler extends StompSessionHandlerAdapter {

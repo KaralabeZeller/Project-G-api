@@ -39,10 +39,10 @@ public class SecretHitlerClient extends Client {
         Message message = new Message();
         message.setType(Message.MessageType.JOIN);
         message.setSender(user);
-        send(message);
+        sendAddUser(message);
     }
 
-    // TODO use CompletableFuture similarly to Client#connect
+    // TODO use CompletableFuture / ListenableFuture similarly to Client#connect
     public Set<String> expectJoin() {
         Message message = handlerPublic.peekJoin();
         String[] users = message.getContent().split(",");
