@@ -163,6 +163,8 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     protected void processMessage(SecretHitlerMessage message) {
         if (message.getGameMessageType() == SecretHitlerMessage.GameMessageType.FACTION) {
             // nothing to do
+        } if (message.getGameMessageType() == SecretHitlerMessage.GameMessageType.QUERY_CHANCELLOR) {
+
         } else {
             // TODO other messages
         }

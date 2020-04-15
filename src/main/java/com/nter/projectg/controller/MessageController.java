@@ -45,6 +45,9 @@ public class MessageController {
         if (message.getType() == MessageType.START) {
             start();
             startMessage = message;
+
+            // Broadcast message to all sessions - Not needed for every message type
+            lobby.sendToAll(message);
         } else if (message.getType() == MessageType.GAME) {
             process(message);
             gameMessage = message;
@@ -52,8 +55,7 @@ public class MessageController {
             // TODO other messages
         }
 
-        // Broadcast message to all sessions
-        lobby.sendToAll(message);
+
     }
 
     @MessageMapping("/chat.addUser")

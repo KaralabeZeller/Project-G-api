@@ -120,7 +120,7 @@
                 });
             }
 
-            if (users.length >= 2) {
+            if (users.length >= 5 && users.length <= 10) {
                 startButton.classList.remove('hidden');
             } else {
                 startButton.classList.add('hidden');
@@ -188,7 +188,7 @@
         var value = userDialog.returnValue
 
         if(value === 'default')
-            value = userDialogSelect.getElementsByTagName('option')[0];
+            value = userDialogSelect.getElementsByTagName('option')[0].innerHTML;
 
         console.log('Chancellor selected: ' + value);
         sendReply('QUERY_CHANCELLOR', value);
