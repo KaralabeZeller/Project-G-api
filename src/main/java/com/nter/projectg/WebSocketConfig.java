@@ -15,7 +15,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws")
+        // TODO restrict allowed origins
+        registry.addEndpoint("/ws/")
                 .setAllowedOrigins("*")
                 .withSockJS()
                 .setHeartbeatTime(TimeUnit.SECONDS.toMillis(10))
@@ -24,10 +25,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes("/app")
-                .setUserDestinationPrefix("/user")
+        // TODO use /app/lobby and /app/game application destinations
+        // TODO use /topic/lobby and /topic/game broker destinations
+        registry.setApplicationDestinationPrefixes("/app/")
+                .setUserDestinationPrefix("/user/")
                 .setPreservePublishOrder(true)
-                .enableSimpleBroker("/topic", "/user");
+                .enableSimpleBroker("/topic/");
     }
 
     @Override

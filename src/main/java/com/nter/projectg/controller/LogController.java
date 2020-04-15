@@ -19,8 +19,10 @@ import java.util.Objects;
 @RequestMapping(path = "/log")
 public class LogController {
 
+    // TODO move configuration to application.properties
     private static final String API_KEY = "N7WxsJLRePC4ZLqy";
     private static final String LOG_FILE = "/var/log/project-g-api.log";
+    private static final int LOG_LINES = 10000;
 
     private static final Logger logger = LoggerFactory.getLogger(LogController.class);
 
@@ -30,6 +32,7 @@ public class LogController {
         if (authenticate(apiKey)) {
             try {
                 logger.debug("Reading log file contents: {}", LOG_FILE);
+                // TODO stream lines to avoid loading the entire file in memory
                 List<String> lines = Files.readAllLines(Paths.get(LOG_FILE));
                 String contents = String.join("\n", lines);
                 return ResponseEntity.ok().body(contents);

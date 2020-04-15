@@ -30,6 +30,7 @@ public class MessageController {
     private Message startMessage;
     private Message gameMessage;
 
+    // TODO use /app/game application destination
     @MessageMapping("/chat.sendMessage")
     public void sendMessage(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
         logger.info("sendMessage: Received message: {} {}", message, headerAccessor);
@@ -40,8 +41,10 @@ public class MessageController {
         // Validate message
         if (!Objects.equals(user, message.getSender())) {
             logger.warn("sendMessage: Detected mismatch between user and sender: {} {}", user, message.getSender());
+            // TODO ignore invalid messages
         }
 
+        // Handle message and update state
         if (message.getType() == MessageType.START) {
             start();
             startMessage = message;
@@ -58,6 +61,7 @@ public class MessageController {
 
     }
 
+    // TODO use /app/lobby application destination
     @MessageMapping("/chat.addUser")
     public void addUser(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
         logger.info("addUser: Received message: {} {}", message, headerAccessor);
