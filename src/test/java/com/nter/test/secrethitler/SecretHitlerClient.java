@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 // TODO extract generic functionality into Client from SecretHitlerClient
@@ -25,14 +24,12 @@ public class SecretHitlerClient extends Client {
 
     @Override
     protected FrameHandler createHandlerPublic() {
-        handlerPublic = new FrameHandlerPublic();
-        return handlerPublic;
+        return handlerPublic = new FrameHandlerPublic();
     }
 
     @Override
     protected FrameHandler createHandlerUser() {
-        handlerUser = new FrameHandlerUser();
-        return handlerUser;
+        return handlerUser = new FrameHandlerUser();
     }
 
     public void sendJoin(String user) {
@@ -51,7 +48,7 @@ public class SecretHitlerClient extends Client {
 
     private static class FrameHandlerPublic extends FrameHandler {
 
-        private volatile Message joinMesage;
+        private volatile Message joinMessage;
 
         @Override
         protected void handleMessage(Message message) {
@@ -60,14 +57,16 @@ public class SecretHitlerClient extends Client {
             Message.MessageType type = message.getType();
             String content = message.getContent();
             if (type == Message.MessageType.JOIN || type == Message.MessageType.LEAVE) {
-                joinMesage = message;
+                joinMessage = message;
+            } else if (type == Message.MessageType.START) {
+                logger.info("Received game started: {}", content);
             } else {
                 // TODO other messages
             }
         }
 
         public Message peekJoin() {
-            return joinMesage;
+            return joinMessage;
         }
 
     }
@@ -80,18 +79,11 @@ public class SecretHitlerClient extends Client {
 
             Message.MessageType type = message.getType();
             String content = message.getContent();
-            if (type == Message.MessageType.START) {
-                logger.info("Game started");
-            } else if (type == Message.MessageType.GAME) {
+            if (type == Message.MessageType.GAME) {
                 SecretHitlerMessage gameMessage = (SecretHitlerMessage) message;
                 SecretHitlerMessage.GameMessageType gameMessageType = gameMessage.getGameMessageType();
                 if (gameMessageType == SecretHitlerMessage.GameMessageType.FACTION) {
-                    if (Objects.equals("FASCIST", content))
-                        logger.info("You are FASCIST");
-                    if (Objects.equals("LIBERAL", content))
-                        logger.info("You are LIBERAL");
-                    if (Objects.equals("HITLER", content))
-                        logger.info("You are HITLER");
+                    logger.info("Received faction: {}", content);
                 } else {
                     // TODO other messages
                 }
