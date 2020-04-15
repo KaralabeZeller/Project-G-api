@@ -186,10 +186,12 @@
 
     function onUserDialogClose() {
         var value = userDialog.returnValue
-        if (value) {
-            console.log('Chancellor selected: ' + value);
-            sendReply('QUERY_CHANCELLOR', userDialog.returnValue);
-        }
+
+        if(value === 'default')
+            value = userDialogSelect.getElementsByTagName('option')[0];
+
+        console.log('Chancellor selected: ' + value);
+        sendReply('QUERY_CHANCELLOR', value);
     }
 
     function getAvatarColor(messageSender) {
