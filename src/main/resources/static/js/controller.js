@@ -80,7 +80,7 @@
         } else if (type === 'START') {
             playSecretHitler();
         } else if (type === 'GAME') {
-            var gameType = message.gameMessageType;
+            var gameType = message.gameType;
 
             // TODO refactor - avoid using game message type as game status
             gameStatus = gameType;
@@ -100,7 +100,7 @@
     function sendReply(type, content) {
         var message = {
             type: 'GAME',
-            gameMessageType: type,
+            gameType: type,
             sender: userName,
             content: content,
         };

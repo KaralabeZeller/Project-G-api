@@ -1,35 +1,37 @@
 package com.nter.projectg.games.secrethitler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Votes {
-    private static final Logger logger = LoggerFactory.getLogger(Votes.class);
 
-    SecretHitlerGame game;
-    Map<String, String> userVote;
-    Map<String, String> voteUser;
+    private final int players;
+    private final Map<String, String> votes;
 
-    public Votes(SecretHitlerGame secretHitlerGame) {
-        this.game = secretHitlerGame;
-        userVote = new HashMap<>();
-        voteUser = new HashMap<>();
+    public Votes(int players) {
+        this.players = players;
+        votes = new HashMap<>(players);
     }
 
     public void process(String sender, String content) {
-        logger.info("Recieved vote from {}: {}", sender, content);
-        userVote.put(sender, content);
-        voteUser.put(content, sender);
+        votes.put(sender, content);
     }
 
-    public boolean voteFinished() {
-        return userVote.keySet().size() == game.getPlayerCount() ? true : false;
+    public boolean isFinished() {
+        return votes.size() == players;
     }
 
     public Map<String, String> getVotes() {
-        return userVote;
+        return Collections.unmodifiableMap(votes);
     }
+
+    @Override
+    public String toString() {
+        return "Votes{" +
+                "players=" + players +
+                ", votes=" + votes +
+                '}';
+    }
+
 }

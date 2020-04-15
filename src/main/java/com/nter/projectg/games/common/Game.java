@@ -93,17 +93,17 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
         return message -> sendToPlayer(name, message);
     }
 
-    public void process(Message message) {
+    public void handle(Message message) {
         if (message.getType() == MessageType.GAME /* && message instanceof GameMessage */) {
-            logger.debug("Processing message: {}", message);
+            logger.debug("Handling message: {}", message);
             GameMessage gameMessage = (GameMessage) message;
-            processMessage(gameMessage);
+            handleGame(gameMessage);
         } else {
             logger.debug("Ignoring message: {}", message);
         }
     }
 
-    protected abstract void processMessage(GameMessage message);
+    protected abstract void handleGame(GameMessage message);
 
     public void start(String user) {
         GamePlayer player = findPlayer(user);

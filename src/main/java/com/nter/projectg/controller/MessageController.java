@@ -97,7 +97,7 @@ public class MessageController {
         return CompletableFuture.runAsync(() -> {
             logger.debug("Processing message: {} {}", message, game);
             try {
-                game.process(message);
+                game.handle(message);
                 logger.info("Processed message: {} {}", message, game);
             } catch (Exception exception) {
                 logger.error("Failed to process message: {} {}", message, game, exception);

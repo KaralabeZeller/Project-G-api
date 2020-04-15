@@ -27,7 +27,7 @@ public class SecretHitlerPlayer extends Player<SecretHitlerMessage> {
     public void sendCommand(GameMessageType type, String content) {
         SecretHitlerMessage message = new SecretHitlerMessage();
         message.setSender(getName());
-        message.setGameMessageType(type);
+        message.setGameType(type);
         message.setContent(content);
         send(message);
     }

@@ -46,7 +46,7 @@
         } else if (type === 'START') {
             playSecretHitler();
         } else if (type === 'GAME') {
-            var gameType = message.gameMessageType;
+            var gameType = message.gameType;
             if (gameType === 'PRESIDENT') {
                 displayPresident(message.content);
             } else if (gameType === 'CHANCELLOR') {

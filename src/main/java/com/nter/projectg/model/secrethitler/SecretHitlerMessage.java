@@ -4,8 +4,7 @@ import com.nter.projectg.model.common.Message;
 
 public class SecretHitlerMessage extends Message {
 
-    // TODO maybe rename to gameType
-    private GameMessageType gameMessageType;
+    private GameMessageType gameType;
 
     public SecretHitlerMessage() {
         setType(MessageType.GAME);
@@ -26,19 +25,19 @@ public class SecretHitlerMessage extends Message {
         QUERY_CHANCELLOR
     }
 
-    public GameMessageType getGameMessageType() {
-        return gameMessageType;
+    public GameMessageType getGameType() {
+        return gameType;
     }
 
-    public void setGameMessageType(GameMessageType gameMessageType) {
-        this.gameMessageType = gameMessageType;
+    public void setGameType(GameMessageType gameType) {
+        this.gameType = gameType;
     }
 
     @Override
     public String toString() {
         return "SecretHitlerMessage{" +
                 "super=" + super.toString() +
-                ", gameMessageType=" + gameMessageType +
+                ", gameType=" + gameType +
                 '}';
     }
 

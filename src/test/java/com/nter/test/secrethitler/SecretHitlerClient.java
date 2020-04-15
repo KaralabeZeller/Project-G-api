@@ -73,7 +73,7 @@ public class SecretHitlerClient extends Client<SecretHitlerMessage> {
         protected void handleGame(SecretHitlerMessage message) {
             logger.info("Received public game message: {}", message);
 
-            GameMessageType type = message.getGameMessageType();
+            GameMessageType type = message.getGameType();
             if (type == GameMessageType.FACTION) {
                 logger.warn("Unexpected faction message: {}", message.getContent());
             } else {
@@ -101,7 +101,7 @@ public class SecretHitlerClient extends Client<SecretHitlerMessage> {
         protected void handleGame(SecretHitlerMessage message) {
             logger.info("Received user game message: {}", message);
 
-            GameMessageType type = message.getGameMessageType();
+            GameMessageType type = message.getGameType();
             if (type == GameMessageType.FACTION) {
                 logger.info("Received faction message: {}", message.getContent());
             } else {
