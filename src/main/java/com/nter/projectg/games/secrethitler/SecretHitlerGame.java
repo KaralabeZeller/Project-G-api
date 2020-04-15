@@ -202,7 +202,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             logger.info("Finished voting: {}", votes);
             for (Map.Entry<String, String> entry : votes.getVotes().entrySet()) {
                 // Send every vote to each player to display on the UI.
-                SecretHitlerMessage votedMessage = buildGameMessage(GameMessageType.VOTED, entry.getValue(), entry.getKey());
+                SecretHitlerMessage votedMessage = buildGameMessage(GameMessageType.VOTED, entry.getKey(), entry.getValue());
                 sendToAll(votedMessage);
             }
         }
