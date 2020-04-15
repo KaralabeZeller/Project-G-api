@@ -97,6 +97,15 @@
         chancellor = player;
     }
 
+     function setPresident(player) {
+            if (president) {
+                updatePlayer(president, "");
+            }
+
+            updatePlayer(player, "PRESIDENT");
+            president = player;
+        }
+
     function vote(sender, content) {
         var playerName = document.getElementById('playerLegend'+sender);
         playerName.innerHTML = sender + ' - ' + content;

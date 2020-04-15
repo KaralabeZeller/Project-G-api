@@ -80,11 +80,14 @@
         } else if (message.type === 'START') {
             playSecretHitler();
         } else if (message.type === 'GAME') {
+            gameStatus = message.gameMessageType;
+
             if (message.gameMessageType === 'FACTION') {
                 displayFaction(message.content);
             } else if (message.gameMessageType === 'QUERY_CHANCELLOR') {
-                var split = message.content.split(',');
-                nominateChancellor(split);
+                nominateChancellor(message.content.split(','));
+            } else if (message.gameMessageType === 'VOTE') {
+                vote(message.content.split(','));
             } else {
               // TODO other messages
             }
@@ -127,27 +130,12 @@
             messageArea.scrollTop = messageArea.scrollHeight;
         });
 
-            if (users.length >= 5 && users.length <= 10) {
-                startButton.classList.remove('hidden');
-            } else {
-                startButton.classList.add('hidden');
-            }
-        } else if (message.type === 'START') {
-            initController();
-            playSecretHitler();
-        } else if (message.type === 'GAME') {
-            gameStatus = message.gameMessageType;
-
-            if (message.gameMessageType === 'FACTION') {
-                displayFaction(message.content);
-            } else if (message.gameMessageType === 'QUERY_CHANCELLOR') {
-                nominateChancellor(message.content.split(','));
-            } else if (message.gameMessageType === 'VOTE') {
-                vote(message.content.split(','));
-            }else {
-              // TODO other messages
-            }
+        if (users.length >= 5 && users.length <= 10) {
+            startButton.classList.remove('hidden');
+        } else {
+            startButton.classList.add('hidden');
         }
+
     }
 
     function playSecretHitler() {
