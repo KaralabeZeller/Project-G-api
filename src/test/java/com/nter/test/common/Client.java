@@ -54,23 +54,31 @@ public abstract class Client {
     }
 
     public void disconnect() {
-        logger.debug("Disconnecting: {}", session);
+        logger.debug("Disconnecting: {} {}", url, session);
         try {
             session.disconnect();
-            logger.info("Disconnected: {}", session);
+            logger.info("Disconnected: {} {}", url, session);
         } catch (IllegalStateException ex) {
-            logger.warn("Failed to disconnect: {}", session, ex);
+            logger.warn("Failed to disconnect: {} {}", url, session, ex);
         }
     }
 
     public void subscribe() {
+        logger.debug("Subscribing: {} {}", subscriptionPublic, subscriptionUser);
+
         subscriptionPublic = session.subscribe("/topic/public", createHandlerPublic());
         subscriptionUser = session.subscribe("/user/topic/public", createHandlerUser());
+
+        logger.info("Subscribed: {} {}", subscriptionPublic, subscriptionUser);
     }
 
     public void unsubscribe() {
+        logger.debug("Unsubscribing: {} {}", subscriptionPublic, subscriptionUser);
+
         subscriptionPublic.unsubscribe();
         subscriptionUser.unsubscribe();
+
+        logger.info("Unsubscribed: {} {}", subscriptionPublic, subscriptionUser);
     }
 
     protected abstract FrameHandler createHandlerPublic();
@@ -79,14 +87,14 @@ public abstract class Client {
 
     // TODO refactor
     protected void sendAddUser(Message message) {
-        logger.debug("send: {} {}", session.getSessionId(), message);
+        logger.info("sendAddUser: {}", message);
 
         session.send("/app/chat.addUser", message);
     }
 
     // TODO refactor
     protected void sendMessage(Message message) {
-        logger.debug("send: {} {}", session.getSessionId(), message);
+        logger.info("sendMessage: {}", message);
 
         session.send("/app/chat.sendMessage", message);
     }
@@ -95,17 +103,17 @@ public abstract class Client {
 
         @Override
         public void afterConnected(StompSession session, StompHeaders headers) {
-            logger.info("Connected in session: {} {} {}", session.getSessionId(), session, headers);
+            logger.debug("Connected in session: {} {}", session, headers);
         }
 
         @Override
         public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload, Throwable exception) {
-            logger.warn("Exception in session: {} {} {} {} {}", session.getSessionId(), session, command, headers, exception);
+            logger.warn("Exception in session: {} {} {} {}", session, command, headers, exception);
         }
 
         @Override
         public void handleTransportError(StompSession session, Throwable exception) {
-            logger.warn("Error in session: {} {} {}", session.getSessionId(), session, exception);
+            logger.warn("Error in session: {} {}", session, exception);
         }
 
     }

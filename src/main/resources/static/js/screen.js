@@ -13,7 +13,7 @@
     var stompClient = null;
 
     // TODO implement - url parameters for screen - lobby id and controller - username
-    var username = sessionStorage.getItem('name');
+    var userName = sessionStorage.getItem('name');
     var users = [];
 
     var president = null;
@@ -49,7 +49,6 @@
             users.length = 0;
             users.push(...split);
         } else if (message.type === 'START') {
-            initScreen();
             playSecretHitler();
         } else if (message.type === 'GAME') {
             if (message.gameMessageType === 'PRESIDENT') {
@@ -64,14 +63,12 @@
         }
     }
 
-    function initScreen() {
+    function playSecretHitler() {
         canvasLiberal.classList.remove('hidden');
         canvasFascist.classList.remove('hidden');
         playersDiv.classList.remove('hidden');
         splashScreen.classList.add('hidden');
-    }
 
-    function playSecretHitler() {
         drawBoards();
         users.forEach(drawPlayer);
 
@@ -83,7 +80,7 @@
         setTimeout(() => { addFascistPolicy(); }, 6000);
     }
     
-    function setPresident(player) {
+    function displayPresident(player) {
         if (president) {
             updatePlayer(president, "");
         }
@@ -105,7 +102,7 @@
         playerName.innerHTML = sender + ' - ' + content;
         playerName.style.color="#FF0000";
     }
-   
+
     function drawPlayer(player) {
         var div = document.createElement('fieldset');
         div.id = 'fieldset-' + player;
@@ -140,7 +137,7 @@
                 ctxLiberal.drawImage(this, 970, 160);
             }
 
-            liberalPolicies ++;
+            liberalPolicies++;
         }
         
         drawing.src = "./games/secrethitler/liberalp-l.png";
@@ -169,7 +166,7 @@
                 ctxFascist.drawImage(this, 1050, 160);
             }
 
-            fascistPolicies ++;
+            fascistPolicies++;
         }
         
         drawing.src = "./games/secrethitler/fascistp-l.png";
@@ -189,7 +186,6 @@
             ctxLiberal.scale(0.5, 0.5);
             ctxLiberal.drawImage(this, 0, 0);
             ctxLiberal.scale(2,2);
-
         };
         drawing2.onload = function() {
             var width = this.naturalWidth,
@@ -205,12 +201,14 @@
 
         drawing.src = "./games/secrethitler/SH1.png";
 
-        if (users.length == 7 || users.length == 8) {
+        if (users.length == 5 || users.length == 6) {
+            drawing2.src = "./games/secrethitler/SH2.png";
+        } else if (users.length == 7 || users.length == 8) {
             drawing2.src = "./games/secrethitler/SH2_2.png";
         } else if (users.length == 9 || users.length == 10) {
             drawing2.src = "./games/secrethitler/SH2_3.png";
         } else {
-            drawing2.src = "./games/secrethitler/SH2.png";
+            console.log("Failed to draw boards: Invalid user count: %s", users)
         }
     }
 

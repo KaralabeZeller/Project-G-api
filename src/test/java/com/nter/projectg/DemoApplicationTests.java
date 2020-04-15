@@ -1,7 +1,9 @@
 package com.nter.projectg;
 
 import com.nter.test.secrethitler.SecretHitlerClient;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -13,7 +15,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 @RunWith(SpringRunner.class)
@@ -22,22 +23,27 @@ public class DemoApplicationTests {
 
     private static final Logger logger = LoggerFactory.getLogger(DemoApplicationTests.class);
 
+    private static final long sleepMillis = TimeUnit.SECONDS.toMillis(1);
+
     @LocalServerPort
     private int port;
 
-    private final long sleepMillis = TimeUnit.SECONDS.toMillis(1);
+    private SecretHitlerClient client1;
+    private SecretHitlerClient client2;
+    private SecretHitlerClient client3;
+    private SecretHitlerClient client4;
+    private SecretHitlerClient client5;
 
-    @Test
-    public void testClients() throws ExecutionException, InterruptedException {
-        // TODO extract test initialization to methods
+    @Before
+    public void setUp() throws Exception {
         logger.info("Creating clients");
-        SecretHitlerClient client1 = new SecretHitlerClient(port);
-        SecretHitlerClient client2 = new SecretHitlerClient(port);
-        SecretHitlerClient client3 = new SecretHitlerClient(port);
-        SecretHitlerClient client4 = new SecretHitlerClient(port);
-        SecretHitlerClient client5 = new SecretHitlerClient(port);
+        client1 = new SecretHitlerClient(port);
+        client2 = new SecretHitlerClient(port);
+        client3 = new SecretHitlerClient(port);
+        client4 = new SecretHitlerClient(port);
+        client5 = new SecretHitlerClient(port);
 
-        logger.info("Connecting clients and creating sessions");
+        logger.info("Connecting clients and opening sessions");
         client1.connect();
         client2.connect();
         client3.connect();
@@ -50,7 +56,28 @@ public class DemoApplicationTests {
         client3.subscribe();
         client4.subscribe();
         client5.subscribe();
-        // END extract test initialization to methods
+    }
+
+    @After
+    public void tearDown() {
+        logger.info("Unsubscribing from topics");
+        client1.unsubscribe();
+        client2.unsubscribe();
+        client3.unsubscribe();
+        client4.unsubscribe();
+        client5.unsubscribe();
+
+        logger.info("Closing sessions and disconnecting clients");
+        client1.disconnect();
+        client2.disconnect();
+        client3.disconnect();
+        client4.disconnect();
+        client5.disconnect();
+    }
+
+    @Test
+    public void testJoin() throws InterruptedException {
+        logger.info("Heló!");
 
         logger.info("Sending join messages");
         client1.sendJoin("TESTER1");
@@ -59,9 +86,7 @@ public class DemoApplicationTests {
         client4.sendJoin("TESTER4");
         client5.sendJoin("TESTER5");
 
-        // TODO avoid sleeping in tests
-        logger.info("Sleeping for: {} milliseconds", sleepMillis);
-        Thread.sleep(sleepMillis);
+        sleep();
 
         logger.info("Expecting join messages");
         Set<String> expectedJoin = new HashSet<>(Arrays.asList("TESTER1", "TESTER2", "TESTER3", "TESTER4", "TESTER5"));
@@ -71,27 +96,13 @@ public class DemoApplicationTests {
         Assert.assertEquals(expectedJoin, client4.expectJoin());
         Assert.assertEquals(expectedJoin, client5.expectJoin());
 
-        // TODO avoid sleeping in tests
-        logger.info("Sleeping for: {} milliseconds", sleepMillis);
-        Thread.sleep(sleepMillis);
-
-        // TODO extract test cleanup to methods
-        logger.info("Unsubscribing from topics");
-        client1.unsubscribe();
-        client2.unsubscribe();
-        client3.unsubscribe();
-        client4.unsubscribe();
-        client5.unsubscribe();
-
-        logger.info("Disconnecting sessions and clients");
-        client1.disconnect();
-        client2.disconnect();
-        client3.disconnect();
-        client4.disconnect();
-        client5.disconnect();
-        // END extract test cleanup to methods
-
         logger.info("Akkor Heló!");
+    }
+
+    // TODO avoid sleeping in unit and integration tests
+    private void sleep() throws InterruptedException {
+        logger.debug("Sleeping for: {} milliseconds", sleepMillis);
+        Thread.sleep(sleepMillis);
     }
 
 }

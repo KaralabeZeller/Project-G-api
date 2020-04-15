@@ -14,7 +14,7 @@
 <div id="chat-page">
     <div class="chat-container">
         <div class="chat-header">
-            <h2 id="LobbyText">Lobby | Secret Hitler</h2>
+            <h2 id="lobbyHeader">Lobby | Secret Hitler</h2>
         </div>
         <div class="connecting">Connecting...</div>
         <ul id="messageArea">
@@ -23,7 +23,7 @@
         <form id="messageForm" name="messageForm">
             <div class="form-group">
                 <div class="input-group clearfix">
-                    <button id="startButton" type="submit" class="primary">Start</button>
+                    <button id="startButton" type="submit" class="primary hidden">Start</button>
                 </div>
             </div>
         </form>
@@ -32,9 +32,9 @@
 
 <dialog id="userDialog">
     <form method="dialog">
-        <p>
+        <div>
             <label id="userDialogLabel"></label>
-        </p>
+        </div>
         <select id="userDialogSelector"></select>
         <menu>
             <button id="confirmButton" value="default">Confirm</button>
