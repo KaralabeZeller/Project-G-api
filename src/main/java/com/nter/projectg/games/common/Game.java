@@ -2,6 +2,7 @@ package com.nter.projectg.games.common;
 
 import com.nter.projectg.common.Lobby;
 import com.nter.projectg.model.common.Message;
+import com.nter.projectg.model.common.Message.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,7 +94,7 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
     }
 
     public void process(Message message) {
-        if (message.getType() == Message.MessageType.GAME /* && message instanceof GameMessage */) {
+        if (message.getType() == MessageType.GAME /* && message instanceof GameMessage */) {
             logger.debug("Processing message: {}", message);
             GameMessage gameMessage = (GameMessage) message;
             processMessage(gameMessage);
@@ -109,7 +110,7 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
 
         // Broadcast start message to all sessions
         Message message = new Message();
-        message.setType(Message.MessageType.START);
+        message.setType(MessageType.START);
         message.setSender(player.getName());
         message.setContent(name);
         lobby.sendToAll(message);
@@ -121,7 +122,7 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
 
         // Send start message to all sessions
         Message message = new Message();
-        message.setType(Message.MessageType.START);
+        message.setType(MessageType.START);
         message.setSender(player.getName());
         message.setContent(name);
         lobby.sendToUser(player.getName(), message);

@@ -2,6 +2,7 @@ package com.nter.projectg.games.secrethitler;
 
 import com.nter.projectg.games.common.Player;
 import com.nter.projectg.model.secrethitler.SecretHitlerMessage;
+import com.nter.projectg.model.secrethitler.SecretHitlerMessage.GameMessageType;
 
 import java.util.function.Consumer;
 
@@ -23,7 +24,7 @@ public class SecretHitlerPlayer extends Player<SecretHitlerMessage> {
 
     }
 
-    public void sendCommand(SecretHitlerMessage.GameMessageType type, String content) {
+    public void sendCommand(GameMessageType type, String content) {
         SecretHitlerMessage message = new SecretHitlerMessage();
         message.setSender(getName());
         message.setGameMessageType(type);

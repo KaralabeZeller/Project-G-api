@@ -42,9 +42,10 @@ public class MessageController {
         }
 
         // Handle message and update state
-        if (message.getType() == MessageType.START) {
+        MessageType type = message.getType();
+        if (type == MessageType.START) {
             start(user);
-        } else if (message.getType() == MessageType.GAME) {
+        } else if (type == MessageType.GAME) {
             process(message);
         } else {
             // TODO other messages

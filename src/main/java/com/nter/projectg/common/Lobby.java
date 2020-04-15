@@ -2,6 +2,7 @@ package com.nter.projectg.common;
 
 import com.nter.projectg.controller.MessageController;
 import com.nter.projectg.model.common.Message;
+import com.nter.projectg.model.common.Message.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class Lobby {
 
         // Broadcast notification message message to all sessions
         Message message = new Message();
-        message.setType(Message.MessageType.JOIN);
+        message.setType(MessageType.JOIN);
         message.setSender(user);
         message.setContent(String.join(",", getUsers()));
         sendToAll(message);
@@ -48,7 +49,7 @@ public class Lobby {
 
         // Broadcast notification message message to all sessions
         Message message = new Message();
-        message.setType(Message.MessageType.LEAVE);
+        message.setType(MessageType.LEAVE);
         message.setSender(user);
         message.setContent(String.join(",", getUsers()));
         sendToAll(message);
