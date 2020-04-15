@@ -2,10 +2,9 @@
     'use strict';
 
     var messageForm = document.querySelector('#messageForm'),
-//        messageInput = document.querySelector('#message'),
         messageArea = document.querySelector('#messageArea'),
         connectingElement = document.querySelector('.connecting'),
-        lobbyText = document.getElementById("LobbyText");
+        lobbyHeader = document.getElementById("lobbyHeader");
 
     var userDialog = document.getElementById('userDialog'),
         userDialogLabel = document.getElementById('userDialogLabel'),
@@ -17,7 +16,7 @@
     var stompClient = null;
 
     // TODO implement - url parameters for screen - lobby id and controller - username
-    var username = sessionStorage.getItem('name');
+    var userName = sessionStorage.getItem('name');
     var users = [];
 
     var started = false;
@@ -38,7 +37,7 @@
         stompClient.subscribe('/user/topic/public', onMessageReceived);
 
         var message = {
-            sender: username,
+            sender: userName,
             type: 'JOIN',
         };
         stompClient.send("/app/chat.addUser", {}, JSON.stringify(message));
@@ -53,26 +52,10 @@
         connectingElement.style.color = 'red';
     }
 
-//    function sendMessage(event) {
-//        var messageContent = messageInput.value.trim();
-//        if (messageContent) {
-//            var message = {
-//                type: 'CHAT',
-//                sender: username,
-//                content: messageInput.value,
-//            };
-//            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(message));
-//
-//            messageInput.value = '';
-//        }
-//
-//        event.preventDefault();
-//    }
-
     function startGame(event) {
         var message = {
             type: 'START',
-            sender: username,
+            sender: userName,
             content: 'SecretHitler',
         };
         stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(message));
@@ -86,53 +69,21 @@
         var message = JSON.parse(payload.body);
         if (message.type === 'JOIN' || message.type === 'LEAVE') {
             if (!started) {
-                var split = message.content.split(','),
-                    i = 0;
-
-                var element = document.getElementById('messageArea');
-                element.innerHTML = '';
-
+                var split = message.content.split(',');
                 users.length = 0;
                 users.push(...split);
 
-                users.forEach(user => {
-                    var messageElement = document.createElement('li');
-                    messageElement.classList.add('chat-message');
-
-                    var avatarElement = document.createElement('i');
-                    var avatarText = document.createTextNode(user[0]);
-                    avatarElement.appendChild(avatarText);
-                    avatarElement.style['background-color'] = getAvatarColor(user);
-                    messageElement.appendChild(avatarElement);
-
-                    var usernameElement = document.createElement('span');
-                    var usernameText = document.createTextNode(user);
-                    usernameElement.appendChild(usernameText);
-                    messageElement.appendChild(usernameElement);
-
-                    var textElement = document.createElement('p');
-                    var messageText = document.createTextNode('');
-                    textElement.appendChild(messageText);
-                    messageElement.appendChild(textElement);
-
-                    messageArea.appendChild(messageElement);
-                    messageArea.scrollTop = messageArea.scrollHeight;
-                });
             }
-
-            if (users.length >= 5 && users.length <= 10) {
-                startButton.classList.remove('hidden');
-            } else {
-                startButton.classList.add('hidden');
-            }
+            // TODO revert later - temporarily always display users on update
+            displayUsers();
         } else if (message.type === 'START') {
-            initController();
             playSecretHitler();
         } else if (message.type === 'GAME') {
             if (message.gameMessageType === 'FACTION') {
                 displayFaction(message.content);
             } else if (message.gameMessageType === 'QUERY_CHANCELLOR') {
-                nominateChancellor(message.content.split(','));
+                var split = message.content.split(',');
+                nominateChancellor(split);
             } else {
               // TODO other messages
             }
@@ -142,21 +93,50 @@
     function sendReply(type, content) {
         var message = {
             type: 'GAME',
-            sender: username,
-            content: content,
             gameMessageType: type,
+            sender: userName,
+            content: content,
         };
         stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(message));
     }
 
-    function initController() {
-        startButton.classList.add('hidden');
-        lobbyText.innerHTML = username;
+    function displayUsers() {
         messageArea.innerHTML = '';
+        users.forEach(user => {
+            var messageElement = document.createElement('li');
+            messageElement.classList.add('chat-message');
+
+            var avatarElement = document.createElement('i');
+            var avatarText = document.createTextNode(user[0]);
+            avatarElement.appendChild(avatarText);
+            avatarElement.style['background-color'] = getAvatarColor(user);
+            messageElement.appendChild(avatarElement);
+
+            var userNameElement = document.createElement('span');
+            var userNameText = document.createTextNode(user);
+            userNameElement.appendChild(userNameText);
+            messageElement.appendChild(userNameElement);
+
+            var textElement = document.createElement('p');
+            var messageText = document.createTextNode('');
+            textElement.appendChild(messageText);
+            messageElement.appendChild(textElement);
+
+            messageArea.appendChild(messageElement);
+            messageArea.scrollTop = messageArea.scrollHeight;
+        });
+
+        if (users.length >= 5 && users.length <= 10) {
+            startButton.classList.remove('hidden');
+        } else {
+            startButton.classList.add('hidden');
+        }
     }
 
     function playSecretHitler() {
-        // TODO implement
+        startButton.classList.add('hidden');
+        lobbyHeader.innerHTML = userName;
+        messageArea.innerHTML = '';
     }
 
     function displayFaction(faction) {
@@ -175,6 +155,7 @@
     function nominateChancellor(players) {
          var options = players.map(player => '<option>' + player + '</option>').join('');
 
+         // TODO implement - add css for the Modal panel
          userDialogLabel.innerHTML = 'Choose a chancellor: ';
          userDialogSelect.innerHTML = options;
          userDialog.showModal();
@@ -186,11 +167,11 @@
 
     function onUserDialogClose() {
         var value = userDialog.returnValue
-
-        if(value === 'default')
+        if (value === 'default') {
             value = userDialogSelect.getElementsByTagName('option')[0].innerHTML;
+        }
 
-        console.log('Chancellor selected: ' + value);
+        console.log('Chancellor selected: %s', value);
         sendReply('QUERY_CHANCELLOR', value);
     }
 
@@ -207,5 +188,4 @@
     userDialogSelect.addEventListener('change', onUserDialogSelect, true);
     userDialog.addEventListener('close', onUserDialogClose, true)
 
-    //TODO implement - add css for the Modal panel
 }());
