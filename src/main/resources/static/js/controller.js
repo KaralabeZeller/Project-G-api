@@ -73,9 +73,8 @@
                 var split = message.content.split(',');
                 users.length = 0;
                 users.push(...split);
+                displayUsers();
             }
-            // TODO revert later - temporarily always display users on update
-            displayUsers();
         } else if (type === 'START') {
             playSecretHitler();
         } else if (type === 'GAME') {
