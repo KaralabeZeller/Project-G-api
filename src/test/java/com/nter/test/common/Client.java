@@ -1,6 +1,7 @@
 package com.nter.test.common;
 
 import com.nter.projectg.model.common.Message;
+import com.nter.projectg.model.common.Message.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
@@ -18,8 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-// TODO extract generic functionality into Client from SecretHitlerClient
-public abstract class Client {
+public abstract class Client<GameMessage extends Message> {
 
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
 
@@ -81,18 +81,18 @@ public abstract class Client {
         logger.info("Unsubscribed: {} {}", subscriptionPublic, subscriptionUser);
     }
 
-    protected abstract FrameHandler createHandlerPublic();
+    protected abstract FrameHandler<GameMessage> createHandlerPublic();
 
-    protected abstract FrameHandler createHandlerUser();
+    protected abstract FrameHandler<GameMessage> createHandlerUser();
 
-    // TODO refactor
+    // TODO use /app/lobby application destination
     protected void sendAddUser(Message message) {
         logger.info("sendAddUser: {}", message);
 
         session.send("/app/chat.addUser", message);
     }
 
-    // TODO refactor
+    // TODO use /app/game application destination
     protected void sendMessage(Message message) {
         logger.info("sendMessage: {}", message);
 
@@ -118,9 +118,7 @@ public abstract class Client {
 
     }
 
-    protected static abstract class FrameHandler implements StompFrameHandler {
-
-        private volatile Message message;
+    protected static abstract class FrameHandler<GameMessage extends Message> implements StompFrameHandler {
 
         @Override
         public Type getPayloadType(StompHeaders headers) {
@@ -130,17 +128,23 @@ public abstract class Client {
         @Override
         public void handleFrame(StompHeaders headers, Object payload) {
             Message message = (Message) payload;
-            logger.debug("Received message: {} {}", message, headers);
+            logger.debug("handleFrame: Received message: {} {}", message, headers);
 
-            this.message = message;
-            handleMessage(message);
+            if (message.getType() == MessageType.GAME /* && message instanceof GameMessage */) {
+                GameMessage gameMessage = (GameMessage) message;
+                handleGame(gameMessage);
+            } else {
+                handleOther(message);
+            }
         }
 
-        public Message peekMessage() {
-            return message;
+        protected void handleOther(Message message) {
+            logger.debug("Ignoring other message: {}", message);
         }
 
-        protected abstract void handleMessage(Message message);
+        protected void handleGame(GameMessage message) {
+            logger.debug("Ignoring game message: {}", message);
+        }
 
     }
 
