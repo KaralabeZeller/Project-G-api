@@ -1,5 +1,9 @@
 # Project-G API
 
+https://api.project-g.xyz
+
+# Web
+http://project-g.xyz/comodo
 
 ## Development
 
