@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 // TODO authenticate with API key using Spring Security
 @Controller
@@ -35,9 +36,8 @@ public class LogController {
         if (authenticate(apiKey)) {
             try {
                 logger.debug("Reading log file contents: {}", LOG_FILE);
-                // TODO stream lines to avoid loading the entire file in memory
-                List<String> lines = Files.readAllLines(Paths.get(LOG_FILE));
-                List<String> tail = lines.subList(Math.max(0, lines.size() - 1 - LOG_LINES), lines.size() - 1);
+                Stream<String> lines = Files.lines(Paths.get(LOG_FILE));
+                List<String> tail = lines.collect(last(LOG_LINES));
                 String contents = String.join(System.lineSeparator(), tail);
                 return ResponseEntity.ok().body(contents);
             } catch (Exception exception) {
@@ -53,6 +53,23 @@ public class LogController {
 
     private boolean authenticate(String apiKey) {
         return Objects.equals(API_KEY, apiKey);
+    }
+
+    private static Collector<String, Deque<String>, List<String>> last(int count) {
+        return Collector.of(
+                () -> new ArrayDeque<>(count),
+                (acc, elem) -> {
+                    if (acc.size() == count)
+                        acc.removeFirst();
+                    acc.addLast(elem);
+                },
+                (acc1, acc2) -> {
+                    while (acc2.size() < count && !acc1.isEmpty())
+                        acc2.addFirst(acc1.removeLast());
+                    return acc2;
+                },
+                ArrayList::new
+        );
     }
 
 }
