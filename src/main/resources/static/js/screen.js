@@ -114,7 +114,7 @@
     
     function updateLegend(player, content, color) {
         var legend = document.getElementById('playerLegend-' + player);
-        legend.innerHTML = sender + ' - ' + content;
+        legend.innerHTML = player + ' - ' + content;
         legend.style.color = color;
     }
 
