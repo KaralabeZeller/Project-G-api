@@ -1,6 +1,6 @@
 package com.nter.projectg.games.common;
 
-import com.nter.projectg.common.Lobby;
+import com.nter.projectg.lobby.Lobby;
 import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.common.Message.MessageType;
 import org.slf4j.Logger;
@@ -73,7 +73,6 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
         lobby.sendToAll(message);
     }
 
-
     protected void sendToPlayer(String name, GameMessage message) {
         lobby.sendToUser(name, message);
     }
@@ -102,10 +101,7 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
         GamePlayer player = findPlayer(user);
 
         // Broadcast start message to all sessions
-        Message message = new Message();
-        message.setType(MessageType.START);
-        message.setSender(player.getName());
-        message.setContent(name);
+        Message message = buildStartMessage(player.getName());
         lobby.sendToAll(message);
     }
 
@@ -114,15 +110,20 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
         GamePlayer player = findPlayer(user);
 
         // Send start message to all sessions
-        Message message = new Message();
-        message.setType(MessageType.START);
-        message.setSender(player.getName());
-        message.setContent(name);
+        Message message = buildStartMessage(player.getName());
         lobby.sendToUser(player.getName(), message);
     }
 
     public void stop() {
         // TODO implement
+    }
+
+    private Message buildStartMessage(String player) {
+        Message message = new Message();
+        message.setType(MessageType.START);
+        message.setSender(player);
+        message.setContent(name);
+        return message;
     }
 
     // TODO maybe remove lobby

@@ -1,6 +1,6 @@
 package com.nter.projectg.controller;
 
-import com.nter.projectg.common.Lobby;
+import com.nter.projectg.lobby.Lobby;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +40,8 @@ public class WebSocketEventListener {
             lobby.remove(user, session);
 
             logger.info("Disconnected user from session: {} {}", user, session);
+        } else {
+            logger.debug("Ignoring disconnect for unknown user: {}", session);
         }
 
     }

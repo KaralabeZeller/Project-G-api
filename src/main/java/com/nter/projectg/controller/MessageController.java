@@ -1,8 +1,8 @@
 package com.nter.projectg.controller;
 
-import com.nter.projectg.common.Lobby;
 import com.nter.projectg.games.common.Game;
 import com.nter.projectg.games.secrethitler.SecretHitlerGame;
+import com.nter.projectg.lobby.Lobby;
 import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.common.Message.MessageType;
 import org.slf4j.Logger;
@@ -70,6 +70,20 @@ public class MessageController {
         reconnect(user, session);
     }
 
+    private CompletableFuture<Void> process(Message message) {
+        // Fake asynchronous computation
+        return CompletableFuture.runAsync(() -> {
+            logger.debug("Processing message: {} {}", message, game);
+            try {
+                game.handle(message);
+                logger.info("Processed message: {} {}", message, game);
+            } catch (Exception exception) {
+                logger.error("Failed to process message: {} {}", message, game, exception);
+                throw exception;
+            }
+        });
+    }
+
     private CompletableFuture<Void> start(String user) {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
@@ -89,20 +103,6 @@ public class MessageController {
             game.stop();
             game = null;
             logger.debug("Stopped game: Secret Hitler {}", lobby);
-        });
-    }
-
-    private CompletableFuture<Void> process(Message message) {
-        // Fake asynchronous computation
-        return CompletableFuture.runAsync(() -> {
-            logger.debug("Processing message: {} {}", message, game);
-            try {
-                game.handle(message);
-                logger.info("Processed message: {} {}", message, game);
-            } catch (Exception exception) {
-                logger.error("Failed to process message: {} {}", message, game, exception);
-                throw exception;
-            }
         });
     }
 
