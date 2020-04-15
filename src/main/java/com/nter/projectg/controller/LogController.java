@@ -34,7 +34,8 @@ public class LogController {
                 logger.debug("Reading log file contents: {}", LOG_FILE);
                 // TODO stream lines to avoid loading the entire file in memory
                 List<String> lines = Files.readAllLines(Paths.get(LOG_FILE));
-                String contents = String.join("\n", lines);
+                List<String> tail = lines.subList(Math.max(0, lines.size() - 1 - LOG_LINES), lines.size() - 1);
+                String contents = String.join(System.lineSeparator(), tail);
                 return ResponseEntity.ok().body(contents);
             } catch (Exception exception) {
                 logger.error("Failed to read log file contents: {}", LOG_FILE, exception);
