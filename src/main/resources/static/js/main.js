@@ -13,6 +13,10 @@
     function startController() {
         if (!userName) {
             userName = userNameInput.value.trim();
+            if(!userName) {
+                alert("Please provide a username");
+                return;
+            }
             sessionStorage.setItem('name', userName);
         }
         window.location.href = './controller.html';

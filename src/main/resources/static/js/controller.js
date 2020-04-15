@@ -6,11 +6,6 @@
         connectingElement = document.querySelector('.connecting'),
         lobbyHeader = document.getElementById('lobbyHeader');
 
-    var userDialog = document.getElementById('userDialog'),
-        userDialogLabel = document.getElementById('userDialogLabel'),
-        userDialogSelect = document.getElementById('userDialogSelector'),
-        userDialogButton = document.getElementById('userDialogButton');
-
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
 
     var stompClient = null;
@@ -155,33 +150,31 @@
     }
 
     function nominateChancellor(players) {
-         showDialog('QUERY_CHANCELLOR', 'Choose a chancellor:', players);
+         showDialog("QUERY_CHANCELLOR", "Nominate the chancellor for the government", players)
     }
 
     function vote(players) {
          showDialog('VOTE', 'Vote for the government:', players);
     }
 
-    function showDialog(type, title, options) {
-         userDialogLabel.innerHTML = title;
-         userDialogSelect.innerHTML = options.map(option => '<option>' + option + '</option>').join('');
-         userDialog.gameType = type;
-         userDialog.showModal();
-    }
+    function showDialog(type, titleText, options) {
+         var optionList = [];
+         for (var i = 0; i < options.length; i++) { optionList.push({ text: options[i], value: options[i] }); }
 
-    function onUserDialogSelect(event) {
-        userDialogButton.value = userDialogSelect.value;
-    }
-
-    function onUserDialogClose(event) {
-        var type = userDialog.gameType;
-        var value = userDialog.returnValue
-        if (value === 'default') {
-            value = userDialogSelect.getElementsByTagName('option')[0].innerHTML;
-        }
-        userDialogSelect.innerHTML = '';
-
-        sendReply(type, value);
+         //TODO remove - cancel button from prompt
+         bootbox.prompt({
+            closeButton: false,
+            title: titleText,
+            value: options[0],
+            inputType: 'select',
+            inputOptions: optionList,
+            callback: function (result) {
+               if(result === null)
+                   showDialog(type, titleText, options);
+                else
+                    sendReply(type, result);
+            }
+         });
     }
 
     function getAvatarColor(messageSender) {
@@ -194,7 +187,5 @@
     }
 
     messageForm.addEventListener('submit', startGame, true);
-    userDialogSelect.addEventListener('change', onUserDialogSelect, true);
-    userDialog.addEventListener('close', onUserDialogClose, true)
 
 }());
