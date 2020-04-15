@@ -114,6 +114,9 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         logger.info("Nominable players for chancellor {}", message);
         players.get(presidentID).sendCommand(SecretHitlerMessage.GameMessageType.QUERY_CHANCELLOR, message);
 
+        //TODO implement - state change in separate function with logging
+        gameState = Constants.SHState.NOMINATION;
+
     }
 
     private void initializeAssets() {
@@ -122,12 +125,13 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         players = new ArrayList<>(getPlayers());
         Collections.shuffle(players);
 
+        chancellorID = -1;
+        presidentID = -1;
+
         assets = new Assets(players);
         assets.updateNotElect(presidentID, chancellorID);
 
         hitlerID = -1;
-        chancellorID = -1;
-        presidentID = -1;
         playerCount = players.size();
         alivePlayers = playerCount;
 
@@ -164,10 +168,35 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         if (message.getGameMessageType() == SecretHitlerMessage.GameMessageType.FACTION) {
             // nothing to do
         } if (message.getGameMessageType() == SecretHitlerMessage.GameMessageType.QUERY_CHANCELLOR) {
-
+            setChancellor(message.getContent());
         } else {
             // TODO other messages
         }
+    }
+
+    private void setChancellor(String player) {
+        if(gameState != Constants.SHState.NOMINATION) {
+            logger.warn("Message received in a false state: {}", gameState.name());
+            return;
+        }
+
+        logger.warn("Nominated chancellor: {}", player);
+        for(int i = 0; i < players.size(); i++) {
+            if(players.get(i).getName().equals(player)) {
+                chancellorID = i;
+                break;
+            }
+        }
+
+        //TODO implement - sendToAll message templates - overload parameter of the existing function maybe?
+        SecretHitlerMessage message = new SecretHitlerMessage();
+        message.setSender(getName());
+        message.setGameMessageType(SecretHitlerMessage.GameMessageType.CHANCELLOR);
+        message.setContent(players.get(chancellorID).getName());
+        sendToAll(message);
+
+        gameState = Constants.SHState.VOTE;
+
     }
 
     @Override

@@ -15,7 +15,7 @@ public class SecretHitlerMessage extends Message {
         FACTION,
         INVESTIGATE,
         SPECIAL_ELECTION,
-        NOMINEE,
+        CHANCELLOR,
         KILL,
         POLICIES,
         VOTE,

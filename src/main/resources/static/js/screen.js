@@ -17,6 +17,7 @@
     var users = [];
 
     var president = null;
+    var chancellor = null;
     var liberalPolicies = 0;
     var fascistPolicies = 0;
 
@@ -53,7 +54,9 @@
         } else if (message.type === 'GAME') {
             if (message.gameMessageType === 'PRESIDENT') {
                 setPresident(message.content);
-            } else {
+            } else if (message.gameMessageType === 'CHANCELLOR') {
+                setChancellor(message.content);
+            }else {
               // TODO other messages
             }
         }
@@ -84,6 +87,14 @@
         }
         updatePlayer(player, "PRESIDENT");
         president = player;
+    }
+
+    function setChancellor(player) {
+        if (chancellor) {
+            updatePlayer(chancellor, "");
+        }
+        updatePlayer(player, "CHANCELLOR");
+        chancellor = player;
     }
    
     function drawPlayer(player) {
