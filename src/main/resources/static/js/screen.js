@@ -1,18 +1,16 @@
 (function () {
     'use strict';
 
-    var canvasLiberal = document.getElementById('gameCanvasLiberal'),
-        ctxLiberal = canvasLiberal.getContext('2d'),
-        canvasFascist = document.getElementById('gameCanvasFascist'),
-        ctxFascist = canvasFascist.getContext('2d'),
-        playersDiv = document.getElementById('players'),
-        splashScreen = document.getElementById('splashScreen');
+    var splashScreen = document.getElementById('splash-page'), 
+        playersArea = document.getElementById('playersArea'),
+        canvasLiberal = document.getElementById('game-canvas-liberal'),
+        canvasFascist = document.getElementById('game-canvas-fascist');        
 
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
 
     var stompClient = null;
 
-    // TODO implement - url parameters for screen - lobby id and controller - username
+    // TODO implement - url parameters for screen - lobby id
     var userName = sessionStorage.getItem('name');
     var users = [];
 
@@ -20,10 +18,6 @@
     var chancellor = null;
     var liberalPolicies = 0;
     var fascistPolicies = 0;
-
-    canvasLiberal.classList.add('hidden');
-    canvasFascist.classList.add('hidden');
-    playersDiv.classList.add('hidden');
 
     connectScreen();
 
@@ -44,20 +38,22 @@
 
     function onMessageReceived(payload) {
         var message = JSON.parse(payload.body);
-        if (message.type === 'JOIN' || message.type === 'LEAVE') {
+        var type = message.type;
+        if (type === 'JOIN' || type === 'LEAVE') {
             var split = message.content.split(',');
             users.length = 0;
             users.push(...split);
-        } else if (message.type === 'START') {
+        } else if (type === 'START') {
             playSecretHitler();
-        } else if (message.type === 'GAME') {
-            if (message.gameMessageType === 'PRESIDENT') {
-                setPresident(message.content);
-            } else if (message.gameMessageType === 'CHANCELLOR') {
-                setChancellor(message.content);
-            } else if (message.gameMessageType === 'VOTED') {
+        } else if (type === 'GAME') {
+            var gameType = message.gameMessageType;
+            if (gameType === 'PRESIDENT') {
+                displayPresident(message.content);
+            } else if (gameType === 'CHANCELLOR') {
+                displayChancellor(message.content);
+            } else if (gameType === 'VOTED') {
                 vote(message.sender, message.content);
-            }else {
+            } else {
               // TODO other messages
             }
         }
@@ -66,7 +62,7 @@
     function playSecretHitler() {
         canvasLiberal.classList.remove('hidden');
         canvasFascist.classList.remove('hidden');
-        playersDiv.classList.remove('hidden');
+        playersArea.classList.remove('hidden');
         splashScreen.classList.add('hidden');
 
         drawBoards();
@@ -82,110 +78,98 @@
     
     function displayPresident(player) {
         if (president) {
-            updatePlayer(president, "");
+            updatePlayer(president, '');
         }
-        updatePlayer(player, "PRESIDENT");
+
+        updatePlayer(player, 'PRESIDENT');
         president = player;
     }
 
-    function setChancellor(player) {
+    function displayChancellor(player) {
         if (chancellor) {
-            updatePlayer(chancellor, "");
+            updatePlayer(chancellor, '');
         }
 
-        updatePlayer(player, "CHANCELLOR");
+        updatePlayer(player, 'CHANCELLOR');
         chancellor = player;
     }
 
-     function setPresident(player) {
-            if (president) {
-                updatePlayer(president, "");
-            }
-
-            updatePlayer(player, "PRESIDENT");
-            president = player;
-        }
-
-    function vote(sender, content) {
-        var playerName = document.getElementById('playerLegend'+sender);
-        playerName.innerHTML = sender + ' - ' + content;
-        playerName.style.color="#FF0000";
+    function vote(player, content) {
+        updateLegend(player, content, '#FF0000');
     }
 
     function drawPlayer(player) {
         var div = document.createElement('fieldset');
         div.id = 'fieldset-' + player;
         div.innerHTML =
-            '<legend class="player-legend" id="playerLegend'+player+'">' + player + '</legend>' +
+            '<legend class="player-legend" id="playerLegend-' + player + '">' + player + '</legend>' +
             '<table><tbody><tr><td height="20" id="'+ player + '" class="player-role"></td></tr></tbody></table>';
-        playersDiv.appendChild(div);
+        playersArea.appendChild(div);
     }
     
     function updatePlayer(player, text) {
         var div = document.getElementById(player);
         div.innerHTML = text;
     }
+    
+    function updateLegend(player, content, color) {
+        var legend = document.getElementById('playerLegend-' + player);
+        legend.innerHTML = sender + ' - ' + content;
+        legend.style.color = color;
+    }
 
     function addLiberalPolicy() {
-        var drawing = new Image();
+        var ctxLiberal = canvasLiberal.getContext('2d');
         
+        var drawing = new Image();
         drawing.onload = function() {
             if (liberalPolicies == 0) {
                 ctxLiberal.drawImage(this, 250, 160);
-            }
-            if (liberalPolicies == 1) {
+            } else if (liberalPolicies == 1) {
                 ctxLiberal.drawImage(this, 430, 160);
-            }
-            if (liberalPolicies == 2) {
+            } else if (liberalPolicies == 2) {
                 ctxLiberal.drawImage(this, 610, 160);
-            }
-            if (liberalPolicies == 3) {
+            } else if (liberalPolicies == 3) {
                 ctxLiberal.drawImage(this, 790, 160);
-            }
-            if (liberalPolicies == 4) {
+            } else if (liberalPolicies == 4) {
                 ctxLiberal.drawImage(this, 970, 160);
             }
-
             liberalPolicies++;
         }
-        
-        drawing.src = "./games/secrethitler/liberalp-l.png";
+        drawing.src = './games/secrethitler/liberalp-l.png';
     }
 
     function addFascistPolicy() {
+        var ctxFascist = canvasFascist.getContext('2d');
+        
         var drawing = new Image();
-
         drawing.onload = function() {
             if (fascistPolicies == 0) {
                 ctxFascist.drawImage(this, 150, 160);
-            }
-            if (fascistPolicies == 1) {
+            } else if (fascistPolicies == 1) {
                 ctxFascist.drawImage(this, 330, 160);
-            }
-            if (fascistPolicies == 2) {
+            } else if (fascistPolicies == 2) {
                 ctxFascist.drawImage(this, 510, 160);
-            }
-            if (fascistPolicies == 3) {
+            } else if (fascistPolicies == 3) {
                 ctxFascist.drawImage(this, 690, 160);
-            }
-            if (fascistPolicies == 4) {
+            } else if (fascistPolicies == 4) {
                 ctxFascist.drawImage(this, 870, 160);
-            }
-            if (fascistPolicies == 5) {
+            } else if (fascistPolicies == 5) {
                 ctxFascist.drawImage(this, 1050, 160);
             }
-
             fascistPolicies++;
         }
-        
-        drawing.src = "./games/secrethitler/fascistp-l.png";
+        drawing.src = './games/secrethitler/fascistp-l.png';
     }
 
     function drawBoards() {
-        var drawing = new Image();
-        var drawing2 = new Image();
+        var ctxLiberal = canvasLiberal.getContext('2d');
+        var ctxFascist = canvasFascist.getContext('2d');
 
-        drawing.onload = function() {
+        var drawingLiberal = new Image();
+        var drawingFascist = new Image();
+        
+        drawingLiberal.onload = function() {
             var width = this.naturalWidth,
                 height = this.naturalHeight;
 
@@ -196,7 +180,7 @@
             ctxLiberal.drawImage(this, 0, 0);
             ctxLiberal.scale(2,2);
         };
-        drawing2.onload = function() {
+        drawingFascist.onload = function() {
             var width = this.naturalWidth,
                 height = this.naturalHeight;
 
@@ -208,16 +192,16 @@
             ctxFascist.scale(2,2);
         };
 
-        drawing.src = "./games/secrethitler/SH1.png";
+        drawingLiberal.src = './games/secrethitler/SH1.png';
 
         if (users.length == 5 || users.length == 6) {
-            drawing2.src = "./games/secrethitler/SH2.png";
+            drawingFascist.src = './games/secrethitler/SH2.png';
         } else if (users.length == 7 || users.length == 8) {
-            drawing2.src = "./games/secrethitler/SH2_2.png";
+            drawingFascist.src = './games/secrethitler/SH2_2.png';
         } else if (users.length == 9 || users.length == 10) {
-            drawing2.src = "./games/secrethitler/SH2_3.png";
+            drawingFascist.src = './games/secrethitler/SH2_3.png';
         } else {
-            console.log("Failed to draw boards: Invalid user count: %s", users)
+            console.log('Failed to draw boards: Invalid user count: %s', users)
         }
     }
 

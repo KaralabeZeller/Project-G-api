@@ -4,18 +4,18 @@
     var messageForm = document.querySelector('#messageForm'),
         messageArea = document.querySelector('#messageArea'),
         connectingElement = document.querySelector('.connecting'),
-        lobbyHeader = document.getElementById("lobbyHeader");
+        lobbyHeader = document.getElementById('lobbyHeader');
 
     var userDialog = document.getElementById('userDialog'),
         userDialogLabel = document.getElementById('userDialogLabel'),
         userDialogSelect = document.getElementById('userDialogSelector'),
-        confirmButton = document.getElementById('confirmButton');
+        userDialogButton = document.getElementById('userDialogButton');
 
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
 
     var stompClient = null;
 
-    // TODO implement - url parameters for screen - lobby id and controller - username
+    // TODO implement - url parameters for controller - username
     var userName = sessionStorage.getItem('name');
     var users = [];
 
@@ -41,7 +41,7 @@
             sender: userName,
             type: 'JOIN',
         };
-        stompClient.send("/app/chat.addUser", {}, JSON.stringify(message));
+        stompClient.send('/app/chat.addUser', {}, JSON.stringify(message));
 
         connectingElement.classList.add('hidden');
     }
@@ -59,7 +59,7 @@
             sender: userName,
             content: 'SecretHitler',
         };
-        stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(message));
+        stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(message));
 
         started = true;
 
@@ -68,25 +68,28 @@
 
     function onMessageReceived(payload) {
         var message = JSON.parse(payload.body);
-        if (message.type === 'JOIN' || message.type === 'LEAVE') {
+        var type = message.type;
+        if (type === 'JOIN' || type === 'LEAVE') {
             if (!started) {
                 var split = message.content.split(',');
                 users.length = 0;
                 users.push(...split);
-
             }
             // TODO revert later - temporarily always display users on update
             displayUsers();
-        } else if (message.type === 'START') {
+        } else if (type === 'START') {
             playSecretHitler();
-        } else if (message.type === 'GAME') {
-            gameStatus = message.gameMessageType;
+        } else if (type === 'GAME') {
+            var gameType = message.gameMessageType;
 
-            if (message.gameMessageType === 'FACTION') {
+            // TODO refactor - avoid using game message type as game status
+            gameStatus = gameType;
+
+            if (gameType === 'FACTION') {
                 displayFaction(message.content);
-            } else if (message.gameMessageType === 'QUERY_CHANCELLOR') {
+            } else if (gameType === 'QUERY_CHANCELLOR') {
                 nominateChancellor(message.content.split(','));
-            } else if (message.gameMessageType === 'VOTE') {
+            } else if (gameType === 'VOTE') {
                 vote(message.content.split(','));
             } else {
               // TODO other messages
@@ -101,7 +104,7 @@
             sender: userName,
             content: content,
         };
-        stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(message));
+        stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(message));
     }
 
     function displayUsers() {
@@ -157,37 +160,34 @@
          messageArea.scrollTop = messageArea.scrollHeight;
     }
 
-    //TODO implement - nominateChancellor and vote can be the same function
     function nominateChancellor(players) {
-         var options = players.map(player => '<option>' + player + '</option>').join('');
-
-         // TODO implement - add css for the Modal panel
-         userDialogLabel.innerHTML = 'Choose a chancellor: ';
-         userDialogSelect.innerHTML = options;
-         userDialog.showModal();
+         showDialog('Choose a chancellor:', players);
     }
 
     function vote(players) {
-         var options = players.map(player => '<option>' + player + '</option>').join('');
+         showDialog('Vote for the government:', players);
+    }
 
-         userDialogLabel.innerHTML = 'Vote for the government:';
-         userDialogSelect.innerHTML = options;
+    function showDialog(title, options) {
+         userDialogLabel.innerHTML = title;
+         userDialogSelect.innerHTML = options.map(option => '<option>' + option + '</option>').join('');
          userDialog.showModal();
     }
 
-    function onUserDialogSelect(e) {
-        confirmButton.value = userDialogSelect.value;
+    function onUserDialogSelect(event) {
+        userDialogButton.value = userDialogSelect.value;
     }
 
-    function onUserDialogClose() {
+    function onUserDialogClose(event) {
         var value = userDialog.returnValue
         if (value === 'default') {
             value = userDialogSelect.getElementsByTagName('option')[0].innerHTML;
         }
 
+        userDialogSelect.innerHTML = '';
+
         console.log('Selected: ' + value);
         sendReply(gameStatus, value);
-        userDialogSelect.innerHTML = '';
     }
 
     function getAvatarColor(messageSender) {
