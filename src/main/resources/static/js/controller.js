@@ -21,6 +21,7 @@
     var users = [];
 
     var started = false;
+    var gameStatus = null;
 
     var liberalPolicies = 0;
     var fascistPolicies = 0;
@@ -129,11 +130,15 @@
             initController();
             playSecretHitler();
         } else if (message.type === 'GAME') {
+            gameStatus = message.gameMessageType;
+
             if (message.gameMessageType === 'FACTION') {
                 displayFaction(message.content);
             } else if (message.gameMessageType === 'QUERY_CHANCELLOR') {
                 nominateChancellor(message.content.split(','));
-            } else {
+            } else if (message.gameMessageType === 'VOTE') {
+                vote(message.content.split(','));
+            }else {
               // TODO other messages
             }
         }
@@ -153,6 +158,7 @@
         startButton.classList.add('hidden');
         lobbyText.innerHTML = username;
         messageArea.innerHTML = '';
+        stompClient.unsubscribe('/topic/public');
     }
 
     function playSecretHitler() {
@@ -172,10 +178,19 @@
          messageArea.scrollTop = messageArea.scrollHeight;
     }
 
+    //TODO implement - nominateChancellor and vote can be the same function
     function nominateChancellor(players) {
          var options = players.map(player => '<option>' + player + '</option>').join('');
 
          userDialogLabel.innerHTML = 'Choose a chancellor: ';
+         userDialogSelect.innerHTML = options;
+         userDialog.showModal();
+    }
+
+    function vote(players) {
+         var options = players.map(player => '<option>' + player + '</option>').join('');
+
+         userDialogLabel.innerHTML = 'Vote for the government:';
          userDialogSelect.innerHTML = options;
          userDialog.showModal();
     }
@@ -190,8 +205,9 @@
         if(value === 'default')
             value = userDialogSelect.getElementsByTagName('option')[0].innerHTML;
 
-        console.log('Chancellor selected: ' + value);
-        sendReply('QUERY_CHANCELLOR', value);
+        console.log('Selected: ' + value);
+        sendReply(gameStatus, value);
+        userDialogSelect.innerHTML = '';
     }
 
     function getAvatarColor(messageSender) {

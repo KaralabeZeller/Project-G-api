@@ -56,6 +56,8 @@
                 setPresident(message.content);
             } else if (message.gameMessageType === 'CHANCELLOR') {
                 setChancellor(message.content);
+            } else if (message.gameMessageType === 'VOTED') {
+                vote(message.sender, message.content);
             }else {
               // TODO other messages
             }
@@ -93,15 +95,22 @@
         if (chancellor) {
             updatePlayer(chancellor, "");
         }
+
         updatePlayer(player, "CHANCELLOR");
         chancellor = player;
+    }
+
+    function vote(sender, content) {
+        var playerName = document.getElementById('playerLegend'+sender);
+        playerName.innerHTML = sender + ' - ' + content;
+        playerName.style.color="#FF0000";
     }
    
     function drawPlayer(player) {
         var div = document.createElement('fieldset');
         div.id = 'fieldset-' + player;
         div.innerHTML =
-            '<legend class="player-legend">' + player + '</legend>' +
+            '<legend class="player-legend" id="playerLegend'+player+'">' + player + '</legend>' +
             '<table><tbody><tr><td height="20" id="'+ player + '" class="player-role"></td></tr></tbody></table>';
         playersDiv.appendChild(div);
     }

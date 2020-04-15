@@ -2,14 +2,12 @@ package com.nter.projectg.games.secrethitler;
 
 import com.nter.projectg.common.Lobby;
 import com.nter.projectg.games.common.Game;
+import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.secrethitler.SecretHitlerMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlayer> {
 
@@ -17,6 +15,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
     private List<SecretHitlerPlayer> players;
     private Assets assets;
+    private Votes votes;
 
     private Constants.SHState gameState;
 
@@ -71,12 +70,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             lastNormalPresident = presidentID;
         }
 
-        // Send message to session
-        SecretHitlerMessage message = new SecretHitlerMessage();
-        message.setSender(getName());
-        message.setGameMessageType(SecretHitlerMessage.GameMessageType.PRESIDENT);
-        message.setContent(players.get(presidentID).getName());
-        sendToAll(message);
+        sendToAll(SecretHitlerMessage.GameMessageType.PRESIDENT, getName(), players.get(presidentID).getName());
 
         gameState = Constants.SHState.NOMINATION;
         nominate();
@@ -84,9 +78,6 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         logger.info("Elected president: " + players.get(presidentID).getName());
     }
 
-    // TODO bug message is null
-    //    c.n.p.g.secrethitler.SecretHitlerGame    : President [1] nominating a chancelloror
-    //    c.n.p.g.secrethitler.SecretHitlerGame    : Nominable players for chancellor
     private void nominate() {
 
         logger.info("President [{}] nominating a chancellor", players.get(presidentID).getName());
@@ -123,6 +114,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         logger.debug("Initializing players and assets: {} {}", players, assets);
 
         players = new ArrayList<>(getPlayers());
+        votes = new Votes(this);
         Collections.shuffle(players);
 
         chancellorID = -1;
@@ -167,11 +159,31 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     protected void processMessage(SecretHitlerMessage message) {
         if (message.getGameMessageType() == SecretHitlerMessage.GameMessageType.FACTION) {
             // nothing to do
-        } if (message.getGameMessageType() == SecretHitlerMessage.GameMessageType.QUERY_CHANCELLOR) {
+        } else if (message.getGameMessageType() == SecretHitlerMessage.GameMessageType.QUERY_CHANCELLOR) {
             setChancellor(message.getContent());
-        } else {
+        } else if (message.getGameMessageType() == SecretHitlerMessage.GameMessageType.VOTE) {
+            votes.process(message.getSender(), message.getContent());
+            if(votes.voteFinished()) {
+                processVotes();
+            }
+        }else {
             // TODO other messages
         }
+    }
+
+    private void processVotes() {
+        logger.info("Voting has finished");
+        votes.getVotes().forEach((key,value) -> sendToAll(SecretHitlerMessage.GameMessageType.VOTED, key, value));
+
+    }
+
+
+    private void sendToAll(SecretHitlerMessage.GameMessageType type, String user, String content) {
+        SecretHitlerMessage message = new SecretHitlerMessage();
+        message.setSender(user);
+        message.setGameMessageType(type);
+        message.setContent(content);
+        sendToAll(message);
     }
 
     private void setChancellor(String player) {
@@ -180,7 +192,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             return;
         }
 
-        logger.warn("Nominated chancellor: {}", player);
+        logger.info("Nominated chancellor: {}", player);
         for(int i = 0; i < players.size(); i++) {
             if(players.get(i).getName().equals(player)) {
                 chancellorID = i;
@@ -188,15 +200,18 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             }
         }
 
-        //TODO implement - sendToAll message templates - overload parameter of the existing function maybe?
-        SecretHitlerMessage message = new SecretHitlerMessage();
-        message.setSender(getName());
-        message.setGameMessageType(SecretHitlerMessage.GameMessageType.CHANCELLOR);
-        message.setContent(players.get(chancellorID).getName());
-        sendToAll(message);
+        sendToAll(SecretHitlerMessage.GameMessageType.CHANCELLOR, getName(), players.get(chancellorID).getName());
 
         gameState = Constants.SHState.VOTE;
+        voteGovernment();
 
+    }
+
+    private void voteGovernment() {
+        logger.info("Voting for government");
+        for(SecretHitlerPlayer player: players) {
+            player.sendCommand(SecretHitlerMessage.GameMessageType.VOTE, "Ja!,Nein!");
+        }
     }
 
     @Override

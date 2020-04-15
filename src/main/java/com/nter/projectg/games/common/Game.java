@@ -37,6 +37,9 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
     public String getName() {
         return name;
     }
+    public int getPlayerCount() {
+        return players.size();
+    }
 
     protected List<GamePlayer> getPlayers() {
         return Collections.unmodifiableList(players);
@@ -62,6 +65,8 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
     protected void sendToAll(GameMessage message) {
         lobby.sendToAll(message);
     }
+
+
 
     protected void sendToPlayer(String name, GameMessage message) {
         lobby.sendToUser(name, message);

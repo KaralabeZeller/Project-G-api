@@ -19,6 +19,7 @@ public class SecretHitlerMessage extends Message {
         KILL,
         POLICIES,
         VOTE,
+        VOTED,
         VETO,
         POLICY,
         PRESIDENT,
