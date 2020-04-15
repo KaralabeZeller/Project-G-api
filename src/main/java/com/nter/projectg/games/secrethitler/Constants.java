@@ -8,7 +8,7 @@ public class Constants {
         FASCIST
     }
 
-    public enum SHState {
+    public enum State {
         ELECTION,
         NOMINATION,
         VOTE,
@@ -24,7 +24,7 @@ public class Constants {
     }
 
     public enum Power {
-        INVESTIGATE_LOYALITY,
+        INVESTIGATE_LOYALTY,
         SPECIAL_ELECTION,
         POLICY_PEEK,
         EXECUTION

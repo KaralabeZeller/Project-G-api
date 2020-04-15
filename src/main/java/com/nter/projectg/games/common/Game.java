@@ -6,10 +6,7 @@ import com.nter.projectg.model.common.Message.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 
 public abstract class Game<GameMessage extends Message, GamePlayer extends Player<GameMessage>> {
@@ -40,10 +37,6 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
         return name;
     }
 
-    public int getPlayerCount() {
-        return players.size();
-    }
-
     protected List<GamePlayer> getPlayers() {
         return Collections.unmodifiableList(players);
     }
@@ -61,13 +54,13 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
     private void initializePlayers() {
         logger.debug("Initializing players: {}", players);
 
-        int userCount = lobby.getUsers().size();
-        if (userCount < minPlayers || userCount >= maxPlayers) {
-            logger.warn("Player count is not in the interval: {} < {} < {}", minPlayers, userCount, maxPlayers);
+        Collection<String> users = lobby.getUsers();
+        if (users.size() < minPlayers || users.size() >= maxPlayers) {
+            logger.warn("Player count is not in the interval: {} < {} < {}", minPlayers, users.size(), maxPlayers);
             // TODO ignore invalid state
         }
 
-        for (String user : lobby.getUsers()) {
+        for (String user : users) {
             players.add(createPlayer(user));
         }
 

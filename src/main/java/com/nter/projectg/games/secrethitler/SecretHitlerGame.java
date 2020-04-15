@@ -2,6 +2,7 @@ package com.nter.projectg.games.secrethitler;
 
 import com.nter.projectg.common.Lobby;
 import com.nter.projectg.games.common.Game;
+import com.nter.projectg.games.secrethitler.Constants.State;
 import com.nter.projectg.model.secrethitler.SecretHitlerMessage;
 import com.nter.projectg.model.secrethitler.SecretHitlerMessage.GameMessageType;
 import org.slf4j.Logger;
@@ -15,16 +16,15 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
     private List<SecretHitlerPlayer> players;
     private Assets assets;
-    private Votes votes;
 
-    private Constants.SHState gameState;
+    private State state;
+    private Votes votes;
 
     // TODO refactor to use methods instead of fields
     private int hitlerID;
     private int chancellorID;
     private int presidentID;
     private int lastNormalPresident;
-    private int playerCount;
     private int alivePlayers;
 
     public SecretHitlerGame(Lobby lobby) {
@@ -39,6 +39,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
     private void electPresident() {
         logger.info("Electing president");
+        state = State.ELECTION;
 
         if (presidentID == -1) {
             Random rand = new Random();
@@ -46,35 +47,30 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         } else {
             int nextPresident = -1;
             int candidate = lastNormalPresident + 1;
-
             while (nextPresident < 0) {
-                if (candidate >= playerCount)
+                if (candidate >= players.size())
                     candidate = 0;
-
                 if (assets.playerMap.get(candidate) == 1)
                     nextPresident = candidate;
                 else
                     candidate++;
             }
-
             presidentID = candidate;
-
             lastNormalPresident = presidentID;
         }
 
         sendToAll(GameMessageType.PRESIDENT, getName(), players.get(presidentID).getName());
 
-        gameState = Constants.SHState.NOMINATION;
-        nominate();
-
         logger.info("Elected president: " + players.get(presidentID).getName());
+
+        nominate();
     }
 
     private void nominate() {
-
         logger.info("President [{}] nominating a chancellor", players.get(presidentID).getName());
-        List<String> playerList = new ArrayList<>();
+        state = State.NOMINATION;
 
+        List<String> playerList = new ArrayList<>();
         for (int i = 0; i < players.size(); i++) {
             if (alivePlayers <= 5) {
                 if (i != assets.nonElectables[1] && i != presidentID) {
@@ -96,10 +92,6 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         String message = String.join(",", playerList);
         logger.info("Nominable players for chancellor {}", message);
         players.get(presidentID).sendCommand(GameMessageType.QUERY_CHANCELLOR, message);
-
-        //TODO implement - state change in separate function with logging
-        gameState = Constants.SHState.NOMINATION;
-
     }
 
     private void initializeAssets() {
@@ -116,8 +108,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         assets.updateNotElect(presidentID, chancellorID);
 
         hitlerID = -1;
-        playerCount = players.size();
-        alivePlayers = playerCount;
+        alivePlayers = players.size();
 
         logger.info("Initialized players and assets: {} {}", players, assets);
     }
@@ -151,7 +142,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     protected void handleGame(SecretHitlerMessage message) {
         GameMessageType type = message.getGameType();
         if (type == GameMessageType.FACTION) {
-            // nothing to do
+            logger.warn("Unexpected faction message: {}", message);
         } else if (type == GameMessageType.QUERY_CHANCELLOR) {
             setChancellor(message.getContent());
         } else if (type == GameMessageType.VOTE) {
@@ -170,8 +161,8 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     }
 
     private void setChancellor(String player) {
-        if (gameState != Constants.SHState.NOMINATION) {
-            logger.warn("Message received in a false state: {}", gameState.name());
+        if (state != State.NOMINATION) {
+            logger.warn("Message received in a false state: {}", state.name());
             return;
         }
 
@@ -185,13 +176,13 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
         sendToAll(GameMessageType.CHANCELLOR, getName(), players.get(chancellorID).getName());
 
-        gameState = Constants.SHState.VOTE;
         voteGovernment();
-
     }
 
     private void voteGovernment() {
         logger.info("Voting for government: {}", votes);
+        state = State.VOTE;
+
         sendToAll(GameMessageType.VOTE, getName(), "Ja!,Nein!");
     }
 

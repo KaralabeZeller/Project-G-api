@@ -7,7 +7,6 @@ import java.util.List;
 
 public class Assets {
 
-    private int playerCount;
     private List<Constants.Faction> factions;
     public int electionTracker;
     private List<Constants.Policy> policies;
@@ -20,7 +19,6 @@ public class Assets {
 
     public Assets(List<SecretHitlerPlayer> players) {
         this.players = players;
-        this.playerCount = players.size();
         nonElectables = new int[2];
         electionTracker = 0;
         playerMap = new HashMap<>();
@@ -33,7 +31,7 @@ public class Assets {
     }
 
     private void initPlayers() {
-        for (int i = 0; i < playerCount; i++) {
+        for (int i = 0; i < players.size(); i++) {
             playerMap.put(i, 1);
         }
     }
@@ -42,17 +40,17 @@ public class Assets {
         powers = new ArrayList<>();
         activePowers = new ArrayList<>();
 
-        if (playerCount < 7) {
+        if (players.size() < 7) {
             powers.add(Constants.Power.POLICY_PEEK);
             powers.add(Constants.Power.EXECUTION);
             powers.add(Constants.Power.EXECUTION);
 
         } else {
-            if (playerCount >= 9) {
-                powers.add(Constants.Power.INVESTIGATE_LOYALITY);
+            if (players.size() >= 9) {
+                powers.add(Constants.Power.INVESTIGATE_LOYALTY);
             }
 
-            powers.add(Constants.Power.INVESTIGATE_LOYALITY);
+            powers.add(Constants.Power.INVESTIGATE_LOYALTY);
             powers.add(Constants.Power.SPECIAL_ELECTION);
             powers.add(Constants.Power.EXECUTION);
             powers.add(Constants.Power.EXECUTION);
@@ -79,7 +77,7 @@ public class Assets {
     }
 
     private void initFactions() {
-        factions = new ArrayList<>(playerCount);
+        factions = new ArrayList<>(players.size());
 
         factions.add(Constants.Faction.HITLER);
         factions.add(Constants.Faction.FASCIST);
@@ -87,29 +85,29 @@ public class Assets {
         factions.add(Constants.Faction.LIBERAL);
         factions.add(Constants.Faction.LIBERAL);
 
-        if (playerCount == 6) {
+        if (players.size() == 6) {
             factions.add(Constants.Faction.LIBERAL);
         }
 
-        if (playerCount == 7) {
+        if (players.size() == 7) {
             factions.add(Constants.Faction.LIBERAL);
             factions.add(Constants.Faction.FASCIST);
         }
 
-        if (playerCount == 8) {
+        if (players.size() == 8) {
             factions.add(Constants.Faction.LIBERAL);
             factions.add(Constants.Faction.LIBERAL);
             factions.add(Constants.Faction.FASCIST);
         }
 
-        if (playerCount == 9) {
+        if (players.size() == 9) {
             factions.add(Constants.Faction.LIBERAL);
             factions.add(Constants.Faction.LIBERAL);
             factions.add(Constants.Faction.FASCIST);
             factions.add(Constants.Faction.FASCIST);
         }
 
-        if (playerCount == 10) {
+        if (players.size() == 10) {
             factions.add(Constants.Faction.LIBERAL);
             factions.add(Constants.Faction.LIBERAL);
             factions.add(Constants.Faction.LIBERAL);
