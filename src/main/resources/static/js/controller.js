@@ -20,7 +20,6 @@
     var users = [];
 
     var started = false;
-    var gameStatus = null;
 
     var liberalPolicies = 0;
     var fascistPolicies = 0;
@@ -81,10 +80,6 @@
             playSecretHitler();
         } else if (type === 'GAME') {
             var gameType = message.gameType;
-
-            // TODO refactor - avoid using game message type as game status
-            gameStatus = gameType;
-
             if (gameType === 'FACTION') {
                 displayFaction(message.content);
             } else if (gameType === 'QUERY_CHANCELLOR') {
@@ -161,16 +156,17 @@
     }
 
     function nominateChancellor(players) {
-         showDialog('Choose a chancellor:', players);
+         showDialog('QUERY_CHANCELLOR', 'Choose a chancellor:', players);
     }
 
     function vote(players) {
-         showDialog('Vote for the government:', players);
+         showDialog('VOTE', 'Vote for the government:', players);
     }
 
-    function showDialog(title, options) {
+    function showDialog(type, title, options) {
          userDialogLabel.innerHTML = title;
          userDialogSelect.innerHTML = options.map(option => '<option>' + option + '</option>').join('');
+         userDialog.gameType = type;
          userDialog.showModal();
     }
 
@@ -179,15 +175,14 @@
     }
 
     function onUserDialogClose(event) {
+        var type = userDialog.gameType;
         var value = userDialog.returnValue
         if (value === 'default') {
             value = userDialogSelect.getElementsByTagName('option')[0].innerHTML;
         }
-
         userDialogSelect.innerHTML = '';
 
-        console.log('Selected: ' + value);
-        sendReply(gameStatus, value);
+        sendReply(type, value);
     }
 
     function getAvatarColor(messageSender) {
