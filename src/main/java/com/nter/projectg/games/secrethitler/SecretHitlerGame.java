@@ -214,14 +214,14 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     public void start(String user) {
         super.start(user);
 
-        SecretHitlerPlayer player = findPlayer(user);
-
         // Send faction message to session
-        SecretHitlerMessage factionMessage = new SecretHitlerMessage();
-        factionMessage.setSender(getName());
-        factionMessage.setGameType(GameMessageType.FACTION);
-        factionMessage.setContent(player.getFaction().name());
-        sendToPlayer(player.getName(), factionMessage);
+        for (SecretHitlerPlayer player : players) {
+            SecretHitlerMessage factionMessage = new SecretHitlerMessage();
+            factionMessage.setSender(getName());
+            factionMessage.setGameType(GameMessageType.FACTION);
+            factionMessage.setContent(player.getFaction().name());
+            sendToPlayer(player.getName(), factionMessage);
+        }
 
         electPresident();
     }
