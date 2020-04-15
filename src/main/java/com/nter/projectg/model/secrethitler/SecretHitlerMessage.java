@@ -4,12 +4,6 @@ import com.nter.projectg.model.common.Message;
 
 public class SecretHitlerMessage extends Message {
 
-    private GameMessageType gameType;
-
-    public SecretHitlerMessage() {
-        setType(MessageType.GAME);
-    }
-
     public enum GameMessageType {
         FACTION,
         HITLER,
@@ -24,6 +18,12 @@ public class SecretHitlerMessage extends Message {
         POLICIES,
         VETO,
         POLICY
+    }
+
+    private GameMessageType gameType;
+
+    public SecretHitlerMessage() {
+        setType(MessageType.GAME);
     }
 
     public GameMessageType getGameType() {

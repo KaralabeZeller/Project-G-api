@@ -16,20 +16,19 @@ import com.nter.projectg.model.secrethitler.SecretHitlerMessage;
 })
 public class Message {
 
-    private MessageType type;
-
-    private String sender;
-    private String content;
-
-    public Message() {
-    }
-
     public enum MessageType {
-        CHAT,
         JOIN,
         LEAVE,
         START,
         GAME
+    }
+
+    private MessageType type;
+    private String sender;
+
+    private String content;
+
+    public Message() {
     }
 
     public MessageType getType() {

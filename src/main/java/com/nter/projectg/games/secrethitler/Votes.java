@@ -14,16 +14,16 @@ public class Votes {
         votes = new HashMap<>(players);
     }
 
-    public void process(String sender, String content) {
-        votes.put(sender, content);
+    public Map<String, String> getVotes() {
+        return Collections.unmodifiableMap(votes);
     }
 
     public boolean isFinished() {
         return votes.size() == players;
     }
 
-    public Map<String, String> getVotes() {
-        return Collections.unmodifiableMap(votes);
+    public void process(String player, String vote) {
+        votes.put(player, vote);
     }
 
     @Override
