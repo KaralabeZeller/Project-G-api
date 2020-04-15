@@ -1,5 +1,6 @@
 package com.nter.projectg.games.common;
 
+import com.nter.projectg.games.common.Constants.ClientState;
 import com.nter.projectg.model.common.Message;
 
 import java.util.function.Consumer;
@@ -9,24 +10,24 @@ public abstract class Player<GameMessage extends Message> {
     private final String name;
     private final Consumer<GameMessage> send;
 
-    private Constants.ClientState state;
+    private ClientState state;
 
     public Player(String name, Consumer<GameMessage> send) {
         this.name = name;
         this.send = send;
 
-        this.state = Constants.ClientState.ACCEPTED;
+        this.state = ClientState.ACCEPTED;
     }
 
     public String getName() {
         return name;
     }
 
-    public Constants.ClientState getState() {
+    public ClientState getState() {
         return state;
     }
 
-    private void setState(Constants.ClientState state) {
+    private void setState(ClientState state) {
         this.state = state;
     }
 

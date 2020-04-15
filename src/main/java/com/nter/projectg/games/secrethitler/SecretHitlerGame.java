@@ -2,6 +2,7 @@ package com.nter.projectg.games.secrethitler;
 
 import com.nter.projectg.common.Lobby;
 import com.nter.projectg.games.common.Game;
+import com.nter.projectg.games.secrethitler.Constants.Faction;
 import com.nter.projectg.games.secrethitler.Constants.State;
 import com.nter.projectg.model.secrethitler.SecretHitlerMessage;
 import com.nter.projectg.model.secrethitler.SecretHitlerMessage.GameMessageType;
@@ -120,13 +121,11 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         for (int i = 0; i < players.size(); i++) {
             SecretHitlerPlayer player = players.get(i);
 
-            Constants.Faction faction = assets.getFactions().get(i);
+            Faction faction = assets.getFactions().get(i);
             player.setFaction(faction);
 
-            if (faction == Constants.Faction.HITLER) {
+            if (faction == Faction.HITLER) {
                 hitlerID = i;
-                // TODO implement
-                // sendHitlerToFascists();
             }
         }
 
@@ -205,13 +204,24 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     public void start(String user) {
         super.start(user);
 
-        // Send faction message to session
+        // TODO refactor to avoid array indexing
+        SecretHitlerMessage hitlerMessage = new SecretHitlerMessage();
+        hitlerMessage.setSender(getName());
+        hitlerMessage.setGameType(GameMessageType.HITLER);
+        hitlerMessage.setContent(players.get(hitlerID).getFaction().name());
+
         for (SecretHitlerPlayer player : players) {
+            // Send faction message to session
             SecretHitlerMessage factionMessage = new SecretHitlerMessage();
             factionMessage.setSender(getName());
             factionMessage.setGameType(GameMessageType.FACTION);
             factionMessage.setContent(player.getFaction().name());
             sendToPlayer(player.getName(), factionMessage);
+
+            // Send hitler message to fascists
+            if (player.getFaction() == Faction.FASCIST) {
+                sendToPlayer(player.getName(), hitlerMessage);
+            }
         }
 
         electPresident();
@@ -230,6 +240,15 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         factionMessage.setGameType(GameMessageType.FACTION);
         factionMessage.setContent(player.getFaction().name());
         sendToPlayer(player.getName(), factionMessage);
+
+        // Send hitler message to fascists
+        if (player.getFaction() == Faction.FASCIST) {
+            SecretHitlerMessage hitlerMessage = new SecretHitlerMessage();
+            hitlerMessage.setSender(getName());
+            hitlerMessage.setGameType(GameMessageType.HITLER);
+            hitlerMessage.setContent(players.get(hitlerID).getFaction().name());
+            sendToPlayer(player.getName(), hitlerMessage);
+        }
 
         // Send president message to session
         SecretHitlerMessage presidentMessage = new SecretHitlerMessage();

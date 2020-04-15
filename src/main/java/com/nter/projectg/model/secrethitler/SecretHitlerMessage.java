@@ -12,17 +12,18 @@ public class SecretHitlerMessage extends Message {
 
     public enum GameMessageType {
         FACTION,
-        INVESTIGATE,
-        SPECIAL_ELECTION,
+        HITLER,
+        PRESIDENT,
+        QUERY_CHANCELLOR,
         CHANCELLOR,
-        KILL,
-        POLICIES,
         VOTE,
         VOTED,
+        INVESTIGATE,
+        SPECIAL_ELECTION,
+        KILL,
+        POLICIES,
         VETO,
-        POLICY,
-        PRESIDENT,
-        QUERY_CHANCELLOR
+        POLICY
     }
 
     public GameMessageType getGameType() {
