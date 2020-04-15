@@ -2,12 +2,14 @@ package com.nter.projectg.games.secrethitler;
 
 import com.nter.projectg.common.Lobby;
 import com.nter.projectg.games.common.Game;
-import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.secrethitler.SecretHitlerMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlayer> {
 
@@ -28,13 +30,12 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     private int alivePlayers;
 
     public SecretHitlerGame(Lobby lobby) {
-        super(lobby, "Secret Hitler", 5, 10);
+        super(lobby, "SecretHitler", 5, 10);
 
         logger.debug("Initializing Secret Hitler: {}", this);
 
         initializeAssets();
         initializeFactions();
-        electPresident();
         logger.info("Initialized Secret Hitler: {}", this);
     }
 
@@ -45,28 +46,21 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             Random rand = new Random();
             presidentID = rand.nextInt(players.size());
         } else {
+            int nextPresident = -1;
+            int candidate = lastNormalPresident + 1;
 
-            if (presidentID == -1) {
-                Random rand = new Random();
-                presidentID = rand.nextInt(playerCount);
-            } else {
+            while (nextPresident < 0) {
+                if (candidate >= playerCount)
+                    candidate = 0;
 
-                int nextPresident = -1;
-                int candidate = lastNormalPresident + 1;
-
-                while (nextPresident < 0) {
-                    if (candidate >= playerCount)
-                        candidate = 0;
-
-                    if (assets.playerMap.get(candidate) == 1)
-                        nextPresident = candidate;
-                    else
-                        candidate++;
-                }
-
-                presidentID = candidate;
-
+                if (assets.playerMap.get(candidate) == 1)
+                    nextPresident = candidate;
+                else
+                    candidate++;
             }
+
+            presidentID = candidate;
+
             lastNormalPresident = presidentID;
         }
 
@@ -163,20 +157,18 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             setChancellor(message.getContent());
         } else if (message.getGameMessageType() == SecretHitlerMessage.GameMessageType.VOTE) {
             votes.process(message.getSender(), message.getContent());
-            if(votes.voteFinished()) {
+            if (votes.voteFinished()) {
                 processVotes();
             }
-        }else {
+        } else {
             // TODO other messages
         }
     }
 
     private void processVotes() {
         logger.info("Voting has finished");
-        votes.getVotes().forEach((key,value) -> sendToAll(SecretHitlerMessage.GameMessageType.VOTED, key, value));
-
+        votes.getVotes().forEach((key, value) -> sendToAll(SecretHitlerMessage.GameMessageType.VOTED, key, value));
     }
-
 
     private void sendToAll(SecretHitlerMessage.GameMessageType type, String user, String content) {
         SecretHitlerMessage message = new SecretHitlerMessage();
@@ -187,14 +179,14 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     }
 
     private void setChancellor(String player) {
-        if(gameState != Constants.SHState.NOMINATION) {
+        if (gameState != Constants.SHState.NOMINATION) {
             logger.warn("Message received in a false state: {}", gameState.name());
             return;
         }
 
         logger.info("Nominated chancellor: {}", player);
-        for(int i = 0; i < players.size(); i++) {
-            if(players.get(i).getName().equals(player)) {
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).getName().equals(player)) {
                 chancellorID = i;
                 break;
             }
@@ -209,14 +201,52 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
     private void voteGovernment() {
         logger.info("Voting for government");
-        for(SecretHitlerPlayer player: players) {
+        for (SecretHitlerPlayer player : players) {
             player.sendCommand(SecretHitlerMessage.GameMessageType.VOTE, "Ja!,Nein!");
         }
     }
 
     @Override
-    public void run() {
-        // TODO
+    public void start(String user) {
+        super.start(user);
+
+        SecretHitlerPlayer player = findPlayer(user);
+
+        // Send faction message to session
+        SecretHitlerMessage factionMessage = new SecretHitlerMessage();
+        factionMessage.setSender(getName());
+        factionMessage.setGameMessageType(SecretHitlerMessage.GameMessageType.FACTION);
+        factionMessage.setContent(player.getFaction().name());
+        sendToPlayer(player.getName(), factionMessage);
+
+        electPresident();
+    }
+
+    // TODO implement restore state / messages on reconnect
+    @Override
+    public void reconnect(String user) {
+        super.reconnect(user);
+
+        SecretHitlerPlayer player = findPlayer(user);
+
+        // Send faction message to session
+        SecretHitlerMessage factionMessage = new SecretHitlerMessage();
+        factionMessage.setSender(getName());
+        factionMessage.setGameMessageType(SecretHitlerMessage.GameMessageType.FACTION);
+        factionMessage.setContent(player.getFaction().name());
+        sendToPlayer(player.getName(), factionMessage);
+
+        // Send president message to session
+        SecretHitlerMessage presidentMessage = new SecretHitlerMessage();
+        presidentMessage.setSender(getName());
+        presidentMessage.setGameMessageType(SecretHitlerMessage.GameMessageType.PRESIDENT);
+        presidentMessage.setContent(players.get(presidentID).getName());
+        sendToPlayer(player.getName(), presidentMessage);
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
     }
 
     @Override

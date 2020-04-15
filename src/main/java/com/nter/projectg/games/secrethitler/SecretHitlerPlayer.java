@@ -20,12 +20,7 @@ public class SecretHitlerPlayer extends Player<SecretHitlerMessage> {
     public void setFaction(Constants.Faction faction) {
         this.faction = faction;
 
-        // Send message to session
-        SecretHitlerMessage message = new SecretHitlerMessage();
-        message.setSender(getName());
-        message.setGameMessageType(SecretHitlerMessage.GameMessageType.FACTION);
-        message.setContent(faction.name());
-        send(message);
+
     }
 
     public void sendCommand(SecretHitlerMessage.GameMessageType type, String content) {

@@ -8,9 +8,10 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
-public abstract class Game<GameMessage extends Message, GamePlayer extends Player<GameMessage>> implements Runnable {
+public abstract class Game<GameMessage extends Message, GamePlayer extends Player<GameMessage>> {
 
     private static final Logger logger = LoggerFactory.getLogger(Game.class);
 
@@ -37,6 +38,7 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
     public String getName() {
         return name;
     }
+
     public int getPlayerCount() {
         return players.size();
     }
@@ -45,12 +47,23 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
         return Collections.unmodifiableList(players);
     }
 
+    protected GamePlayer findPlayer(String name) {
+        for (GamePlayer player : players) {
+            if (Objects.equals(player.getName(), name)) {
+                return player;
+            }
+        }
+
+        throw new IllegalArgumentException(String.format("Failed to find player: Invalid name: %s", name));
+    }
+
     private void initializePlayers() {
         logger.debug("Initializing players: {}", players);
 
         int userCount = lobby.getUsers().size();
         if (userCount < minPlayers || userCount >= maxPlayers) {
             logger.warn("Player count is not in the interval: {} < {} < {}", minPlayers, userCount, maxPlayers);
+            // TODO ignore invalid state
         }
 
         for (String user : lobby.getUsers()) {
@@ -65,7 +78,6 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
     protected void sendToAll(GameMessage message) {
         lobby.sendToAll(message);
     }
-
 
 
     protected void sendToPlayer(String name, GameMessage message) {
@@ -92,13 +104,31 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
 
     protected abstract void processMessage(GameMessage message);
 
-    public void reconnect(String user) {
-        // TODO implement
+    public void start(String user) {
+        GamePlayer player = findPlayer(user);
+
+        // Broadcast start message to all sessions
+        Message message = new Message();
+        message.setType(Message.MessageType.START);
+        message.setSender(player.getName());
+        message.setContent(name);
+        lobby.sendToAll(message);
     }
 
-    @Override
-    public void run() {
-        // TODO
+    // TODO implement restore state / messages on reconnect
+    public void reconnect(String user) {
+        GamePlayer player = findPlayer(user);
+
+        // Send start message to all sessions
+        Message message = new Message();
+        message.setType(Message.MessageType.START);
+        message.setSender(player.getName());
+        message.setContent(name);
+        lobby.sendToUser(player.getName(), message);
+    }
+
+    public void stop() {
+        // TODO implement
     }
 
     // TODO maybe remove lobby

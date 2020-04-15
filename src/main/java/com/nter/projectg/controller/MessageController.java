@@ -26,9 +26,6 @@ public class MessageController {
     private Lobby lobby;
 
     private Game<?, ?> game;
-    // TODO move to Game from MessageController
-    private Message startMessage;
-    private Message gameMessage;
 
     // TODO use /app/game application destination
     @MessageMapping("/chat.sendMessage")
@@ -46,19 +43,12 @@ public class MessageController {
 
         // Handle message and update state
         if (message.getType() == MessageType.START) {
-            start();
-            startMessage = message;
-
-            // Broadcast message to all sessions - Not needed for every message type
-            lobby.sendToAll(message);
+            start(user);
         } else if (message.getType() == MessageType.GAME) {
             process(message);
-            gameMessage = message;
         } else {
             // TODO other messages
         }
-
-
     }
 
     // TODO use /app/lobby application destination
@@ -79,15 +69,12 @@ public class MessageController {
         reconnect(user, session);
     }
 
-    private CompletableFuture<Void> start() {
+    private CompletableFuture<Void> start(String user) {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
             logger.debug("Starting game: Secret Hitler {}", lobby);
-
             game = new SecretHitlerGame(lobby);
-            // TODO implement
-            // game.start(user);
-
+            game.start(user);
             logger.info("Started game: Secret Hitler {}", game);
 
             // Fake timeout to reset Game
@@ -98,11 +85,8 @@ public class MessageController {
             }
 
             logger.debug("Stopping game: Secret Hitler {}", game);
-
-            // TODO implement
-            // game.stop(user);
+            game.stop();
             game = null;
-
             logger.debug("Stopped game: Secret Hitler {}", lobby);
         });
     }
@@ -126,17 +110,7 @@ public class MessageController {
         return CompletableFuture.runAsync(() -> {
             if (game != null) {
                 logger.debug("Reconnecting user in session: {} {}", user, session);
-
-                // TODO implement restore state / messages on reconnect
-                if (startMessage != null) {
-                    lobby.sendToUser(user, startMessage);
-                    if (gameMessage != null) {
-                        lobby.sendToUser(user, gameMessage);
-                    }
-                }
-
                 game.reconnect(user);
-
                 logger.info("Reconnected user in session: {} {}", user, session);
             }
         });
