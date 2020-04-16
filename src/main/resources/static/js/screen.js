@@ -4,6 +4,7 @@
     var splashScreen = document.getElementById('splash-page'), 
         playersArea = document.getElementById('playersArea'),
         canvasLiberal = document.getElementById('game-canvas-liberal'),
+        canvasLiberalOverlay = document.getElementById('game-canvas-liberal-overlay'),
         canvasFascist = document.getElementById('game-canvas-fascist');        
 
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
@@ -64,11 +65,13 @@
 
     function playSecretHitler() {
         canvasLiberal.classList.remove('hidden');
+        canvasLiberalOverlay.classList.remove('hidden');
         canvasFascist.classList.remove('hidden');
         playersArea.classList.remove('hidden');
         splashScreen.classList.add('hidden');
 
         drawBoards();
+        moveTracker(0);
         users.forEach(drawPlayer);
     }
     
@@ -99,8 +102,20 @@
             updatePlayer(chancellor, '');
         }
 
-        users.forEach(player => updateLegend(player, player, '#000000'));
-    }    
+        clearPlayerLabels
+
+    }
+
+    function clearPlayerLabels() {
+        var index = 0;
+        for (index; index < users.length; ++index) {
+            var legend = document.getElementById('playerLegend-' + users[index]);
+                legend.innerHTML = users[index];
+                legend.style.color = '#000000';
+        }
+        if(chancellor !== null)
+            updatePlayer(chancellor, '');
+    }
 
     function drawPlayer(player) {
         var div = document.createElement('fieldset');
@@ -217,4 +232,7 @@
         }
     }
 
+    //TODO implement
+    function moveTracker(electionTracker) {
+    }
 }());

@@ -4,7 +4,8 @@
     var messageForm = document.querySelector('#messageForm'),
         messageArea = document.querySelector('#messageArea'),
         connectingElement = document.querySelector('.connecting'),
-        lobbyHeader = document.getElementById('lobbyHeader');
+        lobbyHeader = document.getElementById('lobbyHeader'),
+        factionCard = document.createElement("img");
 
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
 
@@ -15,6 +16,8 @@
     var users = [];
 
     var started = false;
+    var userFaction = null;
+    var factionShow = false;
 
     var liberalPolicies = 0;
     var fascistPolicies = 0;
@@ -142,16 +145,44 @@
     }
 
     function displayFaction(faction) {
+        userFaction = faction;
         var messageElement = document.createElement('li');
         messageElement.classList.add('event-message');
 
         var textElement = document.createElement('p');
-        var messageText = document.createTextNode('You are: ' + faction);
-        textElement.appendChild(messageText);
-        messageElement.appendChild(textElement);
+        //var messageText = document.createTextNode('You are: ' + faction);
+        //textElement.appendChild(messageText);
+
+        factionCard.width = 290;
+        factionCard.height = 360;
+        factionCard.id = 'factionCard';
+        factionCard.onclick = showFaction;
+        showFaction()
+
+        messageElement.appendChild(factionCard);
 
         messageArea.appendChild(messageElement);
         messageArea.scrollTop = messageArea.scrollHeight;
+    }
+
+    function showFaction() {
+        if(factionShow){
+            factionCard.src = './games/secrethitler/role-card-back.png';
+            factionShow = false;
+            return;
+        }
+
+        if(userFaction === 'LIBERAL') {
+            factionCard.src = './games/secrethitler/role-liberal.png';
+        }
+        if(userFaction === 'FASCIST') {
+            factionCard.src = './games/secrethitler/role-fascist.png';
+        }
+        if(userFaction === 'HITLER') {
+            factionCard.src = './games/secrethitler/role-hitler.png';
+        }
+
+        factionShow = true;
     }
 
     function nominateChancellor(players) {
