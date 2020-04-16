@@ -48,7 +48,7 @@
         } else if (type === 'GAME') {
             var gameType = message.gameType;
             if (gameType === 'PRESIDENT') {
-                clearPlayerLabels();
+                clearVotes();
                 displayPresident(message.content);
             } else if (gameType === 'CHANCELLOR') {
                 displayChancellor(message.content);
@@ -93,6 +93,14 @@
     function vote(player, content) {
         updateLegend(player, content, '#FF0000');
     }
+    
+    function clearVotes() {
+        if (chancellor) {
+            updatePlayer(chancellor, '');
+        }
+
+        users.forEach(player => updateLegend(player, player, '#000000'));
+    }    
 
     function drawPlayer(player) {
         var div = document.createElement('fieldset');
@@ -107,18 +115,6 @@
         var div = document.getElementById(player);
         div.innerHTML = text;
     }
-
-    function clearPlayerLabels() {
-        var index = 0;
-        for (index; index < users.length; ++index) {
-            var legend = document.getElementById('playerLegend-' + users[index]);
-                legend.innerHTML = users[index];
-                legend.style.color = '#000000';
-        }
-        if(chancellor !== null)
-            updatePlayer(chancellor, '');
-
-    }
     
     function updateLegend(player, content, color) {
         var legend = document.getElementById('playerLegend-' + player);
@@ -127,7 +123,7 @@
     }
 
     function enactPolicy(policy) {
-        if(policy === 'LIBERAL') {
+        if (policy === 'LIBERAL') {
             addLiberalPolicy();
         } else {
             addFascistPolicy();

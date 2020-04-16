@@ -82,9 +82,9 @@
                 vote(message.content.split(','));
             } else if (gameType === 'POLICIES') {
                 selectPolicies(message.content.split(','));
-            }  else if (gameType === 'POLICY') {
-               selectPolicy(message.content.split(','));
-           } else {
+            } else if (gameType === 'POLICY') {
+                selectPolicy(message.content.split(','));
+            } else {
               // TODO other messages
             }
         }
@@ -163,52 +163,31 @@
     }
 
     function selectPolicies(policies) {
-        showMultiChoiceDialog('POLICIES', "Choose two policies to hand over to the chancellor", policies)
+        showDialog('POLICIES', 'Choose two policies to hand over to the chancellor', policies, true);
     }
     function selectPolicy(policies) {
-            showDialog('POLICY', "Choose a policy, which will be enacted", policies)
+        showDialog('POLICY', 'Choose a policy, which will be enacted', policies);
     }
 
-    function showDialog(type, title, options) {
+    function showDialog(type, title, options, multiChoice = false) {
         // TODO remove - cancel button from prompt
         bootbox.prompt({
             // buttons: { confirm: { label: 'OK' } },
             closeButton: false,
             title: title,
             inputOptions: options.map(option => ({ text: option, value: option })),
-            inputType: 'select',
+            inputType: multiChoice ? 'checkbox' : 'select',
             value: options[0],
             callback: result => {
                 if (result === null) {
                     return false;
                 } else {
-                    sendReply(type, result);
+                    sendReply(type, multiChoice ? result.join(',') : result);
                     return true;
                 }
             }
         });
     }
-
-    //TODO merge this with the ShowDialog function
-    function showMultiChoiceDialog(type, titleText, options) {
-             var optionList = [];
-             for (var i = 0; i < options.length; i++) { optionList.push({ text: options[i], value: options[i] }); }
-
-             //TODO remove - cancel button from prompt
-             bootbox.prompt({
-                closeButton: false,
-                title: titleText,
-                inputType: 'checkbox',
-                inputOptions: optionList,
-                callback: function (result) {
-                   console.log(result);
-                   if (result === null)
-                       showDialog(type, titleText, options);
-                   else
-                       sendReply(type, result.join());
-                }
-             });
-        }
 
     function getAvatarColor(messageSender) {
         var hash = 0;
