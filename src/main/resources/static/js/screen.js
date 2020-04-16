@@ -49,7 +49,7 @@
         } else if (type === 'GAME') {
             var gameType = message.gameType;
             if (gameType === 'PRESIDENT') {
-                clearVotes();
+                clearPlayerLabels();
                 displayPresident(message.content);
             } else if (gameType === 'CHANCELLOR') {
                 displayChancellor(message.content);
@@ -85,7 +85,7 @@
     }
 
     function displayChancellor(player) {
-        if (chancellor) {
+        if (chancellor && chancellor !== president) {
             updatePlayer(chancellor, '');
         }
 
