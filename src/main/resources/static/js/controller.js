@@ -142,24 +142,24 @@
     }
 
     function displayFaction(faction) {
-         var messageElement = document.createElement('li');
-         messageElement.classList.add('event-message');
+        var messageElement = document.createElement('li');
+        messageElement.classList.add('event-message');
 
-         var textElement = document.createElement('p');
-         var messageText = document.createTextNode('You are: ' + faction);
-         textElement.appendChild(messageText);
-         messageElement.appendChild(textElement);
+        var textElement = document.createElement('p');
+        var messageText = document.createTextNode('You are: ' + faction);
+        textElement.appendChild(messageText);
+        messageElement.appendChild(textElement);
 
-         messageArea.appendChild(messageElement);
-         messageArea.scrollTop = messageArea.scrollHeight;
+        messageArea.appendChild(messageElement);
+        messageArea.scrollTop = messageArea.scrollHeight;
     }
 
     function nominateChancellor(players) {
-         showDialog("QUERY_CHANCELLOR", "Nominate the chancellor for the government", players)
+        showDialog('QUERY_CHANCELLOR', 'Nominate the chancellor for the government', players);
     }
 
     function vote(players) {
-         showDialog('VOTE', 'Vote for the government:', players);
+        showDialog('VOTE', 'Vote for the government:', players);
     }
 
     function selectPolicies(policies) {
@@ -169,24 +169,24 @@
             showDialog('POLICY', "Choose a policy, which will be enacted", policies)
     }
 
-    function showDialog(type, titleText, options) {
-         var optionList = [];
-         for (var i = 0; i < options.length; i++) { optionList.push({ text: options[i], value: options[i] }); }
-
-         //TODO remove - cancel button from prompt
-         bootbox.prompt({
+    function showDialog(type, title, options) {
+        // TODO remove - cancel button from prompt
+        bootbox.prompt({
+            // buttons: { confirm: { label: 'OK' } },
             closeButton: false,
-            title: titleText,
-            value: options[0],
+            title: title,
+            inputOptions: options.map(option => ({ text: option, value: option })),
             inputType: 'select',
-            inputOptions: optionList,
-            callback: function (result) {
-               if(result === null)
-                   showDialog(type, titleText, options);
-                else
+            value: options[0],
+            callback: result => {
+                if (result === null) {
+                    return false;
+                } else {
                     sendReply(type, result);
+                    return true;
+                }
             }
-         });
+        });
     }
 
     //TODO merge this with the ShowDialog function
