@@ -94,6 +94,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
     private void electPresident() {
         logger.info("Electing president");
+        checkAssets();
         state = State.ELECTION;
 
         if (presidentID == -1) {
@@ -228,16 +229,17 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
                 }
                 state = State.ENACTMENT;
                 selectPolicy();
+            } else {
+                logger.info("Votes failed!");
+                assets.electionTracker++;
+                //moveTracker(); TODO implement
+                state = State.ELECTION;
+                electPresident();
             }
 
-        } else {
-            logger.info("Votes failed!");
-            assets.electionTracker++;
-            //moveTracker(); TODO implement
-            state = State.ELECTION;
-            //clearChancellor(chancellorID); TODO implement
-            //TODO clear votes
+            votes.clear();
         }
+
     }
 
     private void selectPolicy() {
@@ -278,12 +280,12 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
                 assets.enactPolicy(Constants.Policy.LIBERAL);
                 ui.enactPolicy(Constants.Policy.LIBERAL);
             }
-            System.out.println("--Policy enacted by government: " + nominee);
+            logger.info("--Policy enacted by government: " + nominee);
             assets.electionTracker = 0;
             //moveTracker();
 
         } else {
-            System.out.println("--Policy vetoed by government!");
+            logger.info("--Policy vetoed by government!");
             assets.electionTracker++;
             //moveTracker();
         }
@@ -376,6 +378,118 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         message.setGameType(type);
         message.setContent(content);
         return message;
+    }
+
+    private void checkAssets() {
+        if (assets.electionTracker == 3) {
+            logger.info("Election tracker: 3 - Top policy will be enacted");
+            Constants.Policy topPolicy = assets.anectTopPolicy();
+            SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.ENACTED_POLICY, topPolicy.name());
+            sendToAll(policyMessage);
+            logger.info("Policy ecanted: " + topPolicy.name());
+            assets.electionTracker = 0;
+            //moveTracker();
+        }
+
+
+        if (getPlayers().size() < 7) { // 5 - 6 PLAYERS
+            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 3) { // PEAK TOP POLICY
+                if (assets.activePowers.size() == 0) {
+                    List<Constants.Policy> policies = assets.getTopPolicies();
+                    String policyString = "";
+                    for (int i = 0; i < policies.size(); i++) {
+                        policyString += policies.get(i).name() + ",";
+                    }
+                    policyString = policyString.substring(0, policyString.length() - 1);
+                    SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.POLICIES, policyString);
+                    sendToPlayer(getPresident().getName(), policyMessage);
+
+                    assets.usePower();
+                }
+            }
+            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 4 && assets.activePowers.size() == 1) { // KILL SOMEONE
+                //killUser(); TODO implement - killUSer()
+                assets.usePower();
+            }
+            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 5 && assets.activePowers.size() == 2) {
+                //killUser();
+                assets.usePower();
+            }
+        }
+
+        if (getPlayers().size() == 7 || getPlayers().size() == 8) { // 7 - 8 PLAYERS
+
+            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 2) { // INVESTIGATE LOYALITY
+                if (assets.activePowers.size() == 0) {
+                    //investigate(); TODO
+                    assets.usePower();
+                }
+            }
+            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 3) { // SPECIAL ELECTION
+                if (assets.activePowers.size() == 1) {
+                    //specialElection(); TODO
+                    assets.usePower();
+                }
+            }
+            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 4) {
+                if (assets.activePowers.size() == 2) {
+                    //killUser();
+                    assets.usePower();
+                }
+            }
+            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 5) {
+                if (assets.activePowers.size() == 3) {
+                    //killUser();
+                    assets.usePower();
+                }
+            }
+        }
+
+        if (getPlayers().size() == 9 || getPlayers().size() == 10) { // 9 - 10 PLAYERS
+
+            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 1) { // INVESTIGATE LOYALITY
+                if (assets.activePowers.size() == 0) {
+                    //investigate();
+                    assets.usePower();
+                }
+            }
+            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 2) { // INVESTIGATE LOYALITY
+                if (assets.activePowers.size() == 1) {
+                    //investigate();
+                    assets.usePower();
+                }
+            }
+            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 3) { // SPECIAL ELECTION
+                if (assets.activePowers.size() == 2) {
+                    //specialElection();
+                    assets.usePower();
+                }
+            }
+            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 4) {
+                if (assets.activePowers.size() == 3) {
+                    //killUser();
+                    assets.usePower();
+                }
+            }
+            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 5) {
+                if (assets.activePowers.size() == 4) {
+                    //killUser();
+                    assets.usePower();
+                }
+            }
+        }
+
+        if (assets.getPolicyCount(Constants.Policy.FASCIST) == 6) {
+            state = State.FINISHED;
+            logger.info("FASCIST victory");
+            return;
+        }
+
+        if (assets.getPolicyCount(Constants.Policy.LIBERAL) == 5) {
+            state = State.FINISHED;
+            logger.info("--LIBERAL victory");
+            return;
+        }
     }
 
     @Override

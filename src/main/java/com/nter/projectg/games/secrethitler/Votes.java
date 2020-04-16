@@ -26,6 +26,8 @@ public class Votes {
         votes.put(player, vote);
     }
 
+    public void clear() {votes.clear();}
+
     @Override
     public String toString() {
         return "Votes{" +
@@ -33,5 +35,4 @@ public class Votes {
                 ", votes=" + votes +
                 '}';
     }
-
 }

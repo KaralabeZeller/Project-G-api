@@ -208,7 +208,7 @@
             title: title,
             inputOptions: options.map(option => ({ text: option, value: option })),
             inputType: multiChoice ? 'checkbox' : 'select',
-            value: options[0],
+            value:  multiChoice ?  null : options[0],
             callback: result => {
                 if (result === null) {
                     return false;
