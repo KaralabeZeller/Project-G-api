@@ -48,6 +48,7 @@
         } else if (type === 'GAME') {
             var gameType = message.gameType;
             if (gameType === 'PRESIDENT') {
+                clearPlayerLabels();
                 displayPresident(message.content);
             } else if (gameType === 'CHANCELLOR') {
                 displayChancellor(message.content);
@@ -105,6 +106,18 @@
     function updatePlayer(player, text) {
         var div = document.getElementById(player);
         div.innerHTML = text;
+    }
+
+    function clearPlayerLabels() {
+        var index = 0;
+        for (index; index < users.length; ++index) {
+            var legend = document.getElementById('playerLegend-' + users[index]);
+                legend.innerHTML = users[index];
+                legend.style.color = '#000000';
+        }
+        if(chancellor !== null)
+            updatePlayer(chancellor, '');
+
     }
     
     function updateLegend(player, content, color) {

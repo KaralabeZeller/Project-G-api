@@ -236,6 +236,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             //moveTracker(); TODO implement
             state = State.ELECTION;
             //clearChancellor(chancellorID); TODO implement
+            //TODO clear votes
         }
     }
 
@@ -314,6 +315,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.ENACTED_POLICY, policy);
         sendToAll(policyMessage);
         state = State.ELECTION;
+        electPresident();
     }
 
     @Override
