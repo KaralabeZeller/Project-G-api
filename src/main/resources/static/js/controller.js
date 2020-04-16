@@ -121,11 +121,6 @@
             userNameElement.appendChild(userNameText);
             messageElement.appendChild(userNameElement);
 
-            var textElement = document.createElement('p');
-            var messageText = document.createTextNode('');
-            textElement.appendChild(messageText);
-            messageElement.appendChild(textElement);
-
             messageArea.appendChild(messageElement);
             messageArea.scrollTop = messageArea.scrollHeight;
         });
