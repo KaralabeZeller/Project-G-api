@@ -53,6 +53,8 @@
                 displayChancellor(message.content);
             } else if (gameType === 'VOTED') {
                 vote(message.sender, message.content);
+            }  else if (gameType === 'ENACTED_POLICY') {
+                enactPolicy(message.content);
             } else {
               // TODO other messages
             }
@@ -67,13 +69,6 @@
 
         drawBoards();
         users.forEach(drawPlayer);
-
-        setTimeout(() => { addLiberalPolicy(); addFascistPolicy(); }, 1000);
-        setTimeout(() => { addLiberalPolicy(); addFascistPolicy(); }, 2000);
-        setTimeout(() => { addLiberalPolicy(); addFascistPolicy(); }, 3000);
-        setTimeout(() => { addLiberalPolicy(); addFascistPolicy(); }, 4000);
-        setTimeout(() => { addLiberalPolicy(); addFascistPolicy(); }, 5000);
-        setTimeout(() => { addFascistPolicy(); }, 6000);
     }
     
     function displayPresident(player) {
@@ -116,6 +111,14 @@
         var legend = document.getElementById('playerLegend-' + player);
         legend.innerHTML = player + ' - ' + content;
         legend.style.color = color;
+    }
+
+    function enactPolicy(policy) {
+        if(policy === 'LIBERAL') {
+            addLiberalPolicy();
+        } else {
+            addFascistPolicy();
+        }
     }
 
     function addLiberalPolicy() {

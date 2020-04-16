@@ -80,7 +80,11 @@
                 nominateChancellor(message.content.split(','));
             } else if (gameType === 'VOTE') {
                 vote(message.content.split(','));
-            } else {
+            } else if (gameType === 'POLICIES') {
+                selectPolicies(message.content.split(','));
+            }  else if (gameType === 'POLICY') {
+               selectPolicy(message.content.split(','));
+           } else {
               // TODO other messages
             }
         }
@@ -96,6 +100,7 @@
         stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(message));
     }
 
+    //TODO move to a different file with all the other lobby stuff
     function displayUsers() {
         messageArea.innerHTML = '';
         users.forEach(user => {
@@ -157,6 +162,13 @@
          showDialog('VOTE', 'Vote for the government:', players);
     }
 
+    function selectPolicies(policies) {
+        showMultiChoiceDialog('POLICIES', "Choose two policies to hand over to the chancellor", policies)
+    }
+    function selectPolicy(policies) {
+            showDialog('POLICY', "Choose a policy, which will be enacted", policies)
+    }
+
     function showDialog(type, titleText, options) {
          var optionList = [];
          for (var i = 0; i < options.length; i++) { optionList.push({ text: options[i], value: options[i] }); }
@@ -176,6 +188,27 @@
             }
          });
     }
+
+    //TODO merge this with the ShowDialog function
+    function showMultiChoiceDialog(type, titleText, options) {
+             var optionList = [];
+             for (var i = 0; i < options.length; i++) { optionList.push({ text: options[i], value: options[i] }); }
+
+             //TODO remove - cancel button from prompt
+             bootbox.prompt({
+                closeButton: false,
+                title: titleText,
+                inputType: 'checkbox',
+                inputOptions: optionList,
+                callback: function (result) {
+                   console.log(result);
+                   if (result === null)
+                       showDialog(type, titleText, options);
+                   else
+                       sendReply(type, result.join());
+                }
+             });
+        }
 
     function getAvatarColor(messageSender) {
         var hash = 0;

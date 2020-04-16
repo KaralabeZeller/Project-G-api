@@ -161,12 +161,17 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             setChancellor(message.getContent());
         } else if (type == GameMessageType.VOTE) {
             processVote(message.getSender(), message.getContent());
+        } else if (type == GameMessageType.POLICIES) {
+            processPolicies(message.getSender(), message.getContent());
+        }  else if (type == GameMessageType.POLICY) {
+            enactPolicies(message.getContent());
         } else {
             // TODO other messages
         }
     }
 
     private void setChancellor(String player) {
+        //TODO implement - state watchers into all process functions
         if (state != State.NOMINATION) {
             logger.warn("Message received in a false state: {}", state.name());
             return;
@@ -205,9 +210,110 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
                 SecretHitlerMessage votedMessage = buildGameMessage(GameMessageType.VOTED, entry.getKey(), entry.getValue());
                 sendToAll(votedMessage);
             }
+
+            logger.info("Processed vote: {} {} {}", player, vote, votes);
+
+            int jaCounter = Collections.frequency(votes.getVotes().values(), "Ja!");
+
+            if (jaCounter - 1 >= players.size() / 2) {
+                logger.info("Vote result: Ja!");
+                assets.electionTracker = 0;
+                assets.updateNotElect(presidentID, chancellorID);
+                if (assets.getPolicyCount(Constants.Policy.FASCIST) >= 3) {
+                    if (chancellorID == hitlerID) {
+                        logger.info("FASCIST win - Hitler is the chancellor");
+                        state = State.FINISHED;
+                        return;
+                    }
+                }
+                state = State.ENACTMENT;
+                selectPolicy();
+            }
+
+        } else {
+            logger.info("Votes failed!");
+            assets.electionTracker++;
+            //moveTracker(); TODO implement
+            state = State.ELECTION;
+            //clearChancellor(chancellorID); TODO implement
+        }
+    }
+
+    private void selectPolicy() {
+        List<Constants.Policy> policies = assets.getTopPolicies();
+
+        String policyString = "";
+        for (int i = 0; i < policies.size(); i++) {
+            policyString += policies.get(i).name() + ",";
+        }
+        policyString = policyString.substring(0, policyString.length() - 1);
+        logger.info("Policies for the president: {}", policyString);
+
+        SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.POLICIES, policyString);
+        sendToPlayer(getPresident().getName(), policyMessage);
+
+        /*
+        String nominees = players.get(presidentID).client.processQuery("POLICIES:" + policyString);
+
+        if(assets.getPolicyCount(Constants.Policy.FASCIST) == 5) { //VETO power
+            nominees += ",VETO";
         }
 
-        logger.info("Processed vote: {} {} {}", player, vote, votes);
+        String nominee = players.get(chancellorID).client.processQuery("POLICY:" + nominees);
+
+        boolean veto = false;
+        if(nominee.equals("VETO"))
+        {
+            String vetoed = players.get(presidentID).client.processQuery("VETO?");
+            if(vetoed.equals("Ja!"))
+                veto = true;
+
+        }
+        if(!veto){
+            if (nominee.equals("FASCIST")) {
+                assets.enactPolicy(Constants.Policy.FASCIST);
+                ui.enactPolicy(Constants.Policy.FASCIST);
+            } else {
+                assets.enactPolicy(Constants.Policy.LIBERAL);
+                ui.enactPolicy(Constants.Policy.LIBERAL);
+            }
+            System.out.println("--Policy enacted by government: " + nominee);
+            assets.electionTracker = 0;
+            //moveTracker();
+
+        } else {
+            System.out.println("--Policy vetoed by government!");
+            assets.electionTracker++;
+            //moveTracker();
+        }
+
+
+        state = State.ELECTION;
+        //clearChancellor(chancellorID);
+
+         */
+
+    }
+
+    private void processPolicies(String player, String policies) {
+        if (state != State.ENACTMENT) {
+            logger.warn("Message received in a false state: {}", state.name());
+            return;
+        }
+        logger.info("Passing policies from president to chancellor: {}", policies);
+        SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.POLICY, policies);
+        sendToPlayer(getChancellor().getName(), policyMessage);
+    }
+
+    private void enactPolicies(String policy) {
+        if (state != State.ENACTMENT) {
+            logger.warn("Message received in a false state: {}", state.name());
+            return;
+        }
+        logger.info("Passing policies from president to chancellor: {}", policy);
+        SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.ENACTED_POLICY, policy);
+        sendToAll(policyMessage);
+        state = State.ELECTION;
     }
 
     @Override

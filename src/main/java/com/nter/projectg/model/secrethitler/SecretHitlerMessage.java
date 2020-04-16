@@ -17,7 +17,8 @@ public class SecretHitlerMessage extends Message {
         KILL,
         POLICIES,
         VETO,
-        POLICY
+        ENACTED_POLICY,
+        POLICY;
     }
 
     private GameMessageType gameType;
