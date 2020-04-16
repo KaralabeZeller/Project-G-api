@@ -13,8 +13,9 @@
     function startController() {
         if (!userName) {
             userName = userNameInput.value.trim();
-            if(!userName) {
-                alert("Please provide a username");
+            if (!userName) {
+                // TODO use bootbox.alert (see bootbox.prompt in controller)
+                alert('Please provide a username');
                 return;
             }
             sessionStorage.setItem('name', userName);
