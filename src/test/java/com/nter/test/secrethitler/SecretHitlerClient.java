@@ -34,10 +34,15 @@ public class SecretHitlerClient extends Client<SecretHitlerMessage> {
     }
 
     public void sendJoin(String user) {
+        Message message = buildJoinMessage(user);
+        sendAddUser(message);
+    }
+
+    private Message buildJoinMessage(String user) {
         Message message = new Message();
         message.setType(MessageType.JOIN);
         message.setSender(user);
-        sendAddUser(message);
+        return message;
     }
 
     // TODO use CompletableFuture / ListenableFuture similarly to Client#connect

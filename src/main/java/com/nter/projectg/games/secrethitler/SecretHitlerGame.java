@@ -163,7 +163,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             processVote(message.getSender(), message.getContent());
         } else if (type == GameMessageType.POLICIES) {
             processPolicies(message.getSender(), message.getContent());
-        }  else if (type == GameMessageType.POLICY) {
+        } else if (type == GameMessageType.POLICY) {
             enactPolicies(message.getContent());
         } else {
             // TODO other messages

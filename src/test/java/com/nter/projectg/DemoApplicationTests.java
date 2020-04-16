@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -78,8 +79,9 @@ public class DemoApplicationTests {
     @Test
     public void testJoin() throws InterruptedException {
         logger.info("Heló!");
+        List<String> users = Arrays.asList("TESTER1", "TESTER2", "TESTER3", "TESTER4", "TESTER5");
 
-        logger.info("Sending join messages");
+        logger.info("Sending join messages: {}", users);
         client1.sendJoin("TESTER1");
         client2.sendJoin("TESTER2");
         client3.sendJoin("TESTER3");
@@ -88,8 +90,8 @@ public class DemoApplicationTests {
 
         sleep();
 
-        logger.info("Expecting join messages");
-        Set<String> expectedJoin = new HashSet<>(Arrays.asList("TESTER1", "TESTER2", "TESTER3", "TESTER4", "TESTER5"));
+        Set<String> expectedJoin = new HashSet<>(users);
+        logger.info("Expecting join messages: {}", users);
         Assert.assertEquals(expectedJoin, client1.expectJoin());
         Assert.assertEquals(expectedJoin, client2.expectJoin());
         Assert.assertEquals(expectedJoin, client3.expectJoin());

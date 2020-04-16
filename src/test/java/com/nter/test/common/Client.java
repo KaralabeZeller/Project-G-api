@@ -5,7 +5,9 @@ import com.nter.projectg.model.common.Message.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.simp.stomp.*;
+import org.springframework.messaging.simp.stomp.StompFrameHandler;
+import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
@@ -97,25 +99,6 @@ public abstract class Client<GameMessage extends Message> {
         logger.info("sendMessage: {}", message);
 
         session.send("/app/chat.sendMessage", message);
-    }
-
-    protected static class SessionHandler extends StompSessionHandlerAdapter {
-
-        @Override
-        public void afterConnected(StompSession session, StompHeaders headers) {
-            logger.debug("Connected in session: {} {}", session, headers);
-        }
-
-        @Override
-        public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload, Throwable exception) {
-            logger.warn("Exception in session: {} {} {} {}", session, command, headers, exception);
-        }
-
-        @Override
-        public void handleTransportError(StompSession session, Throwable exception) {
-            logger.warn("Error in session: {} {}", session, exception);
-        }
-
     }
 
     protected static abstract class FrameHandler<GameMessage extends Message> implements StompFrameHandler {
