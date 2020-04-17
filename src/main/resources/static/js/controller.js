@@ -1,11 +1,12 @@
 (function () {
     'use strict';
 
-    var messageForm = document.querySelector('#messageForm'),
-        messageArea = document.querySelector('#messageArea'),
+    var messageForm       = document.querySelector('#messageForm'),
+        messageArea       = document.querySelector('#messageArea'),
         connectingElement = document.querySelector('.connecting'),
-        lobbyHeader = document.getElementById('lobbyHeader'),
-        factionCard = document.createElement("img");
+        lobbyHeader       = document.getElementById('lobbyHeader'),
+        factionCard       = document.createElement("img"),
+        membershipCard    = document.createElement("img");
 
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
 
@@ -18,6 +19,7 @@
     var started = false;
     var userFaction = null;
     var factionShow = false;
+    var membershipShow = false;
 
     var liberalPolicies = 0;
     var fascistPolicies = 0;
@@ -141,28 +143,35 @@
 
     function displayFaction(faction) {
         userFaction = faction;
-        var messageElement = document.createElement('li');
-        messageElement.classList.add('event-message');
+        var factionElement = document.createElement('li'),
+            membershipElement = document.createElement('li');
 
-        var textElement = document.createElement('p');
-        //var messageText = document.createTextNode('You are: ' + faction);
-        //textElement.appendChild(messageText);
+        factionElement.classList.add('event-message');
+        membershipElement.classList.add('event-message');
 
-        factionCard.width = 290;
-        factionCard.height = 360;
+        factionCard.width = 230;
+        factionCard.height = 311;
         factionCard.id = 'factionCard';
         factionCard.onclick = showFaction;
         showFaction()
 
-        messageElement.appendChild(factionCard);
+        membershipCard.width = 172;
+        membershipCard.height = 233;
+        membershipCard.id = 'membershipCard';
+        membershipCard.onclick = showMembership;
+        showMembership()
 
-        messageArea.appendChild(messageElement);
+        factionElement.appendChild(factionCard);
+        membershipElement.appendChild(membershipCard);
+
+        messageArea.appendChild(factionElement);
+        messageArea.appendChild(membershipElement);
         messageArea.scrollTop = messageArea.scrollHeight;
     }
 
     function showFaction() {
         if(factionShow){
-            factionCard.src = './games/secrethitler/role-card-back.png';
+            factionCard.src = './games/secrethitler/role-cover.png';
             factionShow = false;
             return;
         }
@@ -179,6 +188,23 @@
 
         factionShow = true;
     }
+
+    function showMembership() {
+        if(membershipShow){
+            membershipCard.src = './games/secrethitler/membership-cover.png';
+            membershipShow = false;
+            return;
+        }
+
+        if(userFaction === 'LIBERAL') {
+            membershipCard.src = './games/secrethitler/membership-liberal.png';
+        } else {
+            membershipCard.src = './games/secrethitler/membership-fascist.png';
+        }
+
+        membershipShow = true;
+    }
+
 
     function nominateChancellor(players) {
         showDialog('QUERY_CHANCELLOR', 'Nominate the chancellor for the government', players);

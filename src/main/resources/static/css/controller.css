@@ -139,7 +139,7 @@ button.accent {
 	overflow-y: hidden;
 	overflow-x: hidden;
 	padding: 0 20px 0px 20px;
-	height: calc(100% - 150px);
+
 }
 
 #chat-page #messageForm {
@@ -214,7 +214,7 @@ button.accent {
 
 .chat-header {
 	text-align: center;
-	padding: 15px;
+	padding: 10px;
 	border-bottom: 1px solid #ececec;
 }
 
