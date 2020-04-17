@@ -49,7 +49,7 @@
         } else if (type === 'GAME') {
             var gameType = message.gameType;
             if (gameType === 'PRESIDENT') {
-                clearPlayerLabels();
+                setTimeout(clearPlayerVotes, 30000);
                 displayPresident(message.content);
             } else if (gameType === 'CHANCELLOR') {
                 displayChancellor(message.content);
@@ -57,6 +57,8 @@
                 vote(message.sender, message.content);
             }  else if (gameType === 'ENACTED_POLICY') {
                 enactPolicy(message.content);
+            }  else if (gameType === 'TRACKER') {
+                moveTracker(message.content);
             } else {
               // TODO other messages
             }
@@ -79,9 +81,14 @@
         if (president) {
             updatePlayer(president, '');
         }
+        if(chancellor !== null)
+             updatePlayer(chancellor, '');
 
         updatePlayer(player, 'PRESIDENT');
         president = player;
+
+
+
     }
 
     function displayChancellor(player) {
@@ -94,47 +101,72 @@
     }
 
     function vote(player, content) {
-        updateLegend(player, content, '#FF0000');
-    }
-    
-    function clearVotes() {
-        if (chancellor) {
-            updatePlayer(chancellor, '');
-        }
-
-        clearPlayerLabels
-
+        updateVote(player, content);
     }
 
-    function clearPlayerLabels() {
+    function clearPlayerVotes() {
         var index = 0;
         for (index; index < users.length; ++index) {
-            var legend = document.getElementById('playerLegend-' + users[index]);
-                legend.innerHTML = users[index];
-                legend.style.color = '#000000';
+            var votes = document.getElementById('playerVote-' + users[index]);
+                votes.innerHTML = '';
         }
-        if(chancellor !== null)
-            updatePlayer(chancellor, '');
     }
 
     function drawPlayer(player) {
-        var div = document.createElement('fieldset');
+        var div = document.createElement('div');
+        var table = document.createElement('table');
+        var body = document.createElement('tbody');
+        var row = document.createElement('tr');
+        var avatar = document.createElement('td');
+        var playerName = document.createElement('td');
+        var playerRole = document.createElement('td');
+        var playerVote = document.createElement('td');
+        var color = '#CEC9CC',
+            i,
+            rc;
+
+        rc = getRandomColor(color);
         div.id = 'fieldset-' + player;
-        div.innerHTML =
-            '<legend class="player-legend" id="playerLegend-' + player + '">' + player + '</legend>' +
-            '<table><tbody><tr><td height="20" id="'+ player + '" class="player-role"></td></tr></tbody></table>';
+        div.style.backgroundColor  = rc;
+        playerName.innerHTML = player;
+        playerName.width = '150 px';
+        playerName.style.fontWeight = 'bold';
+        playerRole.id = player;
+        playerVote.id = 'playerVote-' + player;
+        playerRole.width = '230 px';
+        avatar.innerHTML = '<img src="./games/secrethitler/lizard.png" width="60" height="60" />';
+
+
+        row.appendChild(avatar);
+        row.appendChild(playerName);
+        row.appendChild(playerRole);
+        row.appendChild(playerVote);
+        body.appendChild(row);
+        table.appendChild(body);
+        div.appendChild(table);
         playersArea.appendChild(div);
     }
     
     function updatePlayer(player, text) {
         var div = document.getElementById(player);
-        div.innerHTML = text;
+        var output = text;
+        if (text === 'PRESIDENT') {
+            output = '<img src="./games/secrethitler/president.png" height="60" />';
+        } else if (text === 'CHANCELLOR') {
+            output = '<img src="./games/secrethitler/chancellor.png" height="60" />';
+        }
+
+        div.innerHTML = output;
     }
+
     
-    function updateLegend(player, content, color) {
-        var legend = document.getElementById('playerLegend-' + player);
-        legend.innerHTML = player + ' - ' + content;
-        legend.style.color = color;
+    function updateVote(player, content) {
+        var div = document.getElementById('playerVote-'+ player);
+        if(content === 'Ja!')
+            div.innerHTML = '<img src="./games/secrethitler/ballot-ja.png" height="60" />';
+        else
+            div.innerHTML = '<img src="./games/secrethitler/ballot-no.png" height="60" />';
+        
     }
 
     function enactPolicy(policy) {
@@ -144,6 +176,11 @@
             addFascistPolicy();
         }
     }
+
+    function moveTracker(tracker) {
+        //TODO
+    }
+
 
     function addLiberalPolicy() {
         var ctxLiberal = canvasLiberal.getContext('2d');
@@ -230,9 +267,22 @@
         } else {
             console.log('Failed to draw boards: Invalid user count: %s', users)
         }
+
+        moveTracker('1');
     }
 
-    //TODO implement
-    function moveTracker(electionTracker) {
+    function getRandomColor(color) {
+        var p = 1,
+            temp,
+            random = Math.random(),
+            result = '#';
+
+        while (p < color.length) {
+            temp = parseInt(color.slice(p, p += 2), 16)
+            temp += Math.floor((255 - temp) * random);
+            result += temp.toString(16).padStart(2, '0');
+        }
+        return result;
     }
+
 }());

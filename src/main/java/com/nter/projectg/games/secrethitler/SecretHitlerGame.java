@@ -237,7 +237,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
                 electPresident();
             }
 
-            votes.clear();
+              votes.clear();
         }
 
     }

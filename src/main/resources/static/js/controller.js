@@ -89,7 +89,7 @@
                 selectPolicies(message.content.split(','));
             } else if (gameType === 'POLICY') {
                 selectPolicy(message.content.split(','));
-            } else {
+            }else {
               // TODO other messages
             }
         }
@@ -162,10 +162,9 @@
         showMembership()
 
         factionElement.appendChild(factionCard);
-        membershipElement.appendChild(membershipCard);
+        factionElement.appendChild(membershipCard);
 
         messageArea.appendChild(factionElement);
-        messageArea.appendChild(membershipElement);
         messageArea.scrollTop = messageArea.scrollHeight;
     }
 

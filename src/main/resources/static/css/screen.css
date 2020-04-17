@@ -33,7 +33,7 @@ body {
 
 .game-canvas-liberal {
 	width: 60%;
-	height: 40%;
+	height: 44%;
 	background-color: #fff;
 	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
 	position: absolute;
@@ -44,7 +44,7 @@ body {
 
 .game-canvas-fascist {
 	width: 60%;
-	height: 40%;
+	height: 44%;
 	background-color: #fff;
 	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
 	position: absolute;
@@ -54,10 +54,8 @@ body {
 }
 
 .players {
-	width: 12%;
-    min-width: 100px
+    min-width: 100px;
     height: auto;
-    background-color: #d8d8de;
     box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
     position: absolute;
     top: 50%;
