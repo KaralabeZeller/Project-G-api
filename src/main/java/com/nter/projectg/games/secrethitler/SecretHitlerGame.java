@@ -191,7 +191,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
 
     private void setChancellor(String player) {
-        //TODO implement - state watchers into all process functions
+        // TODO implement - state watchers into all process functions
         if (state != State.NOMINATION) {
             logger.warn("Message received in a false state: {}", state.name());
             return;
@@ -279,7 +279,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.POLICIES, policyString);
         sendToPlayer(getPresident().getName(), policyMessage);
 
-        //TODO add to processPolicies
+        // TODO add to processPolicies
         /*
         if(nominee.equals("VETO"))
         {
@@ -568,7 +568,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
                     hitlerKilled = true;
 
                 assets.playerMap.replace(i, 0);
-                //TODO kill and disconnect player
+                // TODO kill and disconnect player
                 alivePlayers--;
                 break;
             }

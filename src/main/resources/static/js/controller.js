@@ -17,7 +17,6 @@
     var users = [];
 
     var started = false;
-    var userFaction = null;
     var factionShow = false;
     var membershipShow = false;
 
@@ -86,9 +85,9 @@
             } else if (gameType === 'VOTE') {
                 vote(message.content.split(','));
             } else if (gameType === 'POLICIES') {
-                selectPolicies(message.content.split(','));
+                showDialog('POLICIES', 'Choose two policies to hand over to the chancellor', message.content.split(','), true);
             } else if (gameType === 'POLICY') {
-                selectPolicy(message.content.split(','));
+                showDialog('POLICY', 'Choose a policy, which will be enacted', message.content.split(','));
             } else if (gameType === 'TOP_POLICIES') {
                 showTopPolicies(message.content);
             } else if (gameType === 'KILL') {
@@ -115,7 +114,7 @@
         stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(message));
     }
 
-    //TODO move to a different file with all the other lobby stuff
+    // TODO move to a different file with all the other lobby stuff
     function displayUsers() {
         messageArea.innerHTML = '';
         users.forEach(user => {
@@ -152,7 +151,6 @@
     }
 
     function displayFaction(faction) {
-        userFaction = faction;
         var factionElement = document.createElement('li'),
             membershipElement = document.createElement('li');
 
@@ -163,13 +161,13 @@
         factionCard.height = 295;
         factionCard.id = 'factionCard';
         factionCard.onclick = showFaction;
-        showFaction()
+        showFaction(faction);
 
         membershipCard.width = 172;
         membershipCard.height = 233;
         membershipCard.id = 'membershipCard';
         membershipCard.onclick = showMembership;
-        showMembership()
+        showMembership(faction);
 
         factionElement.appendChild(factionCard);
         factionElement.appendChild(membershipCard);
@@ -178,34 +176,32 @@
         messageArea.scrollTop = messageArea.scrollHeight;
     }
 
-    function showFaction() {
-        if(factionShow){
+    function showFaction(faction) {
+        if (factionShow) {
             factionCard.src = './games/secrethitler/role-cover.png';
             factionShow = false;
             return;
         }
 
-        if(userFaction === 'LIBERAL') {
+        if (faction === 'LIBERAL') {
             factionCard.src = './games/secrethitler/role-liberal.png';
-        }
-        if(userFaction === 'FASCIST') {
+        } else if (faction === 'FASCIST') {
             factionCard.src = './games/secrethitler/role-fascist.png';
-        }
-        if(userFaction === 'HITLER') {
+        } else if(faction === 'HITLER') {
             factionCard.src = './games/secrethitler/role-hitler.png';
         }
 
         factionShow = true;
     }
 
-    function showMembership() {
-        if(membershipShow){
+    function showMembership(faction) {
+        if (membershipShow) {
             membershipCard.src = './games/secrethitler/membership-cover.png';
             membershipShow = false;
             return;
         }
 
-        if(userFaction === 'LIBERAL') {
+        if (faction === 'LIBERAL') {
             membershipCard.src = './games/secrethitler/membership-liberal.png';
         } else {
             membershipCard.src = './games/secrethitler/membership-fascist.png';
@@ -222,21 +218,14 @@
         showDialog('VOTE', 'Vote for the government:', players);
     }
 
-    function selectPolicies(policies) {
-        showDialog('POLICIES', 'Choose two policies to hand over to the chancellor', policies, true);
-    }
-    function selectPolicy(policies) {
-        showDialog('POLICY', 'Choose a policy, which will be enacted', policies);
-    }
-
     function showTopPolicies(policies) {
        bootbox.alert({
            closeButton: false,
            message: "Peeked TOP policies: " + policies ,
            callback: function () {
-               //TODO
+               // TODO
            }
-       })
+       });
     }
 
     function showInvestigatedFaction(faction) {
@@ -244,9 +233,9 @@
            closeButton: false,
            message: "Faction of the investigated player: " + faction ,
            callback: function () {
-               //TODO
+               // TODO
            }
-       })
+       });
     }
 
     function showDialog(type, title, options, multiChoice = false) {

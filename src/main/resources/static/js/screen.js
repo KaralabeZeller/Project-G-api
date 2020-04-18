@@ -11,8 +11,6 @@
 
     var stompClient = null;
 
-    // TODO implement - url parameters for screen - lobby id
-    var userName = sessionStorage.getItem('name');
     var users = [];
 
     var president = null;
@@ -81,14 +79,12 @@
         if (president) {
             updatePlayer(president, '');
         }
-        if(chancellor !== null)
+        if (chancellor) {
              updatePlayer(chancellor, '');
+        }
 
         updatePlayer(player, 'PRESIDENT');
         president = player;
-
-
-
     }
 
     function displayChancellor(player) {
@@ -105,11 +101,7 @@
     }
 
     function clearPlayerVotes() {
-        var index = 0;
-        for (index; index < users.length; ++index) {
-            var votes = document.getElementById('playerVote-' + users[index]);
-                votes.innerHTML = '';
-        }
+        users.forEach(player => updateVote(player, null));
     }
 
     function drawPlayer(player) {
@@ -121,13 +113,10 @@
         var playerName = document.createElement('td');
         var playerRole = document.createElement('td');
         var playerVote = document.createElement('td');
-        var color = '#CEC9CC',
-            i,
-            rc;
+        var color = '#CEC9CC';
 
-        rc = getRandomColor(color);
         div.id = 'fieldset-' + player;
-        div.style.backgroundColor  = rc;
+        div.style.backgroundColor = getRandomColor(color);
         playerName.innerHTML = player;
         playerName.width = '150 px';
         playerName.style.fontWeight = 'bold';
@@ -154,17 +143,18 @@
         } else if (text === 'CHANCELLOR') {
             output = '<img src="./games/secrethitler/chancellor.png" height="60" />';
         }
-
         div.innerHTML = output;
     }
 
     function updateVote(player, content) {
-        var div = document.getElementById('playerVote-'+ player);
-        if(content === 'Ja!')
+        var div = document.getElementById('playerVote-' + player);
+        if (content === 'Ja!') {
             div.innerHTML = '<img src="./games/secrethitler/ballot-ja.png" height="60" />';
-        else
+        } else if (content == 'Nein!') {
             div.innerHTML = '<img src="./games/secrethitler/ballot-no.png" height="60" />';
-        
+        } else {
+            div.innerHTML = '';
+        }
     }
 
     function enactPolicy(policy) {
@@ -176,7 +166,7 @@
     }
 
     function moveTracker(tracker) {
-        //TODO
+        // TODO
     }
 
     function addLiberalPolicy() {
