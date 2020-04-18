@@ -5,14 +5,14 @@
         messageArea       = document.querySelector('#messageArea'),
         connectingElement = document.querySelector('.connecting'),
         lobbyHeader       = document.getElementById('lobbyHeader'),
-        factionCard       = document.createElement("img"),
-        membershipCard    = document.createElement("img");
+        factionCard       = document.createElement('img'),
+        membershipCard    = document.createElement('img');
 
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
 
     var stompClient = null;
 
-    // TODO implement - url parameters for controller - username
+    // TODO use url parameters for controller - username
     var userName = sessionStorage.getItem('name');
     var users = [];
 
@@ -219,19 +219,19 @@
     }
 
     function showTopPolicies(policies) {
-       bootbox.alert({
-           closeButton: false,
-           message: "Peeked TOP policies: " + policies ,
-           callback: function () {
-               // TODO
-           }
-       });
+        bootbox.alert({
+            closeButton: false,
+            message: 'Peeked TOP policies: ' + policies,
+            callback: function () {
+                // TODO
+            }
+        });
     }
 
     function showInvestigatedFaction(faction) {
         bootbox.alert({
            closeButton: false,
-           message: "Faction of the investigated player: " + faction ,
+           message: 'Faction of the investigated player: ' + faction,
            callback: function () {
                // TODO
            }
