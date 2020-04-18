@@ -97,6 +97,8 @@
                 showDialog('INVESTIGATE', 'Choose a player to be investigated', message.content.split(','));
             } else if (gameType === 'INVESTIGATE_RESULT') {
                 showInvestigatedFaction(message.content);
+            } else if (gameType === 'SPECIAL_ELECTION') {
+                showDialog('SPECIAL_ELECTION', 'Choose a player to be elected as president', message.content.split(','));
             } else {
               // TODO other messages
             }
@@ -229,11 +231,23 @@
     }
 
     function showTopPolicies(policies) {
-        //TODO implement
+       bootbox.alert({
+           closeButton: false,
+           message: "Peeked TOP policies: " + policies ,
+           callback: function () {
+               //TODO
+           }
+       })
     }
 
     function showInvestigatedFaction(faction) {
-        //TODO implement
+        bootbox.alert({
+           closeButton: false,
+           message: "Faction of the investigated player: " + faction ,
+           callback: function () {
+               //TODO
+           }
+       })
     }
 
     function showDialog(type, title, options, multiChoice = false) {
