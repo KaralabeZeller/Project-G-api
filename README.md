@@ -1,7 +1,7 @@
 # Project-G API
 
 ## Web
-http://www.project-g.xyz/comodo  
+http://www.project-g.xyz/ 
 https://api.project-g.xyz/
 
 ## Development
