@@ -14,8 +14,7 @@ public class Constants {
         VOTE,
         EVALUATE,
         ENACTMENT,
-        FINISHED,
-        DEBUG
+        FINISHED
     }
 
     public enum Policy {

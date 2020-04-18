@@ -3,6 +3,7 @@ package com.nter.projectg.games.common;
 import com.nter.projectg.lobby.Lobby;
 import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.common.Message.MessageType;
+import com.nter.projectg.games.common.util.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,7 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
     private static final Logger logger = LoggerFactory.getLogger(Game.class);
 
     private final Lobby lobby;
+    private final Timer timer;
 
     private final String name;
     private final int minPlayers;
@@ -23,7 +25,7 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
 
     public Game(Lobby lobby, String name, int minPlayers, int maxPlayers) {
         this.lobby = lobby;
-
+        this.timer = new Timer();
         this.name = name;
         this.minPlayers = minPlayers;
         this.maxPlayers = maxPlayers;
@@ -112,6 +114,10 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
         // Send start message to all sessions
         Message message = buildStartMessage(player.getName());
         lobby.sendToUser(player.getName(), message);
+    }
+
+    public Timer getTimer() {
+        return timer;
     }
 
     public void stop() {
