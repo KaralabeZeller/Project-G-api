@@ -26,7 +26,9 @@ public class Votes {
         votes.put(player, vote);
     }
 
-    public void clear() {votes.clear();}
+    public void clear() {
+        votes.clear();
+    }
 
     @Override
     public String toString() {
