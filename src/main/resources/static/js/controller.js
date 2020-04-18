@@ -89,7 +89,15 @@
                 selectPolicies(message.content.split(','));
             } else if (gameType === 'POLICY') {
                 selectPolicy(message.content.split(','));
-            }else {
+            } else if (gameType === 'TOP_POLICIES') {
+                showTopPolicies(message.content);
+            } else if (gameType === 'KILL') {
+                showDialog('KILL', 'Choose a player to be killed', message.content.split(','));
+            }  else if (gameType === 'INVESTIGATE') {
+                showDialog('INVESTIGATE', 'Choose a player to be investigated', message.content.split(','));
+            } else if (gameType === 'INVESTIGATE_RESULT') {
+                showInvestigatedFaction(message.content);
+            } else {
               // TODO other messages
             }
         }
@@ -149,8 +157,8 @@
         factionElement.classList.add('event-message');
         membershipElement.classList.add('event-message');
 
-        factionCard.width = 230;
-        factionCard.height = 311;
+        factionCard.width = 210;
+        factionCard.height = 295;
         factionCard.id = 'factionCard';
         factionCard.onclick = showFaction;
         showFaction()
@@ -218,6 +226,14 @@
     }
     function selectPolicy(policies) {
         showDialog('POLICY', 'Choose a policy, which will be enacted', policies);
+    }
+
+    function showTopPolicies(policies) {
+        //TODO implement
+    }
+
+    function showInvestigatedFaction(faction) {
+        //TODO implement
     }
 
     function showDialog(type, title, options, multiChoice = false) {

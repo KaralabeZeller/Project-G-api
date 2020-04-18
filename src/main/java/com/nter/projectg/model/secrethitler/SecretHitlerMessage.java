@@ -18,6 +18,8 @@ public class SecretHitlerMessage extends Message {
         POLICIES,
         VETO,
         ENACTED_POLICY,
+        TOP_POLICIES,
+        INVESTIGATE_RESULT,
         POLICY;
     }
 
