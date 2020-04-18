@@ -21,11 +21,10 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
 
 public class SHClient {
 
-    private static Logger logger = LoggerFactory.getLogger(SHClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(SHClient.class);
 
     private final static WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
     private String username;
@@ -46,7 +45,7 @@ public class SHClient {
         return stompClient.connect(url, headers, new MyHandler());
     }
 
-    public void subscribeChannels(StompSession session) throws ExecutionException, InterruptedException {
+    public void subscribeChannels(StompSession session) {
         this.stompSession = session;
         stompSession.subscribe("/topic/public", new StompFrameHandler() {
 
@@ -56,7 +55,7 @@ public class SHClient {
 
             public void handleFrame(StompHeaders stompHeaders, Object o) {
                 String message = new String((byte[]) o);
-                JSONObject obj = null;
+                JSONObject obj;
                 try {
                     obj = new JSONObject(message);
                     String output = obj.getString("content");
@@ -70,7 +69,6 @@ public class SHClient {
 
                     if (obj.getString("type").equals("START")) {
                         logger.info("Game started");
-                        return;
                     } else if (obj.getString("type").equals("GAME")) {
 
                         logger.info("GameType: " + obj.getString("gameType"));
@@ -102,7 +100,7 @@ public class SHClient {
 
             public void handleFrame(StompHeaders stompHeaders, Object o) {
                 String message = new String((byte[]) o);
-                JSONObject obj = null;
+                JSONObject obj;
                 try {
                     obj = new JSONObject(message);
                     String output = obj.getString("content");
@@ -154,7 +152,7 @@ public class SHClient {
 
     private void chooseOne(String message, String type) throws JSONException {
         String userList = message.replace("Selectable:", "");
-        String splitted[] = userList.split(",");
+        String[] splitted = userList.split(",");
 
         int rnd = new Random().nextInt(splitted.length);
 
@@ -170,7 +168,7 @@ public class SHClient {
 
     private void chooseTwo(String message, String type) throws JSONException {
         String userList = message.replace("Selectable:", "");
-        String splitted[] = userList.split(",");
+        String[] splitted = userList.split(",");
 
         int rnd = new Random().nextInt(splitted.length);
         String answer = "";
@@ -217,7 +215,7 @@ public class SHClient {
         stompSession.send("/app/chat.sendMessage", join.toString().getBytes());
     }
 
-    private class MyHandler extends StompSessionHandlerAdapter {
+    private static class MyHandler extends StompSessionHandlerAdapter {
         public void afterConnected(StompSession stompSession, StompHeaders stompHeaders) {
             logger.info("Connected");
         }

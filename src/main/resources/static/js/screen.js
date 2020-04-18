@@ -58,8 +58,10 @@
             }  else if (gameType === 'TRACKER') {
                 moveTracker(message.content);
             } else {
-              // TODO other messages
+                console.log('Ignoring game message: %s', message);
             }
+        } else {
+            console.log('Ignoring other message: %s', message);
         }
     }
 
@@ -166,7 +168,7 @@
     }
 
     function moveTracker(tracker) {
-        // TODO
+        // TODO implement
     }
 
     function addLiberalPolicy() {

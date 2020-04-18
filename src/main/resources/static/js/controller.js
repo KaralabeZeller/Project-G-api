@@ -12,7 +12,7 @@
 
     var stompClient = null;
 
-    // TODO use url parameters for controller - username
+    // TODO use url parameters for controller (lobby id, username)
     var userName = sessionStorage.getItem('name');
     var users = [];
 
@@ -99,8 +99,10 @@
             } else if (gameType === 'SPECIAL_ELECTION') {
                 showDialog('SPECIAL_ELECTION', 'Choose a player to be elected as president', message.content.split(','));
             } else {
-              // TODO other messages
+                console.log('Ignoring game message: %s', message);
             }
+        } else {
+            console.log('Ignoring other message: %s', message);
         }
     }
 
@@ -223,7 +225,7 @@
             closeButton: false,
             message: 'Peeked TOP policies: ' + policies,
             callback: function () {
-                // TODO
+                // TODO implement
             }
         });
     }
@@ -233,13 +235,13 @@
            closeButton: false,
            message: 'Faction of the investigated player: ' + faction,
            callback: function () {
-               // TODO
+               // TODO implement
            }
        });
     }
 
     function showDialog(type, title, options, multiChoice = false) {
-        // TODO remove - cancel button from prompt
+        // TODO remove cancel button from prompt
         bootbox.prompt({
             // buttons: { confirm: { label: 'OK' } },
             closeButton: false,
