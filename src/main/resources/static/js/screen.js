@@ -136,7 +136,6 @@
         playerRole.width = '230 px';
         avatar.innerHTML = '<img src="./games/secrethitler/lizard.png" width="60" height="60" />';
 
-
         row.appendChild(avatar);
         row.appendChild(playerName);
         row.appendChild(playerRole);
@@ -159,7 +158,6 @@
         div.innerHTML = output;
     }
 
-    
     function updateVote(player, content) {
         var div = document.getElementById('playerVote-'+ player);
         if(content === 'Ja!')
@@ -180,7 +178,6 @@
     function moveTracker(tracker) {
         //TODO
     }
-
 
     function addLiberalPolicy() {
         var ctxLiberal = canvasLiberal.getContext('2d');

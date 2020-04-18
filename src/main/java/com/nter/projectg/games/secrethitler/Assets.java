@@ -1,5 +1,9 @@
 package com.nter.projectg.games.secrethitler;
 
+import com.nter.projectg.games.secrethitler.Constants.Faction;
+import com.nter.projectg.games.secrethitler.Constants.Policy;
+import com.nter.projectg.games.secrethitler.Constants.Power;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,19 +11,19 @@ import java.util.List;
 
 public class Assets {
 
-    private List<Constants.Faction> factions;
+    private List<Faction> factions;
     public int electionTracker;
-    private List<Constants.Policy> policies;
-    private List<Constants.Policy> enactedPolicies;
-    private List<Constants.Power> powers;
-    public List<Constants.Power> activePowers;
-    public int[] nonElectables;
+    private List<Policy> policies;
+    private List<Policy> enactedPolicies;
+    private List<Power> powers;
+    public List<Power> activePowers;
+    public int[] nonCandidates;
     public HashMap<Integer, Integer> playerMap;
     public List<SecretHitlerPlayer> players;
 
     public Assets(List<SecretHitlerPlayer> players) {
         this.players = players;
-        nonElectables = new int[2];
+        nonCandidates = new int[2];
         electionTracker = 0;
         playerMap = new HashMap<>();
 
@@ -41,26 +45,26 @@ public class Assets {
         activePowers = new ArrayList<>();
 
         if (players.size() < 7) {
-            powers.add(Constants.Power.POLICY_PEEK);
-            powers.add(Constants.Power.EXECUTION);
-            powers.add(Constants.Power.EXECUTION);
+            powers.add(Power.POLICY_PEEK);
+            powers.add(Power.EXECUTION);
+            powers.add(Power.EXECUTION);
 
         } else {
             if (players.size() >= 9) {
-                powers.add(Constants.Power.INVESTIGATE_LOYALTY);
+                powers.add(Power.INVESTIGATE_LOYALTY);
             }
 
-            powers.add(Constants.Power.INVESTIGATE_LOYALTY);
-            powers.add(Constants.Power.SPECIAL_ELECTION);
-            powers.add(Constants.Power.EXECUTION);
-            powers.add(Constants.Power.EXECUTION);
+            powers.add(Power.INVESTIGATE_LOYALTY);
+            powers.add(Power.SPECIAL_ELECTION);
+            powers.add(Power.EXECUTION);
+            powers.add(Power.EXECUTION);
         }
 
     }
 
     public void updateNotElect(int a, int b) {
-        nonElectables[0] = a;
-        nonElectables[1] = b;
+        nonCandidates[0] = a;
+        nonCandidates[1] = b;
     }
 
     private void initPolicies() {
@@ -69,9 +73,9 @@ public class Assets {
 
         for (int i = 0; i < 18; i++) {
             if (i < 11)
-                policies.add(Constants.Policy.FASCIST);
+                policies.add(Policy.FASCIST);
             else
-                policies.add(Constants.Policy.LIBERAL);
+                policies.add(Policy.LIBERAL);
         }
         Collections.shuffle(policies);
     }
@@ -79,71 +83,71 @@ public class Assets {
     private void initFactions() {
         factions = new ArrayList<>(players.size());
 
-        factions.add(Constants.Faction.HITLER);
-        factions.add(Constants.Faction.FASCIST);
-        factions.add(Constants.Faction.LIBERAL);
-        factions.add(Constants.Faction.LIBERAL);
-        factions.add(Constants.Faction.LIBERAL);
+        factions.add(Faction.HITLER);
+        factions.add(Faction.FASCIST);
+        factions.add(Faction.LIBERAL);
+        factions.add(Faction.LIBERAL);
+        factions.add(Faction.LIBERAL);
 
         if (players.size() == 6) {
-            factions.add(Constants.Faction.LIBERAL);
+            factions.add(Faction.LIBERAL);
         }
 
         if (players.size() == 7) {
-            factions.add(Constants.Faction.LIBERAL);
-            factions.add(Constants.Faction.FASCIST);
+            factions.add(Faction.LIBERAL);
+            factions.add(Faction.FASCIST);
         }
 
         if (players.size() == 8) {
-            factions.add(Constants.Faction.LIBERAL);
-            factions.add(Constants.Faction.LIBERAL);
-            factions.add(Constants.Faction.FASCIST);
+            factions.add(Faction.LIBERAL);
+            factions.add(Faction.LIBERAL);
+            factions.add(Faction.FASCIST);
         }
 
         if (players.size() == 9) {
-            factions.add(Constants.Faction.LIBERAL);
-            factions.add(Constants.Faction.LIBERAL);
-            factions.add(Constants.Faction.FASCIST);
-            factions.add(Constants.Faction.FASCIST);
+            factions.add(Faction.LIBERAL);
+            factions.add(Faction.LIBERAL);
+            factions.add(Faction.FASCIST);
+            factions.add(Faction.FASCIST);
         }
 
         if (players.size() == 10) {
-            factions.add(Constants.Faction.LIBERAL);
-            factions.add(Constants.Faction.LIBERAL);
-            factions.add(Constants.Faction.LIBERAL);
-            factions.add(Constants.Faction.FASCIST);
-            factions.add(Constants.Faction.FASCIST);
+            factions.add(Faction.LIBERAL);
+            factions.add(Faction.LIBERAL);
+            factions.add(Faction.LIBERAL);
+            factions.add(Faction.FASCIST);
+            factions.add(Faction.FASCIST);
         }
 
         Collections.shuffle(factions);
 
     }
 
-    public List<Constants.Faction> getFactions() {
+    public List<Faction> getFactions() {
         return factions;
     }
 
-    public Constants.Policy anectTopPolicy() {
-        Constants.Policy pol = policies.get(0);
+    public Policy enactTopPolicy() {
+        Policy pol = policies.get(0);
         enactedPolicies.add(pol);
         policies.remove(0);
         return pol;
 
     }
 
-    public List<Constants.Policy> getTopPolicies() {
-        List<Constants.Policy> returnPol = new ArrayList<>();
+    public List<Policy> getTopPolicies() {
+        List<Policy> returnPol = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             returnPol.add(policies.get(i));
         }
         return returnPol;
     }
 
-    public void enactPolicy(Constants.Policy policy) {
+    public void enactPolicy(Policy policy) {
         int index = 0;
         for (int i = 0; i < 3; i++) {
-            Constants.Policy pol = policies.get(i);
-            if (pol == Constants.Policy.FASCIST) {
+            Policy pol = policies.get(i);
+            if (pol == Policy.FASCIST) {
                 index = i;
                 break;
             }
@@ -154,9 +158,9 @@ public class Assets {
         Collections.shuffle(policies);
     }
 
-    public int getPolicyCount(Constants.Policy pol) {
+    public int getPolicyCount(Policy pol) {
         int counter = 0;
-        for (Constants.Policy policy : enactedPolicies) {
+        for (Policy policy : enactedPolicies) {
             if (policy == pol) {
                 counter++;
             }

@@ -30,6 +30,7 @@ public class SHClient {
     private final static WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
     private String username;
     private StompSession stompSession;
+
     public ListenableFuture<StompSession> connect() {
 
         Transport webSocketTransport = new WebSocketTransport(new StandardWebSocketClient());
@@ -67,12 +68,12 @@ public class SHClient {
                     String content = getContent(message);
 
 
-                    if ( obj.getString("type").equals("START")) {
+                    if (obj.getString("type").equals("START")) {
                         logger.info("Game started");
                         return;
-                    } else if(obj.getString("type").equals("GAME")) {
+                    } else if (obj.getString("type").equals("GAME")) {
 
-                        logger.info("GameType: " +  obj.getString("gameType"));
+                        logger.info("GameType: " + obj.getString("gameType"));
                         if (obj.getString("gameType").equals("FACTION")) {
                             if (message.contains("FASCIST"))
                                 logger.info("You are FASCIST");
@@ -208,7 +209,7 @@ public class SHClient {
         stompSession.send("/app/chat.addUser", join.toString().getBytes());
     }
 
-    public void sendStart (StompSession stompSession, String username) throws JSONException {
+    public void sendStart(StompSession stompSession, String username) throws JSONException {
         JSONObject join = new JSONObject();
         join.put("sender", username);
         join.put("type", "START");

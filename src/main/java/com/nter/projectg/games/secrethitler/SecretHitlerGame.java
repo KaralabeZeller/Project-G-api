@@ -2,6 +2,7 @@ package com.nter.projectg.games.secrethitler;
 
 import com.nter.projectg.games.common.Game;
 import com.nter.projectg.games.secrethitler.Constants.Faction;
+import com.nter.projectg.games.secrethitler.Constants.Policy;
 import com.nter.projectg.games.secrethitler.Constants.State;
 import com.nter.projectg.lobby.Lobby;
 import com.nter.projectg.model.secrethitler.SecretHitlerMessage;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlayer> {
 
@@ -138,27 +140,27 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         logger.info("President nominating a chancellor: {}", president);
         state = State.NOMINATION;
 
-        List<String> nominablePlayers = new ArrayList<>();
+        List<String> eligiblePlayers = new ArrayList<>();
         for (int i = 0; i < players.size(); i++) {
             if (alivePlayers <= 5) {
-                if (i != assets.nonElectables[1] && i != presidentID) {
+                if (i != assets.nonCandidates[1] && i != presidentID) {
                     if (assets.playerMap.get(i) == 1) {
                         SecretHitlerPlayer u = players.get(i);
-                        nominablePlayers.add(u.getName());
+                        eligiblePlayers.add(u.getName());
                     }
                 }
             } else {
-                if (i != assets.nonElectables[0] && i != assets.nonElectables[1] && i != presidentID) {
+                if (i != assets.nonCandidates[0] && i != assets.nonCandidates[1] && i != presidentID) {
                     if (assets.playerMap.get(i) == 1) {
                         SecretHitlerPlayer u = players.get(i);
-                        nominablePlayers.add(u.getName());
+                        eligiblePlayers.add(u.getName());
                     }
                 }
             }
         }
 
-        String content = String.join(",", nominablePlayers);
-        logger.info("Nominable players for chancellor {}", nominablePlayers);
+        String content = String.join(",", eligiblePlayers);
+        logger.info("Eligible players for chancellor {}", eligiblePlayers);
         SecretHitlerMessage chancellorMessage = buildGameMessage(GameMessageType.QUERY_CHANCELLOR, content);
         sendToPlayer(president.getName(), chancellorMessage);
     }
@@ -177,9 +179,9 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         } else if (type == GameMessageType.POLICY) {
             enactPolicies(message.getContent());
         } else if (type == GameMessageType.KILL) {
-            preocessKill(message.getContent());
+            processKill(message.getContent());
         } else if (type == GameMessageType.INVESTIGATE) {
-            preocessInvestigate(message.getContent());
+            processInvestigate(message.getContent());
         } else if (type == GameMessageType.SPECIAL_ELECTION) {
             processSpecialElection(message.getContent());
         } else {
@@ -237,7 +239,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
                 logger.info("Vote result: Ja!");
                 assets.electionTracker = 0;
                 assets.updateNotElect(presidentID, chancellorID);
-                if (assets.getPolicyCount(Constants.Policy.FASCIST) >= 3) {
+                if (assets.getPolicyCount(Policy.FASCIST) >= 3) {
                     if (chancellorID == hitlerID) {
                         logger.info("FASCIST win - Hitler is the chancellor");
                         state = State.FINISHED;
@@ -254,7 +256,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
                 electPresident();
             }
 
-              votes.clear();
+            votes.clear();
         }
 
     }
@@ -269,13 +271,9 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     }
 
     private void selectPolicy() {
-        List<Constants.Policy> policies = assets.getTopPolicies();
-
-        String policyString = "";
-        for (int i = 0; i < policies.size(); i++) {
-            policyString += policies.get(i).name() + ",";
-        }
-        policyString = policyString.substring(0, policyString.length() - 1);
+        List<Policy> policies = assets.getTopPolicies();
+        List<String> policyNames = policies.stream().map(Enum::toString).collect(Collectors.toList());
+        String policyString = String.join(",", policyNames);
         logger.info("Policies for the president: {}", policyString);
 
         SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.POLICIES, policyString);
@@ -292,11 +290,11 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         }
         if(!veto){
             if (nominee.equals("FASCIST")) {
-                assets.enactPolicy(Constants.Policy.FASCIST);
-                ui.enactPolicy(Constants.Policy.FASCIST);
+                assets.enactPolicy(Policy.FASCIST);
+                ui.enactPolicy(Policy.FASCIST);
             } else {
-                assets.enactPolicy(Constants.Policy.LIBERAL);
-                ui.enactPolicy(Constants.Policy.LIBERAL);
+                assets.enactPolicy(Policy.LIBERAL);
+                ui.enactPolicy(Policy.LIBERAL);
             }
             logger.info("--Policy enacted by government: " + nominee);
             assets.electionTracker = 0;
@@ -307,10 +305,10 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             assets.electionTracker++;
             //moveTracker();
         }
+
         state = State.ELECTION;
-
+        //clearChancellor(chancellorID);
          */
-
     }
 
     private void processPolicies(String player, String policies) {
@@ -332,9 +330,9 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.ENACTED_POLICY, policy);
         sendToAll(policyMessage);
         if (policy.equals("FASCIST")) {
-            assets.enactPolicy(Constants.Policy.FASCIST);
+            assets.enactPolicy(Policy.FASCIST);
         } else {
-            assets.enactPolicy(Constants.Policy.LIBERAL);
+            assets.enactPolicy(Policy.LIBERAL);
         }
         state = State.ELECTION;
         electPresident();
@@ -383,6 +381,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         SecretHitlerMessage presidentMessage = buildGameMessage(GameMessageType.PRESIDENT, getPresident().getName());
         sendToPlayer(player.getName(), presidentMessage);
     }
+
     @Override
     public void stop() {
         super.stop();
@@ -403,35 +402,31 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     private void checkAssets() {
         if (assets.electionTracker == 3) {
             logger.info("Election tracker: 3 - Top policy will be enacted");
-            Constants.Policy topPolicy = assets.anectTopPolicy();
+            Policy topPolicy = assets.enactTopPolicy();
             SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.ENACTED_POLICY, topPolicy.name());
             sendToAll(policyMessage);
-            logger.info("Policy ecanted: " + topPolicy.name());
+            logger.info("Policy enacted: " + topPolicy.name());
             assets.electionTracker = 0;
             //moveTracker();
         }
 
-
         if (getPlayers().size() < 7) { // 5 - 6 PLAYERS
-            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 3) { // PEAK TOP POLICY
+            if (assets.getPolicyCount(Policy.FASCIST) == 3) { // PEAK TOP POLICY
                 if (assets.activePowers.size() == 0) {
-                    List<Constants.Policy> policies = assets.getTopPolicies();
-                    String policyString = "";
-                    for (int i = 0; i < policies.size(); i++) {
-                        policyString += policies.get(i).name() + ",";
-                    }
-                    policyString = policyString.substring(0, policyString.length() - 1);
+                    List<Policy> policies = assets.getTopPolicies();
+                    List<String> policyNames = policies.stream().map(Enum::toString).collect(Collectors.toList());
+                    String policyString = String.join(",", policyNames);
                     logger.info("Sending top policies for the president to peek: " + policyString);
                     SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.TOP_POLICIES, policyString);
                     sendToPlayer(getPresident().getName(), policyMessage);
                     assets.usePower();
                 }
             }
-            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 4 && assets.activePowers.size() == 1) { // KILL SOMEONE
+            if (assets.getPolicyCount(Policy.FASCIST) == 4 && assets.activePowers.size() == 1) { // KILL SOMEONE
                 killUser();
                 assets.usePower();
             }
-            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 5 && assets.activePowers.size() == 2) {
+            if (assets.getPolicyCount(Policy.FASCIST) == 5 && assets.activePowers.size() == 2) {
                 killUser();
                 assets.usePower();
             }
@@ -439,25 +434,25 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
         if (getPlayers().size() == 7 || getPlayers().size() == 8) { // 7 - 8 PLAYERS
 
-            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 2) { // INVESTIGATE LOYALITY
+            if (assets.getPolicyCount(Policy.FASCIST) == 2) { // INVESTIGATE LOYALTY
                 if (assets.activePowers.size() == 0) {
                     investigate();
                     assets.usePower();
                 }
             }
-            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 3) { // SPECIAL ELECTION
+            if (assets.getPolicyCount(Policy.FASCIST) == 3) { // SPECIAL ELECTION
                 if (assets.activePowers.size() == 1) {
                     specialElection();
                     assets.usePower();
                 }
             }
-            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 4) {
+            if (assets.getPolicyCount(Policy.FASCIST) == 4) {
                 if (assets.activePowers.size() == 2) {
                     killUser();
                     assets.usePower();
                 }
             }
-            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 5) {
+            if (assets.getPolicyCount(Policy.FASCIST) == 5) {
                 if (assets.activePowers.size() == 3) {
                     killUser();
                     assets.usePower();
@@ -467,31 +462,31 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
         if (getPlayers().size() == 9 || getPlayers().size() == 10) { // 9 - 10 PLAYERS
 
-            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 1) { // INVESTIGATE LOYALITY
+            if (assets.getPolicyCount(Policy.FASCIST) == 1) { // INVESTIGATE LOYALTY
                 if (assets.activePowers.size() == 0) {
                     investigate();
                     assets.usePower();
                 }
             }
-            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 2) { // INVESTIGATE LOYALITY
+            if (assets.getPolicyCount(Policy.FASCIST) == 2) { // INVESTIGATE LOYALTY
                 if (assets.activePowers.size() == 1) {
                     investigate();
                     assets.usePower();
                 }
             }
-            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 3) { // SPECIAL ELECTION
+            if (assets.getPolicyCount(Policy.FASCIST) == 3) { // SPECIAL ELECTION
                 if (assets.activePowers.size() == 2) {
                     specialElection();
                     assets.usePower();
                 }
             }
-            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 4) {
+            if (assets.getPolicyCount(Policy.FASCIST) == 4) {
                 if (assets.activePowers.size() == 3) {
                     killUser();
                     assets.usePower();
                 }
             }
-            if (assets.getPolicyCount(Constants.Policy.FASCIST) == 5) {
+            if (assets.getPolicyCount(Policy.FASCIST) == 5) {
                 if (assets.activePowers.size() == 4) {
                     killUser();
                     assets.usePower();
@@ -499,16 +494,15 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             }
         }
 
-        if (assets.getPolicyCount(Constants.Policy.FASCIST) == 6) {
+        if (assets.getPolicyCount(Policy.FASCIST) == 6) {
             state = State.FINISHED;
             logger.info("FASCIST victory");
             return;
         }
 
-        if (assets.getPolicyCount(Constants.Policy.LIBERAL) == 5) {
+        if (assets.getPolicyCount(Policy.LIBERAL) == 5) {
             state = State.FINISHED;
             logger.info("LIBERAL victory");
-            return;
         }
     }
 
@@ -529,39 +523,41 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
     private void killUser() {
         logger.info("Query user to be killed by the president");
-        String message = "";
+
+        List<SecretHitlerPlayer> killablePlayers = new ArrayList<>();
         for (int i = 0; i < players.size(); i++) {
             if (i != presidentID && assets.playerMap.get(i) == 1) {
-                SecretHitlerPlayer u = players.get(i);
-                message += u.getName() + ",";
+                killablePlayers.add(players.get(i));
             }
         }
-        message = message.substring(0, message.length() - 1);
 
-        SecretHitlerMessage killMessage = buildGameMessage(GameMessageType.KILL, message);
+        List<String> playerNames = killablePlayers.stream().map(p -> p.getName()).collect(Collectors.toList());
+        String killString = String.join(",", playerNames);
+        logger.info("Kill for the president: {}", killString);
+
+        SecretHitlerMessage killMessage = buildGameMessage(GameMessageType.KILL, killString);
         sendToPlayer(getPresident().getName(), killMessage);
-
-
     }
 
     private void investigate() {
         logger.info("Query user to be investigated by the president");
-        String message = "";
+
+        List<SecretHitlerPlayer> investigablePlayers = new ArrayList<>();
         for (int i = 0; i < players.size(); i++) {
             if (i != presidentID && assets.playerMap.get(i) == 1) {
-                SecretHitlerPlayer u = players.get(i);
-                message += u.getName() + ",";
+                investigablePlayers.add(players.get(i));
             }
         }
-        message = message.substring(0, message.length() - 1);
 
-        SecretHitlerMessage killMessage = buildGameMessage(GameMessageType.INVESTIGATE, message);
+        List<String> playerNames = investigablePlayers.stream().map(p -> p.getName()).collect(Collectors.toList());
+        String investigateString = String.join(",", playerNames);
+        logger.info("Kill for the president: {}", investigateString);
+
+        SecretHitlerMessage killMessage = buildGameMessage(GameMessageType.INVESTIGATE, investigateString);
         sendToPlayer(getPresident().getName(), killMessage);
-
-
     }
 
-    private void preocessKill(String content) {
+    private void processKill(String content) {
         logger.info("Processing killed user: " + content);
         boolean hitlerKilled = false;
         for (int i = 0; i < players.size(); i++) {
@@ -573,7 +569,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
                 assets.playerMap.replace(i, 0);
                 //TODO kill and disconnect player
-                alivePlayers --;
+                alivePlayers--;
                 break;
             }
         }
@@ -583,18 +579,16 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         if (hitlerKilled) {
             state = State.FINISHED;
             logger.info("LIBERAL win - Hitler is killed");
-            return;
         }
     }
 
-    private void preocessInvestigate(String content) {
+    private void processInvestigate(String content) {
         logger.info("Processing investigated user: " + content);
         Faction f = null;
-        for(SecretHitlerPlayer player: players) {
-            if(player.getName().equals(content))
-            {
+        for (SecretHitlerPlayer player : players) {
+            if (player.getName().equals(content)) {
                 f = player.getFaction();
-                if(f.equals(Faction.HITLER)) {
+                if (f.equals(Faction.HITLER)) {
                     f = Faction.FASCIST;
                 }
                 break;

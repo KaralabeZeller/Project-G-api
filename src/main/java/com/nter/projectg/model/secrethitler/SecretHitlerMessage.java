@@ -20,7 +20,7 @@ public class SecretHitlerMessage extends Message {
         ENACTED_POLICY,
         TOP_POLICIES,
         INVESTIGATE_RESULT,
-        POLICY;
+        POLICY
     }
 
     private GameMessageType gameType;

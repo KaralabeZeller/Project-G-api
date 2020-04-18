@@ -214,7 +214,6 @@
         membershipShow = true;
     }
 
-
     function nominateChancellor(players) {
         showDialog('QUERY_CHANCELLOR', 'Nominate the chancellor for the government', players);
     }
