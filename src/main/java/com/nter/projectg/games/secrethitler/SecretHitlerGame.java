@@ -285,10 +285,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             assets.electionTracker++;
             //moveTracker();
         }
-
-
         state = State.ELECTION;
-        //clearChancellor(chancellorID);
 
          */
 
