@@ -57,6 +57,8 @@
                 enactPolicy(message.content);
             }  else if (gameType === 'TRACKER') {
                 moveTracker(message.content);
+            } else if (gameType === 'KILLED') {
+                killUser(message.content);
             } else {
                 console.log('Ignoring game message: %s', message);
             }
@@ -106,6 +108,16 @@
         users.forEach(player => updateVote(player, null));
     }
 
+    function killUser(player) {
+        var avatar = document.getElementById('avatar-' + player),
+            div = document.getElementById('fieldset-' + player),
+            name = document.getElementById('name-' + player);
+
+        div.style.backgroundColor = '#c9ccce'; // TODO stylesheet
+        avatar.innerHTML = '<img src="./games/secrethitler/lizard_killed.png" width="60" height="60" />';
+        name.style.color = 'grey';
+    }
+
     function drawPlayer(player) {
         var div = document.createElement('div');
         var table = document.createElement('table');
@@ -115,16 +127,19 @@
         var playerName = document.createElement('td');
         var playerRole = document.createElement('td');
         var playerVote = document.createElement('td');
-        var color = '#CEC9CC';
+        var color = '#c9ccce';
 
+        table.id = 'table-' + player;
         div.id = 'fieldset-' + player;
         div.style.backgroundColor = getRandomColor(color);
         playerName.innerHTML = player;
+        playerName.id = 'name-' + player;
         playerName.width = '150 px';
         playerName.style.fontWeight = 'bold';
         playerRole.id = player;
         playerVote.id = 'playerVote-' + player;
         playerRole.width = '230 px';
+        avatar.id = 'avatar-' + player;
         avatar.innerHTML = '<img src="./games/secrethitler/lizard.png" width="60" height="60" />';
 
         row.appendChild(avatar);

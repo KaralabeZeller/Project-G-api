@@ -162,13 +162,13 @@
         factionCard.width = 210;
         factionCard.height = 295;
         factionCard.id = 'factionCard';
-        factionCard.onclick = showFaction;
+        factionCard.onclick = event => showFaction(faction);
         showFaction(faction);
 
         membershipCard.width = 172;
         membershipCard.height = 233;
         membershipCard.id = 'membershipCard';
-        membershipCard.onclick = showMembership;
+        membershipCard.onclick = event => showMembership(faction);
         showMembership(faction);
 
         factionElement.appendChild(factionCard);

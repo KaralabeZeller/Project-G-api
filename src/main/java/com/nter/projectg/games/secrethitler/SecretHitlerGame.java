@@ -585,6 +585,8 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
                 assets.playerMap.replace(i, 0);
                 // TODO kill and disconnect player
+                SecretHitlerMessage killMessage = buildGameMessage(GameMessageType.KILLED, content);
+                sendToAll(killMessage);
                 alivePlayers--;
                 break;
             }
@@ -595,6 +597,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         if (hitlerKilled) {
             state = State.FINISHED;
             logger.info("LIBERAL win - Hitler is killed");
+            return;
         }
 
         getTimer().suspend(()->electPresident(), 5);
