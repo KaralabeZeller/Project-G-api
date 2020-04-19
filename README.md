@@ -2,7 +2,8 @@
 
 ## Web
 http://www.project-g.xyz/  
-https://api.project-g.xyz/
+https://api.project-g.xyz/  
+https://api.project-g.xyz/log?api-key=N7WxsJLRePC4ZLqy
 
 ## Development
 

@@ -1,9 +1,9 @@
 package com.nter.projectg.games.common;
 
+import com.nter.projectg.games.common.util.Timer;
 import com.nter.projectg.lobby.Lobby;
 import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.common.Message.MessageType;
-import com.nter.projectg.games.common.util.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

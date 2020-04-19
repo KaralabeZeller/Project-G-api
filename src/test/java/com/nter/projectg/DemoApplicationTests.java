@@ -37,7 +37,7 @@ public class DemoApplicationTests {
 
     @Before
     public void setUp() throws Exception {
-        logger.info("Creating clients");
+        logger.info("Creating Secret Hitler clients");
         client1 = new SecretHitlerClient(port);
         client2 = new SecretHitlerClient(port);
         client3 = new SecretHitlerClient(port);

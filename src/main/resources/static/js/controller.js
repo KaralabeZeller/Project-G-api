@@ -197,7 +197,7 @@
             factionCard.src = './games/secrethitler/role-liberal.png';
         } else if (faction === 'FASCIST') {
             factionCard.src = './games/secrethitler/role-fascist.png';
-        } else if(faction === 'HITLER') {
+        } else if (faction === 'HITLER') {
             factionCard.src = './games/secrethitler/role-hitler.png';
         }
 

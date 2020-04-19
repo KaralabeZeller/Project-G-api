@@ -55,40 +55,36 @@ public class SHClient {
 
             public void handleFrame(StompHeaders stompHeaders, Object o) {
                 String message = new String((byte[]) o);
-                JSONObject obj;
                 try {
-                    obj = new JSONObject(message);
-                    String output = obj.getString("content");
+                    JSONObject obj = new JSONObject(message);
+                    logger.info("Received message: {} {}", obj, stompHeaders);
 
-
-                    //JSONObject jsonMessage = new JSONObject(message);
-
-                    logger.info("Received message " + message);
                     String content = getContent(message);
-
-
                     if (obj.getString("type").equals("START")) {
                         logger.info("Game started");
+                        logger.info("Game type: {}", content);
                     } else if (obj.getString("type").equals("GAME")) {
 
-                        logger.info("GameType: " + obj.getString("gameType"));
-                        if (obj.getString("gameType").equals("FACTION")) {
+                        String gameType = obj.getString("gameType");
+                        if (gameType.equals("FACTION")) {
                             if (message.contains("FASCIST"))
                                 logger.info("You are FASCIST");
                             if (message.contains("LIBERAL"))
                                 logger.info("You are LIBERAL");
                             if (message.contains("HITLER"))
                                 logger.info("You are HITLER");
-                        } else if (obj.getString("gameType").equals("VOTE")) {
+                        } else if (gameType.equals("VOTE")) {
                             chooseOne(content, "VOTE");
+                        } else {
+                            logger.warn("Unexpected game message: {}", message);
                         }
-                    }
 
+                    } else {
+                        logger.warn("Unexpected other message: {}", message);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-
             }
         });
 
@@ -100,38 +96,41 @@ public class SHClient {
 
             public void handleFrame(StompHeaders stompHeaders, Object o) {
                 String message = new String((byte[]) o);
-                JSONObject obj;
                 try {
-                    obj = new JSONObject(message);
-                    String output = obj.getString("content");
-                    //JSONObject jsonMessage = new JSONObject(message);
+                    JSONObject obj = new JSONObject(message);
+                    logger.info("Received message: {} {}", obj, stompHeaders);
 
-                    logger.info("Received message " + message);
                     String content = getContent(message);
                     if (obj.getString("type").equals("GAME")) {
 
-                        if (obj.getString("gameType").equals("FACTION")) {
+                        String gameType = obj.getString("gameType");
+                        if (gameType.equals("FACTION")) {
                             if (message.contains("FASCIST"))
                                 logger.info("You are FASCIST");
                             if (message.contains("LIBERAL"))
                                 logger.info("You are LIBERAL");
                             if (message.contains("HITLER"))
                                 logger.info("You are HITLER");
-                        } else if (obj.getString("gameType").equals("QUERY_CHANCELLOR")) {
+                        } else if (gameType.equals("QUERY_CHANCELLOR")) {
                             chooseOne(content, "QUERY_CHANCELLOR");
-                        } else if (obj.getString("gameType").equals("POLICIES")) {
+                        } else if (gameType.equals("POLICIES")) {
                             chooseTwo(content, "POLICIES");
-                        } else if (obj.getString("gameType").equals("POLICY")) {
+                        } else if (gameType.equals("POLICY")) {
                             chooseOne(content, "POLICY");
-                        } else if (obj.getString("gameType").equals("TOP_POLICIES")) {
-                            logger.info("Peeked policy: " + content);
-                        } else if (obj.getString("gameType").equals("KILL")) {
+                        } else if (gameType.equals("TOP_POLICIES")) {
+                            logger.info("Peeked policy: {}", content);
+                        } else if (gameType.equals("KILL")) {
                             chooseOne(content, "KILL");
-                        } else if (obj.getString("gameType").equals("INVESTIGATE")) {
+                        } else if (gameType.equals("INVESTIGATE")) {
                             chooseOne(content, "INVESTIGATE");
-                        } else if (obj.getString("gameType").equals("INVESTIGATE_RESULT")) {
-                            logger.info("Investigation result: " + content);
+                        } else if (gameType.equals("INVESTIGATE_RESULT")) {
+                            logger.info("Investigation result: {}", content);
+                        } else {
+                            logger.warn("Unexpected game message: {}", message);
                         }
+
+                    } else {
+                        logger.warn("Unexpected other message: {}", message);
                     }
 
                 } catch (JSONException e) {
@@ -145,10 +144,9 @@ public class SHClient {
     private String getContent(String message) throws JSONException {
         JSONObject obj = new JSONObject(message);
         String output = obj.getString("content");
-        logger.info("Message trimmed: " + output);
+        logger.info("Message trimmed: {}", output);
         return output;
     }
-
 
     private void chooseOne(String message, String type) throws JSONException {
         String userList = message.replace("Selectable:", "");
@@ -162,7 +160,7 @@ public class SHClient {
             e.printStackTrace();
         }
 
-        logger.info("Reply: " + splitted[rnd]);
+        logger.info("Reply: {}", splitted[rnd]);
         sendMessage(splitted[rnd], type);
     }
 
@@ -184,7 +182,7 @@ public class SHClient {
             e.printStackTrace();
         }
 
-        logger.info("Reply: " + answer);
+        logger.info("Reply: {}", answer);
         sendMessage(answer, type);
     }
 
@@ -217,7 +215,7 @@ public class SHClient {
 
     private static class MyHandler extends StompSessionHandlerAdapter {
         public void afterConnected(StompSession stompSession, StompHeaders stompHeaders) {
-            logger.info("Connected");
+            logger.info("Connected: {} {}", stompSession, stompHeaders);
         }
     }
 
