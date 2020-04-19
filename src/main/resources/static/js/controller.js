@@ -22,6 +22,8 @@
 
     var liberalPolicies = 0;
     var fascistPolicies = 0;
+    var subscriptionUser;
+    var subscriptionPublic;
 
     connect();
 
@@ -32,8 +34,8 @@
     }
 
     function onConnected() {
-        stompClient.subscribe('/topic/public', onMessageReceived);
-        stompClient.subscribe('/user/topic/public', onMessageReceived);
+        subscriptionPublic = stompClient.subscribe('/topic/public', onMessageReceived);
+        subscriptionUser = stompClient.subscribe('/user/topic/public', onMessageReceived);
 
         var message = {
             sender: userName,
@@ -98,10 +100,15 @@
                 showInvestigatedFaction(message.content);
             } else if (gameType === 'SPECIAL_ELECTION') {
                 showDialog('SPECIAL_ELECTION', 'Choose a player to be elected as president', message.content.split(','));
+            } else if (gameType === 'KILLED') {
+                dsq();
             } else {
                 console.log('Ignoring game message: %s', message);
             }
+        }  else if (type === 'GAME') {
+            dsq();
         } else {
+        }
             console.log('Ignoring other message: %s', message);
         }
     }
@@ -147,6 +154,7 @@
     }
 
     function playSecretHitler() {
+        subscriptionPublic.unsubscribe();
         startButton.classList.add('hidden');
         lobbyHeader.innerHTML = userName;
         messageArea.innerHTML = '';
@@ -270,5 +278,11 @@
     }
 
     messageForm.addEventListener('submit', startGame, true);
+
+    function dsq() {
+
+        subscriptionUser.unsubscribe();
+        stompClient.disconnect(function() {console.log("DISCONNECTED")});
+    }
 
 }());

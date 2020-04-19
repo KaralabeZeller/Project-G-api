@@ -10,6 +10,8 @@
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
 
     var stompClient = null;
+    var subscriptionUser;
+    var subscriptionPublic;
 
     var users = [];
 
@@ -27,8 +29,8 @@
     }
 
     function onConnected() {
-        stompClient.subscribe('/topic/public', onMessageReceived);
-        stompClient.subscribe('/user/topic/public', onMessageReceived);
+        subscriptionPublic = stompClient.subscribe('/topic/public', onMessageReceived);
+        subscriptionUser = stompClient.subscribe('/user/topic/public', onMessageReceived);
     }
 
     function onError(error) {
@@ -62,7 +64,9 @@
             } else {
                 console.log('Ignoring game message: %s', message);
             }
-        } else {
+        } else if (type === 'STOP') {
+            dsq();
+        }else {
             console.log('Ignoring other message: %s', message);
         }
     }
@@ -288,5 +292,11 @@
         }
         return result;
     }
+
+     function dsq() {
+        subscriptionUser.unsubscribe();
+        subscriptionPlayer.unsubscribe();
+        stompClient.disconnect(function() {console.log("DISCONNECTED")});
+     }
 
 }());

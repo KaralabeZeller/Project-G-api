@@ -20,7 +20,8 @@ public class Message {
         JOIN,
         LEAVE,
         START,
-        GAME
+        GAME,
+        STOP
     }
 
     private MessageType type;

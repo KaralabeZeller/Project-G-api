@@ -7,6 +7,7 @@ import com.nter.projectg.games.common.util.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.lang.model.element.NestingKind;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -121,7 +122,15 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
     }
 
     public void stop() {
-        // TODO implement
+        for(GamePlayer p: getPlayers()) {
+            Message message = new Message();
+            message.setType(MessageType.STOP);
+            message.setSender(getName());
+            message.setContent("BYE");
+            lobby.sendToUser(p.getName(), message);
+            lobby.sendToAll(message);
+        }
+
     }
 
     private Message buildStartMessage(String player) {

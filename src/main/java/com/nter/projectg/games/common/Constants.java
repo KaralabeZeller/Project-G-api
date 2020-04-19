@@ -10,10 +10,4 @@ public class Constants {
             "Taboo"
     );
 
-    public enum ClientState {
-        ACCEPTED,
-        READY,
-        AUTH
-    }
-
 }

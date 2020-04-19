@@ -6,19 +6,17 @@ import java.util.Map;
 
 public class Votes {
 
-    private final int players;
     private final Map<String, String> votes;
 
-    public Votes(int players) {
-        this.players = players;
-        votes = new HashMap<>(players);
+    public Votes() {
+        votes = new HashMap<>();
     }
 
     public Map<String, String> getVotes() {
         return Collections.unmodifiableMap(votes);
     }
 
-    public boolean isFinished() {
+    public boolean isFinished(int players) {
         return votes.size() == players;
     }
 
@@ -33,7 +31,6 @@ public class Votes {
     @Override
     public String toString() {
         return "Votes{" +
-                "players=" + players +
                 ", votes=" + votes +
                 '}';
     }
