@@ -9,7 +9,6 @@ public abstract class Player<GameMessage extends Message> {
     private final String name;
     private final Consumer<GameMessage> send;
 
-
     public Player(String name, Consumer<GameMessage> send) {
         this.name = name;
         this.send = send;

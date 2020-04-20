@@ -23,4 +23,9 @@ public class Timer {
         executorService.schedule(task, seconds, TimeUnit.SECONDS);
     }
 
+    public void schedule(Runnable task, int seconds) {
+        logger.info("Scheduling task with fixed delay {} seconds: {}", seconds, task);
+        executorService.scheduleWithFixedDelay(task, seconds, seconds, TimeUnit.SECONDS);
+    }
+
 }

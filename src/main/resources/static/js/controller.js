@@ -11,6 +11,8 @@
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
 
     var stompClient = null;
+    var subscriptionPublic;
+    var subscriptionUser;
 
     // TODO use url parameters for controller (lobby id, username)
     var userName = sessionStorage.getItem('name');
@@ -22,8 +24,6 @@
 
     var liberalPolicies = 0;
     var fascistPolicies = 0;
-    var subscriptionUser;
-    var subscriptionPublic;
 
     connect();
 
@@ -51,6 +51,17 @@
 
         connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
         connectingElement.style.color = 'red';
+    }
+
+    function disconnect() {
+        subscriptionPublic.unsubscribe();
+        subscriptionUser.unsubscribe();
+
+        stompClient.disconnect(onDisconnected);
+    }
+
+    function onDisconnected() {
+        console.log('DISCONNECTED');
     }
 
     function startGame(event) {
@@ -101,14 +112,13 @@
             } else if (gameType === 'SPECIAL_ELECTION') {
                 showDialog('SPECIAL_ELECTION', 'Choose a player to be elected as president', message.content.split(','));
             } else if (gameType === 'KILLED') {
-                dsq();
+                disconnect();
             } else {
                 console.log('Ignoring game message: %s', message);
             }
-        }  else if (type === 'GAME') {
-            dsq();
+        } else if (type === 'STOP') {
+            disconnect();
         } else {
-        }
             console.log('Ignoring other message: %s', message);
         }
     }
@@ -190,34 +200,30 @@
         if (factionShow) {
             factionCard.src = './games/secrethitler/role-cover.png';
             factionShow = false;
-            return;
+        } else {
+            if (faction === 'LIBERAL') {
+                factionCard.src = './games/secrethitler/role-liberal.png';
+            } else if (faction === 'FASCIST') {
+                factionCard.src = './games/secrethitler/role-fascist.png';
+            } else if (faction === 'HITLER') {
+                factionCard.src = './games/secrethitler/role-hitler.png';
+            }
+            factionShow = true;
         }
-
-        if (faction === 'LIBERAL') {
-            factionCard.src = './games/secrethitler/role-liberal.png';
-        } else if (faction === 'FASCIST') {
-            factionCard.src = './games/secrethitler/role-fascist.png';
-        } else if (faction === 'HITLER') {
-            factionCard.src = './games/secrethitler/role-hitler.png';
-        }
-
-        factionShow = true;
     }
 
     function showMembership(faction) {
         if (membershipShow) {
             membershipCard.src = './games/secrethitler/membership-cover.png';
             membershipShow = false;
-            return;
-        }
-
-        if (faction === 'LIBERAL') {
-            membershipCard.src = './games/secrethitler/membership-liberal.png';
         } else {
-            membershipCard.src = './games/secrethitler/membership-fascist.png';
+            if (faction === 'LIBERAL') {
+                membershipCard.src = './games/secrethitler/membership-liberal.png';
+            } else {
+                membershipCard.src = './games/secrethitler/membership-fascist.png';
+            }
+            membershipShow = true;
         }
-
-        membershipShow = true;
     }
 
     function nominateChancellor(players) {
@@ -249,7 +255,7 @@
     }
 
     function showDialog(type, title, options, multiChoice = false) {
-        // TODO remove cancel button from prompt
+        // TODO remove cancel button from prompt or implement cancel vote on cancel button
         bootbox.prompt({
             // buttons: { confirm: { label: 'OK' } },
             closeButton: false,
@@ -278,11 +284,5 @@
     }
 
     messageForm.addEventListener('submit', startGame, true);
-
-    function dsq() {
-
-        subscriptionUser.unsubscribe();
-        stompClient.disconnect(function() {console.log("DISCONNECTED")});
-    }
 
 }());

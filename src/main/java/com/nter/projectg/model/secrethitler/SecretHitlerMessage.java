@@ -12,16 +12,16 @@ public class SecretHitlerMessage extends Message {
         CHANCELLOR,
         VOTE,
         VOTED,
-        INVESTIGATE,
-        SPECIAL_ELECTION,
         KILL,
         KILLED,
         POLICIES,
-        VETO,
+        POLICY,
         ENACTED_POLICY,
-        TOP_POLICIES,
+        INVESTIGATE,
         INVESTIGATE_RESULT,
-        POLICY
+        SPECIAL_ELECTION,
+        TOP_POLICIES,
+        VETO,
     }
 
     private GameMessageType gameType;

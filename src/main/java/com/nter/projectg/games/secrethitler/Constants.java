@@ -12,7 +12,6 @@ public class Constants {
         ELECTION,
         NOMINATION,
         VOTE,
-        EVALUATE,
         ENACTMENT,
         FINISHED
     }

@@ -10,8 +10,8 @@
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
 
     var stompClient = null;
-    var subscriptionUser;
     var subscriptionPublic;
+    var subscriptionUser;
 
     var users = [];
 
@@ -35,6 +35,17 @@
 
     function onError(error) {
         console.log('onError: Could not connect to WebSocket server. Please refresh this page to try again!', error);
+    }
+
+    function disconnectScreen() {
+        subscriptionPublic.unsubscribe();
+        subscriptionUser.unsubscribe();
+
+        stompClient.disconnect(onDisconnected);
+    }
+
+    function onDisconnected() {
+        console.log('DISCONNECTED');
     }
 
     function onMessageReceived(payload) {
@@ -65,8 +76,8 @@
                 console.log('Ignoring game message: %s', message);
             }
         } else if (type === 'STOP') {
-            dsq();
-        }else {
+            disconnectScreen();
+        } else {
             console.log('Ignoring other message: %s', message);
         }
     }
@@ -292,11 +303,5 @@
         }
         return result;
     }
-
-     function dsq() {
-        subscriptionUser.unsubscribe();
-        subscriptionPlayer.unsubscribe();
-        stompClient.disconnect(function() {console.log("DISCONNECTED")});
-     }
 
 }());

@@ -1,6 +1,8 @@
 package com.nter.projectg.games.secrethitler;
 
 import com.nter.projectg.games.common.Game;
+import com.nter.projectg.games.common.Player;
+import com.nter.projectg.games.common.util.Votes;
 import com.nter.projectg.games.secrethitler.Constants.Faction;
 import com.nter.projectg.games.secrethitler.Constants.Policy;
 import com.nter.projectg.games.secrethitler.Constants.State;
@@ -24,13 +26,14 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     private Votes votes;
 
     // TODO refactor to use methods instead of fields
+    // TODO move to SecretHitlerPlayer
     private int hitlerID;
     private int chancellorID;
     private int presidentID;
-    private int lastNormalPresident;
-    private int alivePlayers;
+
     private boolean specialElection;
-    private int specialPresident;
+    private int lastNormalPresidentID;
+    private int specialPresidentID;
 
     public SecretHitlerGame(Lobby lobby) {
         super(lobby, "SecretHitler", 5, 10);
@@ -53,6 +56,14 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         return players.get(presidentID);
     }
 
+    private SecretHitlerPlayer getLastNormalPresident() {
+        return players.get(lastNormalPresidentID);
+    }
+
+    private SecretHitlerPlayer getSpecialPresident() {
+        return players.get(specialPresidentID);
+    }
+
     @Override
     protected SecretHitlerPlayer createPlayer(String name) {
         return new SecretHitlerPlayer(name, sendToPlayer(name));
@@ -65,16 +76,15 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         votes = new Votes();
         Collections.shuffle(players);
 
+        hitlerID = -1;
         chancellorID = -1;
         presidentID = -1;
-        specialPresident = -1;
+
         specialElection = false;
+        specialPresidentID = -1;
 
         assets = new Assets(players);
         assets.updateNotElect(presidentID, chancellorID);
-
-        hitlerID = -1;
-        alivePlayers = players.size();
 
         logger.info("Initialized players and assets: {} {}", players, assets);
     }
@@ -102,7 +112,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         state = State.ELECTION;
 
         if (specialElection) {
-            presidentID = specialPresident;
+            presidentID = specialPresidentID;
             specialElection = false;
         } else {
 
@@ -111,7 +121,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
                 presidentID = rand.nextInt(players.size());
             } else {
                 int nextPresident = -1;
-                int candidate = lastNormalPresident + 1;
+                int candidate = lastNormalPresidentID + 1;
                 while (nextPresident < 0) {
                     if (candidate >= players.size())
                         candidate = 0;
@@ -121,7 +131,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
                         candidate++;
                 }
                 presidentID = candidate;
-                lastNormalPresident = presidentID;
+                lastNormalPresidentID = presidentID;
             }
         }
 
@@ -138,35 +148,34 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         logger.info("President nominating a chancellor: {}", president);
         state = State.NOMINATION;
 
-        List<String> eligiblePlayers = new ArrayList<>();
+        List<SecretHitlerPlayer> eligiblePlayers = new ArrayList<>();
         for (int i = 0; i < players.size(); i++) {
-            if (alivePlayers <= 5) {
+            if (players.size() <= 5) {
                 if (i != assets.nonCandidates[1] && i != presidentID) {
                     if (assets.playerMap.get(i) == 1) {
-                        SecretHitlerPlayer u = players.get(i);
-                        eligiblePlayers.add(u.getName());
+                        SecretHitlerPlayer player = players.get(i);
+                        eligiblePlayers.add(player);
                     }
                 }
             } else {
                 if (i != assets.nonCandidates[0] && i != assets.nonCandidates[1] && i != presidentID) {
                     if (assets.playerMap.get(i) == 1) {
-                        SecretHitlerPlayer u = players.get(i);
-                        eligiblePlayers.add(u.getName());
+                        SecretHitlerPlayer player = players.get(i);
+                        eligiblePlayers.add(player);
                     }
                 }
             }
         }
 
         logger.info("Eligible players for chancellor: {}", eligiblePlayers);
-        String content = String.join(",", eligiblePlayers);
-        SecretHitlerMessage chancellorMessage = buildGameMessage(GameMessageType.QUERY_CHANCELLOR, content);
+        SecretHitlerMessage chancellorMessage = buildGameMessage(GameMessageType.QUERY_CHANCELLOR, playersAsString(eligiblePlayers));
         sendToPlayer(president.getName(), chancellorMessage);
     }
 
     @Override
     protected void handleGame(SecretHitlerMessage message) {
-        if(state == State.FINISHED) {
-            logger.warn("GAme is already finished!");
+        if (state == State.FINISHED) {
+            logger.warn("Game is already finished!");
             return;
         }
 
@@ -218,15 +227,16 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         state = State.VOTE;
 
         SecretHitlerMessage voteMessage = buildGameMessage(GameMessageType.VOTE, "Ja!,Nein!");
-        for(SecretHitlerPlayer player: players)
+        for (SecretHitlerPlayer player : players) {
             sendToPlayer(player.getName(), voteMessage);
+        }
     }
 
     private void processVote(String player, String vote) {
         logger.debug("Processing vote: {} {} {}", player, vote, votes);
 
         votes.process(player, vote);
-        if (votes.isFinished(alivePlayers)) {
+        if (votes.isFinished(players.size())) {
             logger.info("Finished voting: {}", votes);
             for (Map.Entry<String, String> entry : votes.getVotes().entrySet()) {
                 // Send every vote to each player to display on the UI.
@@ -234,13 +244,14 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
                 sendToAll(votedMessage);
             }
 
-            int jaCounter = Collections.frequency(votes.getVotes().values(), "Ja!");
-            if (jaCounter - 1 >= players.size() / 2) {
+            int jaVotes = votes.getFrequency("Ja!");
+            if (jaVotes - 1 >= players.size() / 2) {
                 logger.info("Vote result: Ja!");
                 assets.electionTracker = 0;
                 assets.updateNotElect(presidentID, chancellorID);
 
                 if (assets.getPolicyCount(Policy.FASCIST) >= 3) {
+                    // TODO move to checkAssets
                     if (chancellorID == hitlerID) {
                         logger.info("FASCIST win - Hitler is the chancellor");
                         state = State.FINISHED;
@@ -265,7 +276,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     private void processSpecialElection(String content) {
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).getName().equals(content)) {
-                specialPresident = i;
+                specialPresidentID = i;
                 specialElection = true;
             }
         }
@@ -273,23 +284,20 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
     private void selectPolicy() {
         List<Policy> policies = assets.getTopPolicies();
-        List<String> policyNames = policies.stream().map(Enum::toString).collect(Collectors.toList());
-        String policyString = String.join(",", policyNames);
-        logger.info("Policies for the president: {}", policyNames);
-
-        SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.POLICIES, policyString);
+        logger.info("Policies for the president: {}", policies);
+        SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.POLICIES, policiesAsString(policies));
         sendToPlayer(getPresident().getName(), policyMessage);
 
         // TODO add to processPolicies
         /*
-        if(nominee.equals("VETO"))
+        if (nominee.equals("VETO"))
         {
             String vetoed = players.get(presidentID).client.processQuery("VETO?");
-            if(vetoed.equals("Ja!"))
+            if (vetoed.equals("Ja!"))
                 veto = true;
 
         }
-        if(!veto){
+        if (!veto) {
             if (nominee.equals("FASCIST")) {
                 assets.enactPolicy(Policy.FASCIST);
                 ui.enactPolicy(Policy.FASCIST);
@@ -416,15 +424,12 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             if (assets.getPolicyCount(Policy.FASCIST) == 3) { // PEAK TOP POLICY
                 if (assets.activePowers.size() == 0) {
                     List<Policy> policies = assets.getTopPolicies();
-                    List<String> policyNames = policies.stream().map(Enum::toString).collect(Collectors.toList());
-                    String policyString = String.join(",", policyNames);
-
-                    logger.info("Sending top policies for the president to peek: " + policyString);
-                    SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.TOP_POLICIES, policyString);
+                    logger.info("Sending top policies for the president to peek: " + policies);
+                    SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.TOP_POLICIES, policiesAsString(policies));
                     sendToPlayer(getPresident().getName(), policyMessage);
 
                     assets.usePower();
-                    getTimer().delay(() -> electPresident(), 5);
+                    scheduleElectPresident();
                     return;
                 }
             }
@@ -523,7 +528,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             return;
         }
 
-        getTimer().delay(() -> electPresident(), 5);
+        scheduleElectPresident();
     }
 
     private void specialElection() {
@@ -534,14 +539,11 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             }
         }
 
-        List<String> playerNames = eligiblePlayers.stream().map(p -> p.getName()).collect(Collectors.toList());
-        String electString = String.join(",", playerNames);
-        logger.info("Special election for the president: {}", electString);
-
-        SecretHitlerMessage specialElection = buildGameMessage(GameMessageType.SPECIAL_ELECTION, electString);
+        logger.info("Special election for the president: {}", eligiblePlayers);
+        SecretHitlerMessage specialElection = buildGameMessage(GameMessageType.SPECIAL_ELECTION, playersAsString(eligiblePlayers));
         sendToPlayer(getPresident().getName(), specialElection);
 
-        getTimer().delay(() -> electPresident(), 5);
+        scheduleElectPresident();
     }
 
     private void killUser() {
@@ -554,11 +556,8 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             }
         }
 
-        List<String> playerNames = killablePlayers.stream().map(p -> p.getName()).collect(Collectors.toList());
-        String killString = String.join(",", playerNames);
-        logger.info("Kill for the president: {}", playerNames);
-
-        SecretHitlerMessage killMessage = buildGameMessage(GameMessageType.KILL, killString);
+        logger.info("Kill for the president: {}", killablePlayers);
+        SecretHitlerMessage killMessage = buildGameMessage(GameMessageType.KILL, playersAsString(killablePlayers));
         sendToPlayer(getPresident().getName(), killMessage);
     }
 
@@ -572,11 +571,8 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             }
         }
 
-        List<String> playerNames = investigablePlayers.stream().map(p -> p.getName()).collect(Collectors.toList());
-        String investigateString = String.join(",", playerNames);
-        logger.info("Sending investigate to president: {}", playerNames);
-
-        SecretHitlerMessage investigateMessage = buildGameMessage(GameMessageType.INVESTIGATE, investigateString);
+        logger.info("Sending investigate to president: {}", investigablePlayers);
+        SecretHitlerMessage investigateMessage = buildGameMessage(GameMessageType.INVESTIGATE, playersAsString(investigablePlayers));
         sendToPlayer(getPresident().getName(), investigateMessage);
     }
 
@@ -591,11 +587,13 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
                     hitlerKilled = true;
 
                 assets.playerMap.replace(i, 0);
-                players.remove(i);
                 SecretHitlerMessage killMessage = buildGameMessage(GameMessageType.KILLED, content);
                 sendToAll(killMessage);
                 sendToPlayer(user.getName(), killMessage);
-                alivePlayers--;
+
+                // Update active / alive player list
+                players.remove(i);
+
                 break;
             }
         }
@@ -608,7 +606,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             return;
         }
 
-        getTimer().delay(() -> electPresident(), 5);
+        scheduleElectPresident();
     }
 
     private void processInvestigate(String content) {
@@ -628,22 +626,36 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         SecretHitlerMessage investigateMessage = buildGameMessage(GameMessageType.INVESTIGATE_RESULT, faction.name());
         sendToPlayer(getPresident().getName(), investigateMessage);
 
+        scheduleElectPresident();
+    }
+
+    private void scheduleElectPresident() {
         getTimer().delay(() -> electPresident(), 5);
+    }
+
+    private String playersAsString(List<SecretHitlerPlayer> players) {
+        List<String> playerNames = players.stream().map(Player::getName).collect(Collectors.toList());
+        return String.join(",", playerNames);
+    }
+
+    private String policiesAsString(List<Policy> policies) {
+        List<String> policyNames = policies.stream().map(Enum::toString).collect(Collectors.toList());
+        return String.join(",", policyNames);
     }
 
     @Override
     public String toString() {
         return "SecretHitlerGame{" +
-                "players=" + players +
-                ", assets=" + assets +
+                "super=" + super.toString() +
+                ", players=" + players +
                 ", state=" + state +
                 ", votes=" + votes +
                 ", hitlerID=" + hitlerID +
                 ", chancellorID=" + chancellorID +
                 ", presidentID=" + presidentID +
-                ", lastNormalPresident=" + lastNormalPresident +
-                ", alivePlayers=" + alivePlayers +
+                ", lastNormalPresident=" + lastNormalPresidentID +
+                ", specialElection=" + specialElection +
+                ", specialPresident=" + specialPresidentID +
                 '}';
     }
-
 }

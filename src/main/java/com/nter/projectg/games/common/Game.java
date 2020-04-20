@@ -7,7 +7,6 @@ import com.nter.projectg.model.common.Message.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.lang.model.element.NestingKind;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -34,6 +33,10 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
         logger.debug("Initializing game: {}", this);
         initializePlayers();
         logger.info("Initialized game: {}", this);
+    }
+
+    public Timer getTimer() {
+        return timer;
     }
 
     public String getName() {
@@ -104,7 +107,7 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
         GamePlayer player = findPlayer(user);
 
         // Broadcast start message to all sessions
-        Message message = buildStartMessage(player.getName());
+        Message message = buildStartMessage(player.getName(), MessageType.START);
         lobby.sendToAll(message);
     }
 
@@ -113,41 +116,35 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
         GamePlayer player = findPlayer(user);
 
         // Send start message to all sessions
-        Message message = buildStartMessage(player.getName());
+        Message message = buildStartMessage(player.getName(), MessageType.START);
         lobby.sendToUser(player.getName(), message);
     }
 
-    public Timer getTimer() {
-        return timer;
-    }
-
     public void stop() {
-        for(GamePlayer p: getPlayers()) {
-            Message message = new Message();
-            message.setType(MessageType.STOP);
-            message.setSender(getName());
-            message.setContent("BYE");
-            lobby.sendToUser(p.getName(), message);
-            lobby.sendToAll(message);
-        }
-
+        // Send stop message to all sessions
+        Message message = buildStartMessage(getName(), MessageType.STOP);
+        lobby.sendToAll(message);
     }
 
-    private Message buildStartMessage(String player) {
+    private Message buildStartMessage(String sender, MessageType type) {
         Message message = new Message();
-        message.setType(MessageType.START);
-        message.setSender(player);
+        message.setType(type);
+        message.setSender(sender);
         message.setContent(name);
         return message;
     }
 
-    // TODO maybe remove lobby
+    // TODO maybe remove lobby and timer
     @Override
     public String toString() {
         return "Game{" +
                 "name='" + name + '\'' +
+                ", minPlayers=" + minPlayers +
+                ", maxPlayers=" + maxPlayers +
                 ", players=" + players +
                 ", lobby=" + lobby +
+                ", timer=" + timer +
                 '}';
     }
+
 }

@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+// TODO refactor to avoid array indexing
 public class Assets {
 
     private List<Faction> factions;

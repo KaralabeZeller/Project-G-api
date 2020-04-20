@@ -16,9 +16,9 @@
             if (!userName) {
                 // TODO use bootbox.alert (see bootbox.prompt in controller)
                 alert('Please provide a username');
-                return;
+            } else {
+                sessionStorage.setItem('name', userName);
             }
-            sessionStorage.setItem('name', userName);
         }
         window.location.href = './controller.html';
     }
