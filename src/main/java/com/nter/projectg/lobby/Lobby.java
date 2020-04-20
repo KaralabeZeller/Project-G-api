@@ -1,6 +1,5 @@
 package com.nter.projectg.lobby;
 
-import com.nter.projectg.controller.MessageController;
 import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.common.Message.MessageType;
 import org.slf4j.Logger;
@@ -18,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class Lobby {
 
-    private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
+    private static final Logger logger = LoggerFactory.getLogger(Lobby.class);
 
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
@@ -31,36 +30,43 @@ public class Lobby {
     }
 
     public void add(String user, String session) {
-        logger.debug("User joining: {} {}", user, this);
+        logger.debug("User joining lobby: {} {}", user, this);
 
         userSession.put(user, session);
         sessionUser.put(session, user);
 
         // Broadcast notification message message to all sessions
         Message message = buildLobbyMessage(MessageType.JOIN, user);
-        sendToAll(message);
+        sendToLobby(message);
 
-        logger.info("User joined: {} {}", user, this);
+        logger.info("User joined lobby: {} {}", user, this);
     }
 
     public void remove(String user, String session) {
-        logger.debug("User leaving: {} {}", user, this);
+        logger.debug("User leaving lobby: {} {}", user, this);
 
         userSession.remove(user);
         sessionUser.remove(session);
 
         // Broadcast notification message message to all sessions
         Message message = buildLobbyMessage(MessageType.LEAVE, user);
-        sendToAll(message);
+        sendToLobby(message);
 
-        logger.info("User left: {} {}", user, this);
+        logger.info("User left lobby: {} {}", user, this);
+    }
+
+    public void sendToLobby(Object message) {
+        logger.debug("sendToLobby: {}", message);
+
+        // Broadcast message to all sessions
+        messagingTemplate.convertAndSend("/topic/lobby", message);
     }
 
     public void sendToAll(Object message) {
         logger.debug("sendToAll: {}", message);
 
         // Broadcast message to all sessions
-        messagingTemplate.convertAndSend("/topic/public", message);
+        messagingTemplate.convertAndSend("/topic/game", message);
     }
 
     public void sendToUser(String user, Object message) {
@@ -72,7 +78,7 @@ public class Lobby {
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create();
         headerAccessor.setSessionId(session);
         headerAccessor.setLeaveMutable(true);
-        messagingTemplate.convertAndSendToUser(session, "/topic/public", message, headerAccessor.getMessageHeaders());
+        messagingTemplate.convertAndSendToUser(session, "/topic/game", message, headerAccessor.getMessageHeaders());
     }
 
     private Message buildLobbyMessage(MessageType type, String user) {

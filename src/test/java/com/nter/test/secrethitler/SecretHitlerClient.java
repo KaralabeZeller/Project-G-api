@@ -16,11 +16,17 @@ public class SecretHitlerClient extends Client<SecretHitlerMessage> {
 
     private static final Logger logger = LoggerFactory.getLogger(SecretHitlerClient.class);
 
+    private FrameHandlerLobby handlerLobby;
     private FrameHandlerPublic handlerPublic;
     private FrameHandlerUser handlerUser;
 
     public SecretHitlerClient(int port) {
         super(port);
+    }
+
+    @Override
+    protected FrameHandlerLobby createHandlerLobby() {
+        return handlerLobby = new FrameHandlerLobby();
     }
 
     @Override
@@ -35,7 +41,7 @@ public class SecretHitlerClient extends Client<SecretHitlerMessage> {
 
     public void sendJoin(String user) {
         Message message = buildJoinMessage(user);
-        sendAddUser(message);
+        sendLobby(message);
     }
 
     private Message buildJoinMessage(String user) {
@@ -47,12 +53,12 @@ public class SecretHitlerClient extends Client<SecretHitlerMessage> {
 
     // TODO use CompletableFuture / ListenableFuture similarly to Client#connect
     public Set<String> expectJoin() {
-        Message message = handlerPublic.peekJoin(); // handlerPublic.expectJoin().get()
+        Message message = handlerLobby.peekJoin(); // handlerPublic.expectJoin().get()
         String[] users = message.getContent().split(",");
         return new HashSet<>(Arrays.asList(users));
     }
 
-    private static class FrameHandlerPublic extends FrameHandler<SecretHitlerMessage> {
+    private static class FrameHandlerLobby extends FrameHandler<Message> {
 
         private volatile Message joinMessage;
 
@@ -62,12 +68,31 @@ public class SecretHitlerClient extends Client<SecretHitlerMessage> {
 
         @Override
         protected void handleOther(Message message) {
-            logger.info("Received public message: {}", message);
+            logger.info("Received lobby message: {}", message);
 
             MessageType type = message.getType();
             if (type == MessageType.JOIN || type == MessageType.LEAVE) {
                 joinMessage = message;
-            } else if (type == MessageType.START) {
+            } else {
+                logger.debug("Ignoring lobby message: {}", message);
+            }
+        }
+
+        @Override
+        protected void handleGame(Message message) {
+            logger.warn("Unexpected lobby message: {}", message);
+        }
+
+    }
+
+    private static class FrameHandlerPublic extends FrameHandler<SecretHitlerMessage> {
+
+        @Override
+        protected void handleOther(Message message) {
+            logger.info("Received public message: {}", message);
+
+            MessageType type = message.getType();
+            if (type == MessageType.START) {
                 logger.info("Received start message: {}", message.getContent());
             } else {
                 logger.debug("Ignoring public message: {}", message);
@@ -96,7 +121,7 @@ public class SecretHitlerClient extends Client<SecretHitlerMessage> {
 
             MessageType type = message.getType();
             if (type == MessageType.START) {
-                logger.warn("Unexpected start message: {}", message.getContent());
+                logger.info("Received start message: {}", message.getContent());
             } else {
                 logger.debug("Ignoring user message: {}", message);
             }

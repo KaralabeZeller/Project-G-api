@@ -11,6 +11,7 @@
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
 
     var stompClient = null;
+    var subscriptionLobby;
     var subscriptionPublic;
     var subscriptionUser;
 
@@ -34,14 +35,11 @@
     }
 
     function onConnected() {
-        subscriptionPublic = stompClient.subscribe('/topic/public', onMessageReceived);
-        subscriptionUser = stompClient.subscribe('/user/topic/public', onMessageReceived);
+        subscriptionLobby = stompClient.subscribe('/topic/lobby', onMessageReceived);
+        subscriptionPublic = stompClient.subscribe('/topic/game', onMessageReceived);
+        subscriptionUser = stompClient.subscribe('/user/topic/game', onMessageReceived);
 
-        var message = {
-            sender: userName,
-            type: 'JOIN',
-        };
-        stompClient.send('/app/chat.addUser', {}, JSON.stringify(message));
+        sendLobby('JOIN', null);
 
         connectingElement.classList.add('hidden');
     }
@@ -54,6 +52,7 @@
     }
 
     function disconnect() {
+        subscriptionLobby.unsubscribe();
         subscriptionPublic.unsubscribe();
         subscriptionUser.unsubscribe();
 
@@ -65,12 +64,7 @@
     }
 
     function startGame(event) {
-        var message = {
-            type: 'START',
-            sender: userName,
-            content: 'SecretHitler',
-        };
-        stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(message));
+        sendStart('SecretHitler');
 
         started = true;
 
@@ -88,6 +82,8 @@
                 displayUsers();
             }
         } else if (type === 'START') {
+//            subscriptionLobby.unsubscribe();
+            subscriptionPublic.unsubscribe();
             playSecretHitler();
         } else if (type === 'GAME') {
             var gameType = message.gameType;
@@ -123,14 +119,32 @@
         }
     }
 
-    function sendReply(type, content) {
+    function sendLobby(type, content) {
+        var message = {
+            type: type,
+            sender: userName,
+            content: content,
+        };
+        stompClient.send('/app/lobby', {}, JSON.stringify(message));
+    }
+
+    function sendStart(content) {
+        var message = {
+            type: 'START',
+            sender: userName,
+            content: content,
+        };
+        stompClient.send('/app/game', {}, JSON.stringify(message));
+    }
+
+    function sendGame(type, content) {
         var message = {
             type: 'GAME',
             gameType: type,
             sender: userName,
             content: content,
         };
-        stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(message));
+        stompClient.send('/app/game', {}, JSON.stringify(message));
     }
 
     // TODO move to a different file with all the other lobby stuff
@@ -164,7 +178,6 @@
     }
 
     function playSecretHitler() {
-        subscriptionPublic.unsubscribe();
         startButton.classList.add('hidden');
         lobbyHeader.innerHTML = userName;
         messageArea.innerHTML = '';
@@ -267,7 +280,7 @@
                 if (result === null) {
                     return false;
                 } else {
-                    sendReply(type, multiChoice ? result.join(',') : result);
+                    sendGame(type, multiChoice ? result.join(',') : result);
                     return true;
                 }
             }

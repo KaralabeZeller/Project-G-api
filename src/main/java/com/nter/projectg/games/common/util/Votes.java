@@ -1,16 +1,12 @@
 package com.nter.projectg.games.common.util;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Votes {
 
-    private final Map<String, String> votes;
-
-    public Votes() {
-        votes = new HashMap<>();
-    }
+    private final Map<String, String> votes = new ConcurrentHashMap<>();
 
     public Map<String, String> getVotes() {
         return Collections.unmodifiableMap(votes);

@@ -28,6 +28,7 @@ public abstract class Client<GameMessage extends Message> {
     private final String url;
 
     private StompSession session;
+    private StompSession.Subscription subscriptionLobby;
     private StompSession.Subscription subscriptionPublic;
     private StompSession.Subscription subscriptionUser;
 
@@ -66,39 +67,41 @@ public abstract class Client<GameMessage extends Message> {
     }
 
     public void subscribe() {
-        logger.debug("Subscribing: {} {}", subscriptionPublic, subscriptionUser);
+        logger.debug("Subscribing: {} {} {}", subscriptionLobby, subscriptionPublic, subscriptionUser);
 
-        subscriptionPublic = session.subscribe("/topic/public", createHandlerPublic());
-        subscriptionUser = session.subscribe("/user/topic/public", createHandlerUser());
+        subscriptionLobby = session.subscribe("/topic/lobby", createHandlerLobby());
+        subscriptionPublic = session.subscribe("/topic/game", createHandlerPublic());
+        subscriptionUser = session.subscribe("/user/topic/game", createHandlerUser());
 
-        logger.info("Subscribed: {} {}", subscriptionPublic, subscriptionUser);
+        logger.info("Subscribed: {} {} {}", subscriptionLobby, subscriptionPublic, subscriptionUser);
     }
 
     public void unsubscribe() {
-        logger.debug("Unsubscribing: {} {}", subscriptionPublic, subscriptionUser);
+        logger.debug("Unsubscribing: {} {} {}", subscriptionLobby, subscriptionPublic, subscriptionUser);
 
+        subscriptionLobby.unsubscribe();
         subscriptionPublic.unsubscribe();
         subscriptionUser.unsubscribe();
 
-        logger.info("Unsubscribed: {} {}", subscriptionPublic, subscriptionUser);
+        logger.info("Unsubscribed: {} {} {}", subscriptionLobby, subscriptionPublic, subscriptionUser);
     }
+
+    protected abstract FrameHandler<Message> createHandlerLobby();
 
     protected abstract FrameHandler<GameMessage> createHandlerPublic();
 
     protected abstract FrameHandler<GameMessage> createHandlerUser();
 
-    // TODO use /app/lobby application destination
-    protected void sendAddUser(Message message) {
-        logger.info("sendAddUser: {}", message);
+    protected void sendLobby(Message message) {
+        logger.info("sendLobby: {}", message);
 
-        session.send("/app/chat.addUser", message);
+        session.send("/app/lobby", message);
     }
 
-    // TODO use /app/game application destination
-    protected void sendMessage(Message message) {
-        logger.info("sendMessage: {}", message);
+    protected void sendGame(Message message) {
+        logger.info("sendGame: {}", message);
 
-        session.send("/app/chat.sendMessage", message);
+        session.send("/app/game", message);
     }
 
     protected static abstract class FrameHandler<GameMessage extends Message> implements StompFrameHandler {

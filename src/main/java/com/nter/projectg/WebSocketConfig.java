@@ -25,8 +25,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        // TODO use /app/lobby and /app/game application destinations
-        // TODO use /topic/lobby and /topic/game broker destinations
         registry.setApplicationDestinationPrefixes("/app/")
                 .setUserDestinationPrefix("/user/")
                 .setPreservePublishOrder(true)

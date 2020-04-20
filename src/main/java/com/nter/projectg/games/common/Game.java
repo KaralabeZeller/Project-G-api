@@ -63,7 +63,7 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
         Collection<String> users = lobby.getUsers();
         if (users.size() < minPlayers || users.size() >= maxPlayers) {
             logger.warn("Player count is not in the interval: {} < {} < {}", minPlayers, users.size(), maxPlayers);
-            // TODO ignore invalid state
+            return;
         }
 
         for (String user : users) {
@@ -111,8 +111,8 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
         lobby.sendToAll(message);
     }
 
-    // TODO implement restore state / messages on reconnect
     public void reconnect(String user) {
+        // TODO implement restore state / messages on reconnect
         GamePlayer player = findPlayer(user);
 
         // Send start message to all sessions
