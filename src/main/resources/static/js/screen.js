@@ -5,7 +5,9 @@
         playersArea = document.getElementById('playersArea'),
         canvasLiberal = document.getElementById('game-canvas-liberal'),
         canvasLiberalOverlay = document.getElementById('game-canvas-liberal-overlay'),
-        canvasFascist = document.getElementById('game-canvas-fascist');        
+        canvasFascist = document.getElementById('game-canvas-fascist'),
+        statusBar = document.getElementById('statusBar'),
+        statusBarText = document.getElementById('statusBarText');
 
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
 
@@ -48,6 +50,15 @@
         console.log('DISCONNECTED');
     }
 
+     function statusText(text) {
+        statusBarText.classList.add('hide');
+        setTimeout(function () {
+            statusBarText.innerHTML = text;
+            statusBarText.classList.remove('hide');
+            counter++;
+        }, 500);
+     }
+
     function onMessageReceived(payload) {
         var message = JSON.parse(payload.body);
         var type = message.type;
@@ -72,6 +83,8 @@
                 moveTracker(message.content);
             } else if (gameType === 'KILLED') {
                 killUser(message.content);
+            } else if (gameType === 'STATE') {
+                statusText(message.content);
             } else {
                 console.log('Ignoring game message: %s', message);
             }
@@ -87,6 +100,7 @@
         canvasLiberalOverlay.classList.remove('hidden');
         canvasFascist.classList.remove('hidden');
         playersArea.classList.remove('hidden');
+        statusBar.classList.remove('hidden');
         splashScreen.classList.add('hidden');
 
         drawBoards();

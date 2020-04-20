@@ -32,8 +32,8 @@ body {
 }
 
 .game-canvas-liberal {
-	width: 60%;
-	height: 44%;
+	width: 55%;
+	height: 40%;
 	background-color: #fff;
 	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
 	position: absolute;
@@ -43,12 +43,12 @@ body {
 }
 
 .game-canvas-fascist {
-	width: 60%;
-	height: 44%;
+	width: 55%;
+	height: 40%;
 	background-color: #fff;
 	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
 	position: absolute;
-	top: 50%;
+	top: 46%;
 	left: 1%;
 	image-rendering: optimizeQuality; /* Awesome future-browsers       */
 }
@@ -60,7 +60,7 @@ body {
     position: absolute;
     top: 50%;
     transform: translate(0, -50%);
-    left: 62%;
+    left: 60%;
     padding: 0px 0px 5px 0px;
  }
 
@@ -75,6 +75,40 @@ body {
      transform: translate(-50%, -50%);
 }
 
+.status-bar {
+    width: 98%;
+    height: 5%;
+    box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+    position: absolute;
+    top: 94%;
+    left: 1%;
+    background-color: #dcdfe0;
+    text-align : center;
+    padding: 0px 0px 20px 20px;
+ }
+
+ .status-bar-text {
+    font-family: "Arial Black", Gadget, sans-serif;
+	font-size: 30px;
+	letter-spacing: 1px;
+	word-spacing: 1px;
+	color: #6B6B6B;
+	margin : auto;
+    position : absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+ }
+
 #game-canvas-liberal-overlay{
     background:transparent;
+}
+
+#statusBarText {
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+.hide {
+    opacity: 0 !important;
 }
