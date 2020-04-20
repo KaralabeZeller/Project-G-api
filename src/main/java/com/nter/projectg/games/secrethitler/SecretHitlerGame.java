@@ -261,6 +261,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
                     if (chancellorID == hitlerID) {
                         logger.info("FASCIST win - Hitler is the chancellor");
                         sendStatus("FASCIST victory - Hitler is the chancellor");
+                        sendVictory(Faction.FASCIST);
                         state = State.FINISHED;
                         return;
                     }
@@ -536,6 +537,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             state = State.FINISHED;
             logger.info("FASCIST victory");
             sendStatus("FASCIST victory");
+            sendVictory(Faction.FASCIST);
             return;
         }
 
@@ -543,6 +545,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             state = State.FINISHED;
             logger.info("LIBERAL victory");
             sendStatus("LIBERAL victory");
+            sendVictory(Faction.LIBERAL);
             return;
         }
 
@@ -628,6 +631,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             state = State.FINISHED;
             logger.info("LIBERAL win - Hitler is killed");
             sendStatus("LIBERAL victory - Hitler is killed");
+            sendVictory(Faction.LIBERAL);
             return;
         }
 
@@ -673,6 +677,15 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     private void sendStatus(String status) {
         SecretHitlerMessage statusMessage = buildGameMessage(GameMessageType.STATE, status);
         sendToAll(statusMessage);
+    }
+
+    private void sendVictory(Faction faction) {
+
+        SecretHitlerMessage factionMessage = buildGameMessage(GameMessageType.VICTORY, faction.name());
+        sendToAll(factionMessage);
+        for(SecretHitlerPlayer player: players) {
+            sendToPlayer(getName(), factionMessage);
+        }
     }
 
     @Override

@@ -55,7 +55,6 @@
         setTimeout(function () {
             statusBarText.innerHTML = text;
             statusBarText.classList.remove('hide');
-            counter++;
         }, 500);
      }
 
@@ -73,6 +72,7 @@
             if (gameType === 'PRESIDENT') {
                 setTimeout(clearPlayerVotes, 30000);
                 displayPresident(message.content);
+                processVictory('LIBERAL');
             } else if (gameType === 'CHANCELLOR') {
                 displayChancellor(message.content);
             } else if (gameType === 'VOTED') {
@@ -85,6 +85,8 @@
                 killUser(message.content);
             } else if (gameType === 'STATE') {
                 statusText(message.content);
+            } else if (gameType === 'VICTORY') {
+                processVictory(message.content);
             } else {
                 console.log('Ignoring game message: %s', message);
             }
@@ -213,6 +215,30 @@
 
     function moveTracker(tracker) {
         // TODO implement
+    }
+
+    function processVictory(faction) {
+        if(faction === 'LIBERAL') {
+          var ctxLiberal = canvasLiberal.getContext('2d');
+          var drawingLiberal = new Image();
+
+            drawingLiberal.onload = function() {
+                var width = this.naturalWidth,
+                    height = this.naturalHeight;
+
+                canvasLiberal.width = Math.floor(width / 2);
+                canvasLiberal.height = Math.floor(height / 2);
+
+                ctxLiberal.scale(0.5, 0.5);
+                ctxLiberal.drawImage(this, 0, 0);
+                ctxLiberal.scale(2,2);
+            };
+
+        drawingLiberal.src = './games/secrethitler/SH1_liberals_won.png';
+
+        } else if (faction === 'FASCIST') {
+
+        }
     }
 
     function addLiberalPolicy() {

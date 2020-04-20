@@ -22,6 +22,7 @@ public class SecretHitlerMessage extends Message {
         SPECIAL_ELECTION,
         TOP_POLICIES,
         STATE,
+        VICTORY,
         VETO,
     }
 
