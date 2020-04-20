@@ -18,15 +18,14 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import org.springframework.web.socket.sockjs.frame.Jackson2SockJsMessageCodec;
 
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class SHClient {
 
     private static final Logger logger = LoggerFactory.getLogger(SHClient.class);
 
     private final static WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
+    private final Random random = new Random();
     private String username;
     private StompSession stompSession;
 
@@ -42,75 +41,93 @@ public class SHClient {
 
         //String url = "wss://api.project-g.xyz:443/ws";
         String url = "ws://localhost:8080/ws";
-        return stompClient.connect(url, headers, new MyHandler());
+        return stompClient.connect(url, headers, new SessionHandler());
     }
 
     public void subscribeChannels(StompSession session) {
         this.stompSession = session;
-        stompSession.subscribe("/topic/public", new StompFrameHandler() {
+
+        stompSession.subscribe("/topic/lobby", new StompFrameHandler() {
 
             public Type getPayloadType(StompHeaders stompHeaders) {
                 return byte[].class;
             }
 
             public void handleFrame(StompHeaders stompHeaders, Object o) {
-                String message = new String((byte[]) o);
                 try {
-                    JSONObject obj = new JSONObject(message);
-                    logger.info("Received message: {} {}", obj, stompHeaders);
+                    JSONObject message = new JSONObject(new String((byte[]) o));
+                    logger.info("Received lobby message: {} {}", message, stompHeaders);
 
-                    String content = getContent(message);
-                    if (obj.getString("type").equals("START")) {
-                        logger.info("Game started");
-                        logger.info("Game type: {}", content);
-                    } else if (obj.getString("type").equals("GAME")) {
-
-                        String gameType = obj.getString("gameType");
-                        if (gameType.equals("FACTION")) {
-                            if (message.contains("FASCIST"))
-                                logger.info("You are FASCIST");
-                            if (message.contains("LIBERAL"))
-                                logger.info("You are LIBERAL");
-                            if (message.contains("HITLER"))
-                                logger.info("You are HITLER");
-                        } else if (gameType.equals("VOTE")) {
-                            chooseOne(content, "VOTE");
-                        } else {
-                            logger.warn("Unexpected game message: {}", message);
-                        }
-
+                    String type = message.getString("type");
+                    if (type.equals("JOIN") || type.equals("LEAVE")) {
+                        // ignore
                     } else {
-                        logger.warn("Unexpected other message: {}", message);
+                        logger.warn("Unexpected lobby message: {}", new String((byte[]) o));
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    logger.error("Failed to handle message", e);
                 }
             }
         });
 
-        stompSession.subscribe("/user/topic/public", new StompFrameHandler() {
+        stompSession.subscribe("/topic/game", new StompFrameHandler() {
 
             public Type getPayloadType(StompHeaders stompHeaders) {
                 return byte[].class;
             }
 
             public void handleFrame(StompHeaders stompHeaders, Object o) {
-                String message = new String((byte[]) o);
                 try {
-                    JSONObject obj = new JSONObject(message);
-                    logger.info("Received message: {} {}", obj, stompHeaders);
+                    JSONObject message = new JSONObject(new String((byte[]) o));
+                    logger.info("Received game message: {} {}", message, stompHeaders);
 
-                    String content = getContent(message);
-                    if (obj.getString("type").equals("GAME")) {
+                    String type = message.getString("type");
+                    if (type.equals("START")) {
+                        String content = message.getString("content");
+                        logger.info("Game started: {}", content);
+                    } else if (type.equals("GAME")) {
 
-                        String gameType = obj.getString("gameType");
-                        if (gameType.equals("FACTION")) {
-                            if (message.contains("FASCIST"))
-                                logger.info("You are FASCIST");
-                            if (message.contains("LIBERAL"))
-                                logger.info("You are LIBERAL");
-                            if (message.contains("HITLER"))
-                                logger.info("You are HITLER");
+                        String content = message.getString("content");
+                        String gameType = message.getString("gameType");
+                        if (gameType.equals("PRESIDENT") || gameType.equals("CHANCELLOR") ||
+                                gameType.equals("VOTED") || gameType.equals("ENACTED_POLICY") ||
+                                gameType.equals("KILED")) {
+                            // ignore
+                        } else if (gameType.equals("VOTE")) {
+                            chooseOne(content, "VOTE");
+                        } else {
+                            logger.warn("Unexpected game message: {}", new String((byte[]) o));
+                        }
+
+                    } else {
+                        logger.warn("Unexpected other message: {}", new String((byte[]) o));
+                    }
+                } catch (Exception e) {
+                    logger.error("Failed to handle message", e);
+                }
+            }
+        });
+
+        stompSession.subscribe("/user/topic/game", new StompFrameHandler() {
+
+            public Type getPayloadType(StompHeaders stompHeaders) {
+                return byte[].class;
+            }
+
+            public void handleFrame(StompHeaders stompHeaders, Object o) {
+                try {
+                    JSONObject message = new JSONObject(new String((byte[]) o));
+                    logger.info("Received user game message: {} {}", message, stompHeaders);
+
+                    String type = message.getString("type");
+                    if (type.equals("GAME")) {
+
+                        String content = message.getString("content");
+                        String gameType = message.getString("gameType");
+                        if (gameType.equals("FACTION") || gameType.equals("HITLER")) {
+                            // ignore
+                        } else if (gameType.equals("VOTE")) {
+                            chooseOne(content, "VOTE");
                         } else if (gameType.equals("QUERY_CHANCELLOR")) {
                             chooseOne(content, "QUERY_CHANCELLOR");
                         } else if (gameType.equals("POLICIES")) {
@@ -121,99 +138,81 @@ public class SHClient {
                             logger.info("Peeked policy: {}", content);
                         } else if (gameType.equals("KILL")) {
                             chooseOne(content, "KILL");
+                        } else if (gameType.equals("KILLED")) {
+                            logger.info("Received killed message: {}", content);
                         } else if (gameType.equals("INVESTIGATE")) {
                             chooseOne(content, "INVESTIGATE");
                         } else if (gameType.equals("INVESTIGATE_RESULT")) {
                             logger.info("Investigation result: {}", content);
                         } else {
-                            logger.warn("Unexpected game message: {}", message);
+                            logger.warn("Unexpected user game message: {}", new String((byte[]) o));
                         }
 
                     } else {
-                        logger.warn("Unexpected other message: {}", message);
+                        logger.warn("Unexpected other message: {}", new String((byte[]) o));
                     }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    logger.error("Failed to handle message", e);
                 }
-
             }
         });
     }
 
-    private String getContent(String message) throws JSONException {
-        JSONObject obj = new JSONObject(message);
-        String output = obj.getString("content");
-        logger.info("Message trimmed: {}", output);
-        return output;
-    }
-
     private void chooseOne(String message, String type) throws JSONException {
-        String userList = message.replace("Selectable:", "");
-        String[] splitted = userList.split(",");
+        String[] split = message.split(",");
 
-        int rnd = new Random().nextInt(splitted.length);
+        String result = split[random.nextInt(split.length)];
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        logger.info("Reply: {}", splitted[rnd]);
-        sendMessage(splitted[rnd], type);
+        logger.info("chooseOne: {} from {}", result, split);
+        sendGame(type, result);
     }
 
     private void chooseTwo(String message, String type) throws JSONException {
-        String userList = message.replace("Selectable:", "");
-        String[] splitted = userList.split(",");
+        String[] split = message.split(",");
 
-        int rnd = new Random().nextInt(splitted.length);
-        String answer = "";
-        for (int i = 0; i < splitted.length; i++) {
-            if (i != rnd)
-                answer += splitted[i] + ",";
-        }
-        answer = answer.substring(0, answer.length() - 1);
+        // copy to avoid UnsupportedOperationException
+        List<String> result = new ArrayList<>(Arrays.asList(split));
+        result.remove(random.nextInt(split.length));
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        logger.info("Reply: {}", answer);
-        sendMessage(answer, type);
+        logger.info("chooseTwo: {} from {}", result, split);
+        sendGame(type, String.join(",", result));
     }
 
-    public void sendMessage(String s, String type) throws JSONException {
-        JSONObject join = new JSONObject();
-        join.put("sender", username);
-        join.put("type", "GAME");
-        join.put("gameType", type);
-        join.put("content", s);
-
-        stompSession.send("/app/chat.sendMessage", join.toString().getBytes());
-    }
-
-    public void sendJoin(StompSession stompSession, String username) throws JSONException {
-        JSONObject join = new JSONObject();
-        join.put("sender", username);
-        join.put("type", "JOIN");
+    public void join(String username) throws JSONException {
         this.username = username;
-
-        stompSession.send("/app/chat.addUser", join.toString().getBytes());
+        sendLobby("JOIN", null);
     }
 
-    public void sendStart(StompSession stompSession, String username) throws JSONException {
+    public void sendLobby(String type, String content) throws JSONException {
         JSONObject join = new JSONObject();
+        join.put("type", type);
         join.put("sender", username);
-        join.put("type", "START");
+        join.put("content", content);
 
-        stompSession.send("/app/chat.sendMessage", join.toString().getBytes());
+        stompSession.send("/app/lobby", join.toString().getBytes());
     }
 
-    private static class MyHandler extends StompSessionHandlerAdapter {
+    private void sendStart(String content) throws JSONException {
+        JSONObject join = new JSONObject();
+        join.put("type", "START");
+        join.put("sender", username);
+        join.put("content", content);
+
+        stompSession.send("/app/game", join.toString().getBytes());
+    }
+
+    public void sendGame(String type, String content) throws JSONException {
+        JSONObject join = new JSONObject();
+        join.put("type", "GAME");
+        join.put("sender", username);
+        join.put("gameType", type);
+        join.put("content", content);
+
+        stompSession.send("/app/game", join.toString().getBytes());
+    }
+
+    private static class SessionHandler extends StompSessionHandlerAdapter {
         public void afterConnected(StompSession stompSession, StompHeaders stompHeaders) {
             logger.info("Connected: {} {}", stompSession, stompHeaders);
         }
@@ -221,7 +220,6 @@ public class SHClient {
 
     public static void main(String[] args) throws Exception {
 
-        //Create clients
         logger.info("Creating clients");
         SHClient SHClient1 = new SHClient();
         SHClient SHClient2 = new SHClient();
@@ -251,24 +249,18 @@ public class SHClient {
         SHClient5.subscribeChannels(stompSession5);
 
         logger.info("Sending join messages");
-        int clientTimer = 100;
-        SHClient1.sendJoin(stompSession1, "Cseni");
-        Thread.sleep(clientTimer);
-        SHClient2.sendJoin(stompSession2, "Linda");
-        Thread.sleep(clientTimer);
-        SHClient3.sendJoin(stompSession3, "Sali");
-        Thread.sleep(clientTimer);
-        SHClient4.sendJoin(stompSession4, "Rudolf");
-        Thread.sleep(clientTimer);
-        SHClient5.sendJoin(stompSession5, "Tamás");
+        SHClient1.join("Cseni");
+        SHClient2.join("Linda");
+        SHClient3.join("Sali");
+        SHClient4.join("Rudolf");
+        SHClient5.join("Tamás");
 
-        Thread.sleep(1000);
+        sleep(4500);
+
         logger.info("Starting game");
-        SHClient5.sendStart(stompSession5, "Tamás");
+        SHClient5.sendStart("SecretHitler");
 
-        int sleepTimer = 600000;
-        logger.info("Sleep for : " + sleepTimer);
-        Thread.sleep(sleepTimer);
+        sleep(900000);
 
         logger.info("Disconnecting sessions");
         stompSession1.disconnect();
@@ -277,6 +269,12 @@ public class SHClient {
         stompSession4.disconnect();
         stompSession5.disconnect();
         logger.info("Akkor Heló!");
+    }
+
+    // TODO avoid sleeping in unit and integration tests
+    private static void sleep(long sleepMillis) throws InterruptedException {
+        logger.debug("Sleeping for: {} milliseconds", sleepMillis);
+        Thread.sleep(sleepMillis);
     }
 
 }

@@ -27,35 +27,9 @@ public class MessageController {
 
     private Game<?, ?> game;
 
-    // TODO use /app/game application destination
-    @MessageMapping("/chat.sendMessage")
-    public void sendMessage(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
-        logger.info("sendMessage: Received message: {} {}", message, headerAccessor);
-
-        // TODO avoid storing username in WebSocket / STOMP session
-        String user = (String) headerAccessor.getSessionAttributes().get("username");
-
-        // Validate message
-        if (!Objects.equals(user, message.getSender())) {
-            logger.warn("sendMessage: Detected mismatch between user and sender: {} {}", user, message.getSender());
-            // TODO ignore invalid messages
-        }
-
-        // Handle message and update state
-        MessageType type = message.getType();
-        if (type == MessageType.START) {
-            start(user);
-        } else if (type == MessageType.GAME) {
-            process(message);
-        } else {
-            // TODO other messages
-        }
-    }
-
-    // TODO use /app/lobby application destination
-    @MessageMapping("/chat.addUser")
-    public void addUser(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
-        logger.info("addUser: Received message: {} {}", message, headerAccessor);
+    @MessageMapping("/lobby")
+    public void receiveLobby(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
+        logger.info("receiveLobby: Received message: {} {}", message, headerAccessor);
 
         String user = message.getSender();
         String session = headerAccessor.getSessionId();
@@ -68,6 +42,30 @@ public class MessageController {
 
         // Handle reconnection and restore state
         reconnect(user, session);
+    }
+
+    @MessageMapping("/game")
+    public void receiveGame(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
+        logger.info("receiveGame: Received message: {} {}", message, headerAccessor);
+
+        // TODO avoid storing username in WebSocket / STOMP session
+        String user = (String) headerAccessor.getSessionAttributes().get("username");
+
+        // Validate message
+        if (!Objects.equals(user, message.getSender())) {
+            logger.warn("receiveGame: Detected mismatch between user and sender: {} {}", user, message.getSender());
+            return;
+        }
+
+        // Handle message and update state
+        MessageType type = message.getType();
+        if (type == MessageType.START) {
+            start(user);
+        } else if (type == MessageType.GAME) {
+            process(message);
+        } else {
+            logger.warn("receiveGame: Unexpected message: {}", message);
+        }
     }
 
     private CompletableFuture<Void> process(Message message) {

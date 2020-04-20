@@ -12,8 +12,9 @@
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
 
     var stompClient = null;
+    var subscriptionLobby;
     var subscriptionPublic;
-    var subscriptionUser;
+//    var subscriptionUser;
 
     var users = [];
 
@@ -31,8 +32,9 @@
     }
 
     function onConnected() {
-        subscriptionPublic = stompClient.subscribe('/topic/public', onMessageReceived);
-        subscriptionUser = stompClient.subscribe('/user/topic/public', onMessageReceived);
+        subscriptionLobby = stompClient.subscribe('/topic/lobby', onMessageReceived);
+        subscriptionPublic = stompClient.subscribe('/topic/game', onMessageReceived);
+//        subscriptionUser = stompClient.subscribe('/user/topic/game', onMessageReceived);
     }
 
     function onError(error) {
@@ -40,8 +42,9 @@
     }
 
     function disconnectScreen() {
+        subscriptionLobby.unsubscribe();
         subscriptionPublic.unsubscribe();
-        subscriptionUser.unsubscribe();
+//        subscriptionUser.unsubscribe();
 
         stompClient.disconnect(onDisconnected);
     }
@@ -67,6 +70,7 @@
             users.length = 0;
             users.push(...split);
         } else if (type === 'START') {
+            subscriptionLobby.unsubscribe();
             playSecretHitler();
         } else if (type === 'GAME') {
             var gameType = message.gameType;
