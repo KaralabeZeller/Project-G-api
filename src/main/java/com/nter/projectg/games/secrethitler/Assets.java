@@ -18,13 +18,13 @@ public class Assets {
     private List<Policy> enactedPolicies;
     private List<Power> powers;
     public List<Power> activePowers;
-    public int[] nonCandidates;
+    public SecretHitlerPlayer[] nonCandidates; //TODO remove
     public HashMap<Integer, Integer> playerMap;
     public List<SecretHitlerPlayer> players;
 
     public Assets(List<SecretHitlerPlayer> players) {
         this.players = players;
-        nonCandidates = new int[2];
+        nonCandidates = new SecretHitlerPlayer[2];
         electionTracker = 0;
         playerMap = new HashMap<>();
 
@@ -63,7 +63,7 @@ public class Assets {
 
     }
 
-    public void updateNotElect(int a, int b) {
+    public void updateNotElect(SecretHitlerPlayer a, SecretHitlerPlayer b) {
         nonCandidates[0] = a;
         nonCandidates[1] = b;
     }
@@ -125,6 +125,7 @@ public class Assets {
     }
 
     public List<Faction> getFactions() {
+
         return factions;
     }
 
@@ -176,4 +177,9 @@ public class Assets {
 
     }
 
+    public Faction getNextFaction() {
+        Faction f = factions.get(0);
+        factions.remove(0);
+        return f;
+    }
 }

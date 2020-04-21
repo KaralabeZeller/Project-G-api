@@ -9,9 +9,15 @@ import java.util.function.Consumer;
 public class SecretHitlerPlayer extends Player<SecretHitlerMessage> {
 
     private Faction faction;
+    private boolean president;
+    private boolean chancellor;
+    private boolean alive;
 
     public SecretHitlerPlayer(String name, Consumer<SecretHitlerMessage> send) {
         super(name, send);
+        setPresident(false);
+        setChancellor(false);
+        setAlive(true);
     }
 
     public Faction getFaction() {
@@ -22,12 +28,41 @@ public class SecretHitlerPlayer extends Player<SecretHitlerMessage> {
         this.faction = faction;
     }
 
+    public boolean isPresident() {
+        return president;
+    }
+
+    public void setPresident(boolean president) {
+        this.president = president;
+    }
+
+    public boolean isChancellor() {
+        return chancellor;
+    }
+
+    public void setChancellor(boolean chancellor) {
+        this.chancellor = chancellor;
+    }
+
+    public boolean isHitler() {
+        return faction.equals(Faction.HITLER) ? true: false;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+
     @Override
     public String toString() {
         return "SecretHitlerPlayer{" +
-                "super=" + super.toString() +
-                ", faction=" + faction +
+                "faction=" + faction +
+                ", president=" + president +
+                ", chancellor=" + chancellor +
+                ", alive=" + alive +
                 '}';
     }
-
 }

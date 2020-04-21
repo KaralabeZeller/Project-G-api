@@ -16,7 +16,7 @@ public class Votes {
         return Collections.frequency(votes.values(), vote);
     }
 
-    public boolean isFinished(int players) {
+    public boolean isFinished(long players) {
         return votes.size() == players;
     }
 
