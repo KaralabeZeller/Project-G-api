@@ -26,10 +26,10 @@
             </div>
             <div class="panel-body">
                 <form th:action="@{/join}" method="get">
-                    <button class="btn btn-lg btn-primary btn-block" name="join" type="Submit">Join</button>
+                    <button class="btn btn-lg btn-primary btn-block" type="Submit">Join</button>
                 </form>
                 <form th:action="@{/watch}" method="get">
-                    <button class="btn btn-lg btn-primary btn-block" name="watch" type="Submit">Watch</button>
+                    <button class="btn btn-lg btn-primary btn-block" type="Submit">Watch</button>
                 </form>
             </div>
             <p class="admin-message-text text-center" th:utext="${userMessage}"></p>

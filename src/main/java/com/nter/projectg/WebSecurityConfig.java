@@ -32,6 +32,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${spring.queries.roles-query}")
     private String rolesQuery;
 
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return bCryptPasswordEncoder;
+    }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
             throws Exception {
@@ -51,29 +57,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.headers().frameOptions().disable();
-        http.    authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/login").permitAll()
-                .antMatchers("/registration").permitAll()
-                .antMatchers("/h2-console/**").permitAll()
-                .antMatchers("/ws/**").permitAll()
-                //.antMatchers("/user/**").hasAuthority("USER")
-                .antMatchers("/admin/**").hasAuthority("ADMIN").anyRequest()
-                .authenticated().and().csrf().disable().formLogin()
-                .loginPage("/login").failureUrl("/login?error=true")
-                .defaultSuccessUrl("/user/userHome")
+        http.authorizeRequests()
+                .antMatchers("/registration").anonymous()
+                .antMatchers("/h2-console/**").anonymous()
+                .antMatchers("/ws/**").authenticated()
+                .antMatchers("/login").anonymous()
+                .antMatchers("/").authenticated()
+                .and()
+                .formLogin()
+                .loginPage("/login")
                 .usernameParameter("name")
                 .passwordParameter("password")
-                /*.antMatchers("/user/**").hasAuthority("USER").anyRequest()
-                .authenticated().and().csrf().disable().formLogin()
-                .loginPage("/login").failureUrl("/login?error=true")
-                .defaultSuccessUrl("/user/userHome")
-                .usernameParameter("email")
-                .passwordParameter("password")*/
+                .defaultSuccessUrl("/", true) // the second parameter is for enforcing this url always
+                .loginProcessingUrl("/login")
+                .failureUrl("/login?error")
+                .permitAll()
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/").and().exceptionHandling()
-                .accessDeniedPage("/access-denied");
+                .logoutSuccessUrl("/");
 
 
     }
