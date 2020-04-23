@@ -57,7 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.headers().frameOptions().disable();
         http.authorizeRequests()
-
+                .antMatchers("/health").permitAll()
                 .antMatchers("/registration", "/h2-console/**").anonymous()
                 .anyRequest().authenticated()
                 .and()
