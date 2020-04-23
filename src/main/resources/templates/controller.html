@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <title>Demo | Project-G</title>
@@ -14,6 +16,8 @@
 </noscript>
 
 <div id="chat-page">
+    <input type="hidden" id="userName" th:value="${userName}"/>
+
     <div class="chat-container">
         <div class="chat-header">
             <h2 id="lobbyHeader">Lobby | Secret Hitler</h2>

@@ -199,13 +199,18 @@
 
     function updateVote(player, content) {
         var div = document.getElementById('playerVote-' + player);
+        var output = '';
         if (content === 'Ja!') {
-            div.innerHTML = '<img src="./games/secrethitler/ballot-ja.png" height="60" />';
+            output = '<img src="./games/secrethitler/ballot-ja.png" height="60" />';
         } else if (content == 'Nein!') {
-            div.innerHTML = '<img src="./games/secrethitler/ballot-no.png" height="60" />';
+            output = '<img src="./games/secrethitler/ballot-no.png" height="60" />';
         } else {
-            div.innerHTML = '';
+           output = '';
         }
+        setTimeout(function () {
+                    div.innerHTML = output;
+                    div.classList.remove('hide');
+                }, 500);
     }
 
     function enactPolicy(policy) {

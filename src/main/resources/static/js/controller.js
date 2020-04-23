@@ -16,7 +16,7 @@
     var subscriptionUser;
 
     // TODO use url parameters for controller (lobby id, username)
-    var userName = sessionStorage.getItem('name');
+    var userName = document.getElementById('userName').value;
     var users = [];
 
     var started = false;

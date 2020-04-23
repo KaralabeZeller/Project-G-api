@@ -112,3 +112,11 @@ body {
 .hide {
     opacity: 0 !important;
 }
+
+*[id^='playerVote-']{
+   opacity: 1;
+   transition: opacity 0.5s;
+ }
+ .hide {
+   opacity: 0 !important;
+ }
