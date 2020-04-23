@@ -20,8 +20,7 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
     private DataSource dataSource;
@@ -33,8 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private String rolesQuery;
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    public BCryptPasswordEncoder getPasswordEncoder() {
         return bCryptPasswordEncoder;
     }
 
@@ -58,11 +56,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.headers().frameOptions().disable();
         http.authorizeRequests()
+
                 .antMatchers("/registration").anonymous()
                 .antMatchers("/h2-console/**").anonymous()
-                .antMatchers("/ws/**").authenticated()
                 .antMatchers("/login").anonymous()
-                .antMatchers("/").authenticated()
+                .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login")
