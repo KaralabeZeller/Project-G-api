@@ -50,14 +50,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity security) {
-        security.ignoring().antMatchers("/css/**", "/images/**", "/js/**", "/login", "/health");
+        security.ignoring().antMatchers("/css/**", "/images/**", "/js/**", "/health");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.headers().frameOptions().disable();
-        http.portMapper()
-                .http(8080).mapsTo(443);
+
         http.authorizeRequests()
                 .antMatchers("/registration", "/h2-console/**").anonymous()
                 .anyRequest().authenticated()
@@ -66,9 +65,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/login")
                 .usernameParameter("name")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/", true) // the second parameter is for enforcing this url always
-                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/user/userHome", true) // the second parameter is for enforcing this url always
                 .failureUrl("/login?error")
+                .loginProcessingUrl("/login")
                 .permitAll()
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))

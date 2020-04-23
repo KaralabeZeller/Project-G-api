@@ -28,6 +28,7 @@ public class UserController {
         return modelAndView;
     }
 
+
     @RequestMapping(value={"/health"}, method = RequestMethod.GET)
     @ResponseBody
     public String health(){
