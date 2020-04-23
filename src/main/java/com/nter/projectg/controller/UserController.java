@@ -26,7 +26,7 @@ public class UserController {
         return modelAndView;
     }
 
-    @RequestMapping(value={"/", "/join"}, method = RequestMethod.GET)
+    @RequestMapping(value={"/join"}, method = RequestMethod.GET)
     public ModelAndView join(Map<String, Object> model) {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
