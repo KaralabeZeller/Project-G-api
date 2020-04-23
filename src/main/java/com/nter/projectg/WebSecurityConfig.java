@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
 import javax.sql.DataSource;
 
 
@@ -48,8 +49,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity security){
-        security.ignoring().antMatchers("/css/**","/images/**","/js/**");
+    public void configure(WebSecurity security) {
+        security.ignoring().antMatchers("/css/**", "/images/**", "/js/**");
     }
 
     @Override
@@ -57,9 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.headers().frameOptions().disable();
         http.authorizeRequests()
 
-                .antMatchers("/registration").anonymous()
-                .antMatchers("/h2-console/**").anonymous()
-                .antMatchers("/login").anonymous()
+                .antMatchers("/registration", "/h2-console/**").anonymous()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
