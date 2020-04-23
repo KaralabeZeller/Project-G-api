@@ -1,10 +1,7 @@
 package com.nter.projectg;
 
 import com.nter.test.secrethitler.SecretHitlerClient;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +73,7 @@ public class DemoApplicationTests {
         client5.disconnect();
     }
 
-    @Test
+    @Test @Ignore
     public void testJoin() throws InterruptedException {
         logger.info("Heló!");
         List<String> users = Arrays.asList("TESTER1", "TESTER2", "TESTER3", "TESTER4", "TESTER5");
