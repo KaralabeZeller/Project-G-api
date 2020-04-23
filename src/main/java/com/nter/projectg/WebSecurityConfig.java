@@ -50,14 +50,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity security) {
-        security.ignoring().antMatchers("/css/**", "/images/**", "/js/**");
+        security.ignoring().antMatchers("/css/**", "/images/**", "/js/**", "/login", "/health");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.headers().frameOptions().disable();
         http.authorizeRequests()
-                .antMatchers("/health").permitAll()
                 .antMatchers("/registration", "/h2-console/**").anonymous()
                 .anyRequest().authenticated()
                 .and()
