@@ -24,10 +24,6 @@ class RedirectUrlProtocolUpdaterFilter extends OncePerRequestFilter {
         String locationHeader = response.getHeader("Location");
         logger.info("############ inside interceptor");
 
-        for(String name: response.getHeaderNames()) {
-            logger.info(name + " : " + response.getHeader(name));
-        }
-
         if(locationHeader != null && locationHeader.startsWith("http://")) {
             logger.info("###################### setting location header");
 
