@@ -70,8 +70,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/")
-                .and().requiresChannel().antMatchers("/user/userHome").requiresSecure();
+                .logoutSuccessUrl("/");
 
 
     }
