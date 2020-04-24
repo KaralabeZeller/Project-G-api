@@ -58,19 +58,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.headers().frameOptions().disable();
 
         http.authorizeRequests()
-                .antMatchers("/registration").permitAll()
+                .antMatchers("/registration", "/").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login")
                 .usernameParameter("name")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/user/userHome", true) // the second parameter is for enforcing this url always
+                .defaultSuccessUrl("/user/userHome")
                 .failureUrl("/login?error")
                 .permitAll()
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/");
+                .logoutSuccessUrl("/")
+                .and().requiresChannel().antMatchers("/user/userHome").requiresSecure();
 
 
     }
