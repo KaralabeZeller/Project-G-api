@@ -62,7 +62,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/login")
+                .loginPage("/login-form")
                 .usernameParameter("name")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/user/userHome", true) // the second parameter is for enforcing this url always
@@ -71,10 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/")
-                .and()
-                .requiresChannel()
-                .anyRequest().requiresSecure();
+                .logoutSuccessUrl("/");
 
 
     }
