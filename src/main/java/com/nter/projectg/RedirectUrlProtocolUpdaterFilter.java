@@ -22,11 +22,9 @@ class RedirectUrlProtocolUpdaterFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String locationHeader = response.getHeader("Location");
-        logger.info("############ inside interceptor");
 
-        logger.info("############ HEADER: " + locationHeader);
+        logger.info("Request HEADER: " + locationHeader);
         if(locationHeader != null && locationHeader.startsWith("http://")) {
-            logger.info("###################### setting location header");
 
             locationHeader = locationHeader.replaceAll("http://", "https://");
             response.setHeader("Location", locationHeader);
