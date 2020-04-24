@@ -2271,3 +2271,6 @@ org.h2.jdbc.JdbcSQLDataException: Invalid value "3" for parameter "columnIndex" 
 2020-04-23 17:33:47 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "UPDATE TABLE[*] USER_ROLE SET ROLE_ID = 2 WHERE USER_ID = 97"; expected "identifier"; SQL statement:
 update table user_role set role_id = 2 where user_id = 97 [42001-200]
+2020-04-24 01:00:18 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "INSERT INTO ROLE SELECT * FROM ( SELECT 1, 'ADMIN' UNION SELECT 2, 'USER' UNION )[*] X WHERE NOT EXISTS(SELECT * FROM ROLE)"; expected "ALL, DISTINCT, (, WITH, SELECT, TABLE, VALUES"; SQL statement:
+insert into ROLE select * from ( select 1, 'ADMIN' union select 2, 'USER' union ) x where not exists(select * from ROLE) [42001-200]
