@@ -55,7 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
+        http.portMapper().http(8080).mapsTo(443).http(80).mapsTo(443);
         http.authorizeRequests()
                 .antMatchers("/registration", "/", "/login").permitAll()
                 .anyRequest().authenticated()
@@ -69,8 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/")
-                .and().requiresChannel().antMatchers("/login/**", "/login","/user/**").requiresSecure();;
+                .logoutSuccessUrl("/");
 
 
     }
