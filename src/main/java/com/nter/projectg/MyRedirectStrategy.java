@@ -24,7 +24,7 @@ public class MyRedirectStrategy extends DefaultRedirectStrategy {
             redirectUrl = response.encodeRedirectURL(redirectUrl);
             logger.info("sendRedirect encoded URL: "+ redirectUrl);
         } else {
-            redirectUrl = response.encodeRedirectURL("https://api.project-g.xyz/" + redirectUrl);
+            redirectUrl = response.encodeRedirectURL("https://"+request.getHeader("host") +"/" + redirectUrl);
             logger.info("sendRedirect encoded URL: "+ redirectUrl);
         }
 

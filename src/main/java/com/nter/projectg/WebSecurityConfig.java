@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.sql.DataSource;
@@ -57,7 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/registration", "/", "/login").permitAll()
+                .antMatchers("/registration", "/", "/login", "/login?error").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -70,7 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/");
+                .logoutSuccessHandler(myLogoutSuccessHandler());
 
 
     }
@@ -80,6 +81,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new MySimpleUrlAuthenticationSuccessHandler();
     }
 
+    @Bean
+    public LogoutSuccessHandler myLogoutSuccessHandler(){
+        return new MyLogoutSuccessHandler();
+    }
 
 
 }
