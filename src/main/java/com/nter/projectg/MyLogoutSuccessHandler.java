@@ -26,7 +26,7 @@ public class MyLogoutSuccessHandler implements LogoutSuccessHandler {
         if(environment.equals("LOCAL")) {
             redirectUrl = request.getScheme() + "://" + request.getServerName()  + (request.getServerPort() != 80 ? ":" + request.getServerPort() : "") + "/";
         } else {
-            redirectUrl = "https://" + request.getServerName()  + (request.getServerPort() != 8443 ? ":" + request.getServerPort() : "")  + "/";
+            redirectUrl = "https://" + request.getServerName()  + ":443/";
         }
 
         logger.info("onLogoutSuccess() redirectUrl: " + redirectUrl);
