@@ -1,4 +1,4 @@
-package com.nter.projectg;
+package com.nter.projectg.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

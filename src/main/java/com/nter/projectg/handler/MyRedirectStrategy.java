@@ -1,4 +1,4 @@
-package com.nter.projectg;
+package com.nter.projectg.handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class MyRedirectStrategy extends DefaultRedirectStrategy {
 
-    private static final Logger logger = LoggerFactory.getLogger(MySimpleUrlAuthenticationSuccessHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(MyAuthSuccessHandler.class);
 
     @Override
     public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {

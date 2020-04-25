@@ -5,7 +5,7 @@
     <option name="PROGRAM_PARAMETERS" value="--debug" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="com.nter.projectg.*" />
+        <option name="PATTERN" value="com.nter.projectg.handler.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
