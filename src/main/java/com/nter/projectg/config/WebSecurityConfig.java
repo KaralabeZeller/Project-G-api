@@ -52,7 +52,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity security) {
-        security.ignoring().antMatchers("/css/**", "/images/**", "/js/**", "/h2-console/**", "/health");
+        security.ignoring().antMatchers("/css/**", "/images/**", "/js/**", "/h2-console/**", "/health", "/ws/**"); //TODO authenticate BOTs and remove /ws
     }
 
     @Override

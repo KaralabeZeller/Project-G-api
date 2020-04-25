@@ -15,7 +15,6 @@ public class MyRedirectStrategy extends DefaultRedirectStrategy {
     @Override
     public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
 
-
         String environment = request.getHeader("host").contains("localhost") ? "LOCAL" : "REMOTE";
         logger.info("sendRedirect environment: "+ environment);
         String redirectUrl = calculateRedirectUrl(request.getContextPath(), url);
