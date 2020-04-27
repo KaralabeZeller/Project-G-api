@@ -1,7 +1,7 @@
 package com.nter.projectg.service;
 
-import com.nter.projectg.model.web.Role;
-import com.nter.projectg.model.web.User;
+import com.nter.projectg.model.web.RoleModel;
+import com.nter.projectg.model.web.UserModel;
 import com.nter.projectg.repository.RoleRepository;
 import com.nter.projectg.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +24,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUserByName(String name) {
+    public UserModel findUserByName(String name) {
         return userRepository.findByName(name);
     }
 
     @Override
-    public User saveUser(User user) {
+    public UserModel saveUser(UserModel user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        Role userRole = roleRepository.findByRole("ADMIN");
-        user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
+        RoleModel userRole = roleRepository.findByRole("ADMIN");
+        user.setRoles(new HashSet<RoleModel>(Arrays.asList(userRole)));
         return userRepository.save(user);
     }
 }

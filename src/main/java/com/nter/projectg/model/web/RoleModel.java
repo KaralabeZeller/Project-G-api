@@ -11,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "ROLE")
-public class Role {
+public class RoleModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ROLE_ID")

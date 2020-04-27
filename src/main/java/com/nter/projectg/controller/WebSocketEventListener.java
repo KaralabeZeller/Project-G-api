@@ -1,6 +1,7 @@
 package com.nter.projectg.controller;
 
 import com.nter.projectg.lobby.Lobby;
+import com.nter.projectg.lobby.LobbyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class WebSocketEventListener {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
 
     @Autowired
-    private Lobby lobby;
+    private LobbyHandler lobbyHandler;
 
     @EventListener
     public void handleWebSocketConnect(SessionConnectedEvent event) {
@@ -37,7 +38,7 @@ public class WebSocketEventListener {
             logger.debug("Disconnecting user from session: {} {}", user, session);
 
             // Update lobby and broadcast notification message
-            lobby.remove(user, session);
+            lobbyHandler.remove(user, session);
 
             logger.info("Disconnected user from session: {} {}", user, session);
         } else {

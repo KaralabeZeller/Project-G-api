@@ -27,8 +27,9 @@ public class Message {
     private MessageType type;
     private String sender;
 
-    private String content;
+    private String lobby;
 
+    private String content;
     public Message() {
     }
 
@@ -56,12 +57,21 @@ public class Message {
         this.content = content;
     }
 
+    public String getLobby() {
+        return lobby;
+    }
+
+    public void setLobby(String lobby) {
+        this.lobby = lobby;
+    }
+
     @Override
     public String toString() {
         return "Message{" +
                 "type=" + type +
                 ", sender='" + sender + '\'' +
                 ", content='" + content + '\'' +
+                ", lobby='" + lobby + '\'' +
                 '}';
     }
 

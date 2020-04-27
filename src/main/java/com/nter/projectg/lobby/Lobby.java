@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -14,16 +15,23 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component
+
 public class Lobby {
 
     private static final Logger logger = LoggerFactory.getLogger(Lobby.class);
 
-    @Autowired
+    // Name of the lobby //TODO map to LobbyModel
+    private String name;
+
     private SimpMessageSendingOperations messagingTemplate;
 
     private final Map<String, String> userSession = new ConcurrentHashMap<>();
     private final Map<String, String> sessionUser = new ConcurrentHashMap<>();
+
+    public Lobby(String name, SimpMessageSendingOperations msgTemplate) {
+        setName(name);
+        this.messagingTemplate = msgTemplate;
+    }
 
     public Collection<String> getUsers() {
         return Collections.unmodifiableSet(userSession.keySet());
@@ -59,14 +67,14 @@ public class Lobby {
         logger.debug("sendToLobby: {}", message);
 
         // Broadcast message to all sessions
-        messagingTemplate.convertAndSend("/topic/lobby", message);
+        messagingTemplate.convertAndSend("/topic/lobby/" + getName(), message);
     }
 
     public void sendToAll(Object message) {
         logger.debug("sendToAll: {}", message);
 
         // Broadcast message to all sessions
-        messagingTemplate.convertAndSend("/topic/game", message);
+        messagingTemplate.convertAndSend("/topic/game/" + name, message);
     }
 
     public void sendToUser(String user, Object message) {
@@ -85,13 +93,27 @@ public class Lobby {
         Message message = new Message();
         message.setType(type);
         message.setSender(user);
+        message.setLobby(getName());
         message.setContent(String.join(",", getUsers()));
         return message;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Map<String, String> getUserSession() {
+        return userSession;
     }
 
     @Override
     public String toString() {
         return "Lobby{" +
+                "name=" + name +
                 "userSession=" + userSession +
                 ", sessionUser=" + sessionUser +
                 '}';

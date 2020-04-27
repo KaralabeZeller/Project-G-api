@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <title>Demo | Project-G</title>
     <link rel="stylesheet" href="/css/screen.css"/>
 </head>
 <body>
+<input type="hidden" id="userName" th:value="${userName}"/>
+<input type="hidden" id="lobbyName" th:value="${lobbyName}"/>
 
 <noscript>
     <h2>Sorry! Your browser doesn't support Javascript</h2>

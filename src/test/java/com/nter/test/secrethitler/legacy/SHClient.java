@@ -28,6 +28,7 @@ public class SHClient {
     private final Random random = new Random();
     private String username;
     private StompSession stompSession;
+    private final String lobbyName = "SECRET_HITLER-1026";
 
     public ListenableFuture<StompSession> connect() {
 
@@ -47,7 +48,7 @@ public class SHClient {
     public void subscribeChannels(StompSession session) {
         this.stompSession = session;
 
-        stompSession.subscribe("/topic/lobby", new StompFrameHandler() {
+        stompSession.subscribe("/topic/lobby/" + lobbyName, new StompFrameHandler() {
 
             public Type getPayloadType(StompHeaders stompHeaders) {
                 return byte[].class;
@@ -91,7 +92,7 @@ public class SHClient {
                         String gameType = message.getString("gameType");
                         if (gameType.equals("PRESIDENT") || gameType.equals("CHANCELLOR") ||
                                 gameType.equals("VOTED") || gameType.equals("ENACTED_POLICY") ||
-                                gameType.equals("KILED")) {
+                                gameType.equals("KILLED")) {
                             // ignore
                         } else if (gameType.equals("VOTE")) {
                             chooseOne(content, "VOTE");
@@ -188,18 +189,20 @@ public class SHClient {
         JSONObject join = new JSONObject();
         join.put("type", type);
         join.put("sender", username);
+        join.put("lobby", lobbyName);
         join.put("content", content);
 
-        stompSession.send("/app/lobby", join.toString().getBytes());
+        stompSession.send("/app/lobby/"+lobbyName, join.toString().getBytes());
     }
 
     private void sendStart(String content) throws JSONException {
         JSONObject join = new JSONObject();
         join.put("type", "START");
         join.put("sender", username);
+        join.put("lobby", lobbyName);
         join.put("content", content);
 
-        stompSession.send("/app/game", join.toString().getBytes());
+        stompSession.send("/app/game/" + lobbyName, join.toString().getBytes());
     }
 
     public void sendGame(String type, String content) throws JSONException {
@@ -208,8 +211,9 @@ public class SHClient {
         join.put("sender", username);
         join.put("gameType", type);
         join.put("content", content);
+        join.put("lobby", lobbyName);
 
-        stompSession.send("/app/game", join.toString().getBytes());
+        stompSession.send("/app/game/" + lobbyName, join.toString().getBytes());
     }
 
     private static class SessionHandler extends StompSessionHandlerAdapter {

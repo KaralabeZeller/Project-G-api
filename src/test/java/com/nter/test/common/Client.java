@@ -26,6 +26,7 @@ public abstract class Client<GameMessage extends Message> {
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
 
     private final String url;
+    private final String lobbyName = "SECRET_HITLER-396";
 
     private StompSession session;
     private StompSession.Subscription subscriptionLobby;
@@ -33,8 +34,8 @@ public abstract class Client<GameMessage extends Message> {
     private StompSession.Subscription subscriptionUser;
 
     public Client(int port) {
-        // this.url = "wss://api.project-g.xyz:443/ws";
-        this.url = "ws://localhost:" + port + "/ws";
+       // this.url = "wss://api.project-g.xyz:443/ws";
+       this.url = "ws://localhost:" + port + "/ws";
     }
 
     public void connect() throws ExecutionException, InterruptedException {
@@ -69,7 +70,7 @@ public abstract class Client<GameMessage extends Message> {
     public void subscribe() {
         logger.debug("Subscribing: {} {} {}", subscriptionLobby, subscriptionPublic, subscriptionUser);
 
-        subscriptionLobby = session.subscribe("/topic/lobby", createHandlerLobby());
+        subscriptionLobby = session.subscribe("/topic/lobby/" + lobbyName, createHandlerLobby());
         subscriptionPublic = session.subscribe("/topic/game", createHandlerPublic());
         subscriptionUser = session.subscribe("/user/topic/game", createHandlerUser());
 
@@ -95,7 +96,7 @@ public abstract class Client<GameMessage extends Message> {
     protected void sendLobby(Message message) {
         logger.info("sendLobby: {}", message);
 
-        session.send("/app/lobby", message);
+        session.send("/app/lobby/" + lobbyName, message);
     }
 
     protected void sendGame(Message message) {

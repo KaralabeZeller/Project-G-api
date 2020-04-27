@@ -17,6 +17,7 @@
 
     // TODO use url parameters for controller (lobby id, username)
     var userName = document.getElementById('userName').value;
+    var lobbyName = document.getElementById('lobbyName').value;
     var users = [];
 
     var started = false;
@@ -35,8 +36,8 @@
     }
 
     function onConnected() {
-        subscriptionLobby = stompClient.subscribe('/topic/lobby', onMessageReceived);
-        subscriptionPublic = stompClient.subscribe('/topic/game', onMessageReceived);
+        subscriptionLobby = stompClient.subscribe('/topic/lobby/' + lobbyName, onMessageReceived);
+        subscriptionPublic = stompClient.subscribe('/topic/game/' + lobbyName, onMessageReceived);
         subscriptionUser = stompClient.subscribe('/user/topic/game', onMessageReceived);
 
         sendLobby('JOIN', null);
@@ -123,18 +124,20 @@
         var message = {
             type: type,
             sender: userName,
+            lobby: lobbyName,
             content: content,
         };
-        stompClient.send('/app/lobby', {}, JSON.stringify(message));
+        stompClient.send('/app/lobby/' + lobbyName, {}, JSON.stringify(message));
     }
 
     function sendStart(content) {
         var message = {
             type: 'START',
             sender: userName,
+            lobby:  lobbyName,
             content: content,
         };
-        stompClient.send('/app/game', {}, JSON.stringify(message));
+        stompClient.send('/app/game/' + lobbyName, {}, JSON.stringify(message));
     }
 
     function sendGame(type, content) {
@@ -142,9 +145,10 @@
             type: 'GAME',
             gameType: type,
             sender: userName,
+            lobby:  lobbyName,
             content: content,
         };
-        stompClient.send('/app/game', {}, JSON.stringify(message));
+        stompClient.send('/app/game/'+ lobbyName, {}, JSON.stringify(message));
     }
 
     // TODO move to a different file with all the other lobby stuff

@@ -1,25 +1,40 @@
 package com.nter.projectg.controller;
 
-import com.nter.projectg.model.web.User;
+import com.nter.projectg.games.common.util.Constants;
+import com.nter.projectg.lobby.Lobby;
+import com.nter.projectg.lobby.LobbyHandler;
+import com.nter.projectg.model.common.LobbyModel;
+import com.nter.projectg.model.web.UserModel;
 import com.nter.projectg.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 @Controller
 public class UserController {
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private Constants constants;
+
+    @Autowired
+    private LobbyHandler lobbyHandler;
 
 
     @RequestMapping(value={"/login"}, method = RequestMethod.GET)
@@ -36,37 +51,57 @@ public class UserController {
         return "OK";
     }
 
-    @RequestMapping(value={"/join"}, method = RequestMethod.GET)
-    public ModelAndView join(Map<String, Object> model) {
+    @RequestMapping(value={"/join/{lobbyId}"}, method = RequestMethod.GET)
+    public ModelAndView join(@PathVariable("lobbyId") String lobbyId, Map<String, Object> model) {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findUserByName(auth.getName());
+
+        logger.info("Joining lobby: " + lobbyId);
+        UserModel user = userService.findUserByName(auth.getName());
         model.put("userName", user.getName());
-        modelAndView.setViewName("controller");
+
+        model.put("lobbyName", lobbyId );
+        modelAndView.setViewName("user/lobby");
         return modelAndView;
     }
 
-    @RequestMapping(value={"/watch"}, method = RequestMethod.GET)
-    public ModelAndView watch() {
+    @RequestMapping(value={"/watch/{lobbyId}"}, method = RequestMethod.GET)
+    public ModelAndView watch(@PathVariable("lobbyId") String lobbyId, Map<String, Object> model) {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        modelAndView.setViewName("screen");
+        logger.info("Watching lobby: " + lobbyId);
+        UserModel user = userService.findUserByName(auth.getName());
+        model.put("userName", user.getName());
+
+        model.put("lobbyName", lobbyId );
+        modelAndView.setViewName("user/screen");
         return modelAndView;
     }
 
     @RequestMapping(value="/registration", method = RequestMethod.GET)
     public ModelAndView registration(){
         ModelAndView modelAndView = new ModelAndView();
-        User user = new User();
+        UserModel user = new UserModel();
         modelAndView.addObject("user", user);
         modelAndView.setViewName("registration");
         return modelAndView;
     }
 
-    @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
+    @RequestMapping(value="/lobbies", method = RequestMethod.GET)
+    public ModelAndView lobbies(){
         ModelAndView modelAndView = new ModelAndView();
-        User userExists = userService.findUserByName(user.getName());
+        UserModel user = new UserModel();
+        modelAndView.addObject("user", user);
+        modelAndView.addObject("gameNames", constants.getGames());
+        modelAndView.addObject("lobbies", lobbyHandler.getLobbies());
+        modelAndView.setViewName("user/lobbies");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/registration", method = RequestMethod.POST)
+    public ModelAndView createNewUser(@Valid UserModel user, BindingResult bindingResult) {
+        ModelAndView modelAndView = new ModelAndView();
+        UserModel userExists = userService.findUserByName(user.getName());
         if (userExists != null) {
             bindingResult
                     .rejectValue("name", "error.user",
@@ -77,17 +112,34 @@ public class UserController {
         } else {
             userService.saveUser(user);
             modelAndView.addObject("successMessage", "User has been registered successfully");
-            modelAndView.addObject("user", new User());
+            modelAndView.addObject("user", new UserModel());
             modelAndView.setViewName("registration");
         }
         return modelAndView;
     }
 
+    //TODO implement create new lobby with lobbyHandler
+    @RequestMapping(value = "/createLobby", method = RequestMethod.POST)
+    public ModelAndView createLobby(@Valid String game,Map<String, Object> model) {
+        ModelAndView modelAndView = new ModelAndView();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        logger.info("Creating lobby for game: " + game);
+        UserModel user = userService.findUserByName(auth.getName());
+        model.put("userName", user.getName());
+
+
+        String lobbyName = lobbyHandler.createLobby(game).getName();
+        model.put("lobbyName", lobbyName );
+        modelAndView.setViewName("user/lobby");
+        return modelAndView;
+    }
+
+
     @RequestMapping(value="/admin/adminHome", method = RequestMethod.GET)
     public ModelAndView home(){
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findUserByName(auth.getName());
+        UserModel user = userService.findUserByName(auth.getName());
         modelAndView.addObject("userName", "Welcome " + user.getName());
         modelAndView.addObject("adminMessage","This Page is available to Users with Admin Role");
         modelAndView.setViewName("admin/adminHome");
@@ -98,7 +150,8 @@ public class UserController {
     public ModelAndView user(){
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findUserByName(auth.getName());
+        UserModel user = userService.findUserByName(auth.getName());
+
         modelAndView.addObject("userName", "Welcome " + user.getName());
         modelAndView.addObject("userMessage","This Page is available to Users with User Role");
         modelAndView.setViewName("user/userHome");

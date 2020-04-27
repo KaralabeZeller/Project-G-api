@@ -103,11 +103,9 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
 
     protected abstract void handleGame(GameMessage message);
 
-    public void start(String user) {
-        GamePlayer player = findPlayer(user);
-
+    public void start() {
         // Broadcast start message to all sessions
-        Message message = buildStartMessage(player.getName(), MessageType.START);
+        Message message = buildStartMessage(getName(), MessageType.START);
         lobby.sendToAll(message);
     }
 

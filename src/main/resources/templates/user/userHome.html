@@ -14,9 +14,7 @@
 <div class="container">
 
     <form th:action="@{/logout}" method="get">
-        <button class="btn btn-md btn-danger btn-block" name="registration"
-                type="Submit">Logout
-        </button>
+        <button class="btn btn-md btn-danger btn-block" name="registration" type="Submit">Logout</button>
     </form>
 
     <div class="panel-group" style="margin-top:40px">
@@ -25,11 +23,8 @@
                 <span th:utext="${userName}"></span>
             </div>
             <div class="panel-body">
-                <form th:action="@{/join}" method="get">
-                    <button class="btn btn-lg btn-primary btn-block" type="Submit">Join</button>
-                </form>
-                <form th:action="@{/watch}" method="get">
-                    <button class="btn btn-lg btn-primary btn-block" type="Submit">Watch</button>
+                <form th:action="@{/lobbies}" method="get">
+                    <button class="btn btn-lg btn-primary btn-block" type="Submit">Lobbies</button>
                 </form>
             </div>
             <p class="admin-message-text text-center" th:utext="${userMessage}"></p>

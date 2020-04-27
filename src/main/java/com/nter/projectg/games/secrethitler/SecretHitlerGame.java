@@ -324,8 +324,8 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     }
 
     @Override
-    public void start(String user) {
-        super.start(user);
+    public void start() {
+        super.start();
 
         SecretHitlerMessage hitlerMessage = buildGameMessage(GameMessageType.HITLER, playerHandler.getHitler().getFaction().name());
 

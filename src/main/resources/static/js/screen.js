@@ -11,6 +11,10 @@
 
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
 
+    // TODO use url parameters for controller (lobby id, username)
+    var userName = document.getElementById('userName').value;
+    var lobbyName = document.getElementById('lobbyName').value;
+
     var stompClient = null;
     var subscriptionLobby;
     var subscriptionPublic;
@@ -32,8 +36,8 @@
     }
 
     function onConnected() {
-        subscriptionLobby = stompClient.subscribe('/topic/lobby', onMessageReceived);
-        subscriptionPublic = stompClient.subscribe('/topic/game', onMessageReceived);
+        subscriptionLobby = stompClient.subscribe('/topic/lobby/' + lobbyName, onMessageReceived);
+        subscriptionPublic = stompClient.subscribe('/topic/game/' +lobbyName, onMessageReceived);
 //        subscriptionUser = stompClient.subscribe('/user/topic/game', onMessageReceived);
     }
 
@@ -148,7 +152,7 @@
             name = document.getElementById('name-' + player);
 
         div.style.backgroundColor = '#c9ccce'; // TODO stylesheet
-        avatar.innerHTML = '<img src="./games/secrethitler/lizard_killed.png" width="60" height="60" />';
+        avatar.innerHTML = '<img src="/games/secrethitler/lizard_killed.png" width="60" height="60" />';
         name.style.color = 'grey';
     }
 
@@ -174,7 +178,7 @@
         playerVote.id = 'playerVote-' + player;
         playerRole.width = '230 px';
         avatar.id = 'avatar-' + player;
-        avatar.innerHTML = '<img src="./games/secrethitler/lizard.png" width="60" height="60" />';
+        avatar.innerHTML = '<img src="/games/secrethitler/lizard.png" width="60" height="60" />';
 
         row.appendChild(avatar);
         row.appendChild(playerName);
@@ -190,9 +194,9 @@
         var div = document.getElementById(player);
         var output = text;
         if (text === 'PRESIDENT') {
-            output = '<img src="./games/secrethitler/president.png" height="60" />';
+            output = '<img src="/games/secrethitler/president.png" height="60" />';
         } else if (text === 'CHANCELLOR') {
-            output = '<img src="./games/secrethitler/chancellor.png" height="60" />';
+            output = '<img src="/games/secrethitler/chancellor.png" height="60" />';
         }
         div.innerHTML = output;
     }
@@ -201,9 +205,9 @@
         var div = document.getElementById('playerVote-' + player);
         var output = '';
         if (content === 'Ja!') {
-            output = '<img src="./games/secrethitler/ballot-ja.png" height="60" />';
+            output = '<img src="/games/secrethitler/ballot-ja.png" height="60" />';
         } else if (content == 'Nein!') {
-            output = '<img src="./games/secrethitler/ballot-no.png" height="60" />';
+            output = '<img src="/games/secrethitler/ballot-no.png" height="60" />';
         } else {
            output = '';
         }
@@ -251,7 +255,7 @@
             }
             liberalPolicies++;
         }
-        drawing.src = './games/secrethitler/liberalp-l.png';
+        drawing.src = '/games/secrethitler/liberalp-l.png';
     }
 
     function addFascistPolicy() {
@@ -274,7 +278,7 @@
             }
             fascistPolicies++;
         }
-        drawing.src = './games/secrethitler/fascistp-l.png';
+        drawing.src = '/games/secrethitler/fascistp-l.png';
     }
 
     function drawBoards() {
@@ -307,14 +311,14 @@
             ctxFascist.scale(2,2);
         };
 
-        drawingLiberal.src = './games/secrethitler/SH1.png';
+        drawingLiberal.src = '/games/secrethitler/SH1.png';
 
         if (users.length == 5 || users.length == 6) {
-            drawingFascist.src = './games/secrethitler/SH2.png';
+            drawingFascist.src = '/games/secrethitler/SH2.png';
         } else if (users.length == 7 || users.length == 8) {
-            drawingFascist.src = './games/secrethitler/SH2_2.png';
+            drawingFascist.src = '/games/secrethitler/SH2_2.png';
         } else if (users.length == 9 || users.length == 10) {
-            drawingFascist.src = './games/secrethitler/SH2_3.png';
+            drawingFascist.src = '/games/secrethitler/SH2_3.png';
         } else {
             console.log('Failed to draw boards: Invalid user count: %s', users)
         }

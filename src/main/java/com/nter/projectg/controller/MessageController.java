@@ -1,13 +1,16 @@
 package com.nter.projectg.controller;
 
 import com.nter.projectg.games.common.Game;
-import com.nter.projectg.games.secrethitler.SecretHitlerGame;
+import com.nter.projectg.games.common.GameHandler;
+import com.nter.projectg.games.common.util.Constants;
 import com.nter.projectg.lobby.Lobby;
+import com.nter.projectg.lobby.LobbyHandler;
 import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.common.Message.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -23,28 +26,30 @@ public class MessageController {
     private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
 
     @Autowired
-    private Lobby lobby;
+    private LobbyHandler lobbyHandler;
 
-    private Game<?, ?> game;
+    @Autowired
+    GameHandler gameFactory;
 
-    @MessageMapping("/lobby")
-    public void receiveLobby(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
+    @MessageMapping("/lobby/{lobbyId}")
+    public void receiveLobby(@DestinationVariable String lobbyId, @Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
         logger.info("receiveLobby: Received message: {} {}", message, headerAccessor);
 
         String user = message.getSender();
+        String lobby = message.getLobby();
         String session = headerAccessor.getSessionId();
 
         // TODO avoid storing username in WebSocket / STOMP session
         headerAccessor.getSessionAttributes().put("username", user);
 
         // Update lobby and broadcast notification message
-        lobby.add(user, session);
+        lobbyHandler.add(user, session, lobby);
 
         // Handle reconnection and restore state
         reconnect(user, session);
     }
 
-    @MessageMapping("/game")
+    @MessageMapping("/game/{lobbyId}")
     public void receiveGame(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
         logger.info("receiveGame: Received message: {} {}", message, headerAccessor);
 
@@ -66,17 +71,21 @@ public class MessageController {
         } else {
             logger.warn("receiveGame: Unexpected message: {}", message);
         }
+
+
     }
 
     private CompletableFuture<Void> process(Message message) {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
+            Game game = gameFactory.get(message.getLobby());
+
             logger.debug("Processing message: {} {}", message, game);
             try {
                 game.handle(message);
                 logger.info("Processed message: {} {}", message, game);
             } catch (Exception exception) {
-                logger.error("Failed to process message: {} {}", message, game, exception);
+                logger.error("Failed to  process message: {} {}", message, game, exception);
                 throw exception;
             }
         });
@@ -85,9 +94,9 @@ public class MessageController {
     private CompletableFuture<Void> start(String user) {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
-            logger.debug("Starting game: Secret Hitler {}", lobby);
-            game = new SecretHitlerGame(lobby);
-            game.start(user);
+            logger.debug("Starting game: Secret Hitler {}", lobbyHandler.findLobbyForUser(user));
+            Game<?, ?> game = gameFactory.createGame(Constants.GAME_NAME.SECRET_HITLER, lobbyHandler.findLobbyForUser(user));
+            game.start();
             logger.info("Started game: Secret Hitler {}", game);
 
             // Fake timeout to reset Game
@@ -100,13 +109,17 @@ public class MessageController {
             logger.debug("Stopping game: Secret Hitler {}", game);
             game.stop();
             game = null;
-            logger.debug("Stopped game: Secret Hitler {}", lobby);
+            logger.debug("Stopped game: Secret Hitler {}", lobbyHandler.findLobbyForUser(user));
         });
     }
 
     private CompletableFuture<Void> reconnect(String user, String session) {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
+
+            Lobby l = lobbyHandler.findLobbyForUser(user);
+            Game game = gameFactory.get(l.getName());
+
             if (game != null) {
                 logger.debug("Reconnecting user in session: {} {}", user, session);
                 game.reconnect(user);

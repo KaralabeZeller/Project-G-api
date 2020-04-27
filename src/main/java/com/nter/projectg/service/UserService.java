@@ -1,9 +1,9 @@
 package com.nter.projectg.service;
 
 
-import com.nter.projectg.model.web.User;
-import org.springframework.stereotype.Service;
+import com.nter.projectg.model.web.UserModel;
+
 public interface UserService {
-    public User findUserByName(String email) ;
-    public User saveUser(User user);
+    public UserModel findUserByName(String email) ;
+    public UserModel saveUser(UserModel user);
 }
