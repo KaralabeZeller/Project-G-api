@@ -38,10 +38,9 @@ public class LobbyHandler {
     public void remove(String user, String session) {
         Lobby lobby = findLobbyForUser(user);
         lobby.remove(user, session);
-        if(lobby.getUsers().size() == 0) {
+        if (lobby.getUsers().size() == 0) {
             timer.delay(() -> closeLobby(lobby.getName()), 240);
         }
-
     }
 
     private void closeLobby(String name) {

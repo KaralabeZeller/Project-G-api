@@ -194,7 +194,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
                 sendToPlayer(player.getName(), voteMessage);
         }
 
-        sendStatus("Vote for the government: President - " + playerHandler.getPresident().getName() + ", chancellor - " + playerHandler.getChancellor().getName());
+        sendStatus("Vote for the government: President - " + playerHandler.getPresident().getName() + ", Chancellor - " + playerHandler.getChancellor().getName());
     }
 
     private void processVote(String player, String vote) {

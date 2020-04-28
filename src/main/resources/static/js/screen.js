@@ -37,8 +37,8 @@
 
     function onConnected() {
         subscriptionLobby = stompClient.subscribe('/topic/lobby/' + lobbyName, onMessageReceived);
-        subscriptionPublic = stompClient.subscribe('/topic/game/' +lobbyName, onMessageReceived);
-//        subscriptionUser = stompClient.subscribe('/user/topic/game', onMessageReceived);
+        subscriptionPublic = stompClient.subscribe('/topic/game/' + lobbyName, onMessageReceived);
+//        subscriptionUser = stompClient.subscribe('/user/topic/game' + lobbyName, onMessageReceived);
     }
 
     function onError(error) {

@@ -81,4 +81,4 @@ jobs:
         run: gcloud compute scp *.jar project-g-api-ci@project-g-1:~/ --zone=europe-west3-c --ssh-key-expire-after=1h
 
       - name: Restart application with init.d
-        run: gcloud compute ssh project-g-api-ci@project-g-1 --zone=europe-west3-c -- "ln -sf ~/${{ env.JAR }} ~/project-g-api && sudo systemctl daemon-reload && sudo service project-g-api restart"
+        run: gcloud compute ssh project-g-api-ci@project-g-1 --zone=europe-west3-c --ssh-key-expire-after=1h -- "ln -sf ~/${{ env.JAR }} ~/project-g-api && sudo systemctl daemon-reload && sudo service project-g-api restart"

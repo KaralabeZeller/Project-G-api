@@ -38,7 +38,7 @@
     function onConnected() {
         subscriptionLobby = stompClient.subscribe('/topic/lobby/' + lobbyName, onMessageReceived);
         subscriptionPublic = stompClient.subscribe('/topic/game/' + lobbyName, onMessageReceived);
-        subscriptionUser = stompClient.subscribe('/user/topic/game', onMessageReceived);
+        subscriptionUser = stompClient.subscribe('/user/topic/game/' + lobbyName, onMessageReceived);
 
         sendLobby('JOIN', null);
 
@@ -148,7 +148,7 @@
             lobby:  lobbyName,
             content: content,
         };
-        stompClient.send('/app/game/'+ lobbyName, {}, JSON.stringify(message));
+        stompClient.send('/app/game/' + lobbyName, {}, JSON.stringify(message));
     }
 
     // TODO move to a different file with all the other lobby stuff
@@ -214,15 +214,15 @@
 
     function showFaction(faction) {
         if (factionShow) {
-            factionCard.src = './games/secrethitler/role-cover.png';
+            factionCard.src = '/games/secrethitler/role-cover.png';
             factionShow = false;
         } else {
             if (faction === 'LIBERAL') {
-                factionCard.src = './games/secrethitler/role-liberal.png';
+                factionCard.src = '/games/secrethitler/role-liberal.png';
             } else if (faction === 'FASCIST') {
-                factionCard.src = './games/secrethitler/role-fascist.png';
+                factionCard.src = '/games/secrethitler/role-fascist.png';
             } else if (faction === 'HITLER') {
-                factionCard.src = './games/secrethitler/role-hitler.png';
+                factionCard.src = '/games/secrethitler/role-hitler.png';
             }
             factionShow = true;
         }
@@ -230,13 +230,13 @@
 
     function showMembership(faction) {
         if (membershipShow) {
-            membershipCard.src = './games/secrethitler/membership-cover.png';
+            membershipCard.src = '/games/secrethitler/membership-cover.png';
             membershipShow = false;
         } else {
             if (faction === 'LIBERAL') {
-                membershipCard.src = './games/secrethitler/membership-liberal.png';
+                membershipCard.src = '/games/secrethitler/membership-liberal.png';
             } else {
-                membershipCard.src = './games/secrethitler/membership-fascist.png';
+                membershipCard.src = '/games/secrethitler/membership-fascist.png';
             }
             membershipShow = true;
         }
