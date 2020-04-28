@@ -14,9 +14,7 @@ public class MyLogoutSuccessHandler implements LogoutSuccessHandler {
     private static final Logger logger = LoggerFactory.getLogger(MyLogoutSuccessHandler.class);
 
     @Override
-    public void onLogoutSuccess(HttpServletRequest request,
-                                HttpServletResponse response, Authentication authentication)
-            throws IOException {
+    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 
         String environment = request.getHeader("host").contains("localhost") ? "LOCAL" : "REMOTE";
         logger.info("onLogoutSuccess() environment: " + environment);

@@ -230,7 +230,7 @@
     }
 
     function processVictory(faction) {
-        if(faction === 'LIBERAL') {
+        if (faction === 'LIBERAL') {
 
         } else if (faction === 'FASCIST') {
 
