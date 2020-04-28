@@ -178,7 +178,6 @@
         } else {
             startButton.classList.add('hidden');
         }
-
     }
 
     function playSecretHitler() {

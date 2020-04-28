@@ -1,6 +1,5 @@
 package com.nter.projectg.controller;
 
-import com.nter.projectg.lobby.Lobby;
 import com.nter.projectg.lobby.LobbyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +43,6 @@ public class WebSocketEventListener {
         } else {
             logger.debug("Ignoring disconnect for unknown user: {}", session);
         }
-
     }
 
 }

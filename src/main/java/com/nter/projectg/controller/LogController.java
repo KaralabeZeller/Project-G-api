@@ -48,7 +48,6 @@ public class LogController {
             logger.debug("Not authorized to read log file contents: invalid api-key");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("401 Not Authorized");
         }
-
     }
 
     private boolean authenticate(String apiKey) {

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PlayerHandler {
-    private Map<String, SecretHitlerPlayer> playerMap;
+    private final Map<String, SecretHitlerPlayer> playerMap;
 
     private SecretHitlerPlayer lastNormalPresident;
     private SecretHitlerPlayer specialPresident;
@@ -14,28 +14,28 @@ public class PlayerHandler {
     private SecretHitlerPlayer previousPresident;
     private SecretHitlerPlayer previousChancellor;
 
-    public PlayerHandler (List<SecretHitlerPlayer> players) {
+    public PlayerHandler(List<SecretHitlerPlayer> players) {
         playerMap = players.stream().collect(Collectors.toMap(p -> p.getName(), p -> p));
     }
 
     public SecretHitlerPlayer getPresident() {
-        return playerMap.values().stream().filter(p->p.isPresident()).findFirst().get();
+        return playerMap.values().stream().filter(p -> p.isPresident()).findFirst().get();
     }
 
     public SecretHitlerPlayer getHitler() {
-        return playerMap.values().stream().filter(p->p.isHitler()).findFirst().get();
+        return playerMap.values().stream().filter(p -> p.isHitler()).findFirst().get();
     }
 
     public SecretHitlerPlayer getChancellor() {
-        return playerMap.values().stream().filter(p->p.isChancellor()).findFirst().get();
+        return playerMap.values().stream().filter(p -> p.isChancellor()).findFirst().get();
     }
 
     public boolean existsChancellor() {
-        return playerMap.values().stream().anyMatch(p->p.isChancellor());
+        return playerMap.values().stream().anyMatch(p -> p.isChancellor());
     }
 
     public boolean existsPresident() {
-        return playerMap.values().stream().anyMatch(p->p.isPresident());
+        return playerMap.values().stream().anyMatch(p -> p.isPresident());
     }
 
     public SecretHitlerPlayer getLastNormalPresident() {
@@ -59,24 +59,22 @@ public class PlayerHandler {
     }
 
     public long getAlivePlayerCount() {
-        return playerMap.values().stream().filter(p->p.isAlive()).count();
+        return playerMap.values().stream().filter(p -> p.isAlive()).count();
     }
 
     public List<SecretHitlerPlayer> getPlayers() {
-        List<SecretHitlerPlayer> returnList = new ArrayList<SecretHitlerPlayer>(playerMap.values());
-        return returnList;
+        return new ArrayList<>(playerMap.values());
     }
 
     public SecretHitlerPlayer getNextPlayer(SecretHitlerPlayer player) {
         List<SecretHitlerPlayer> players = getPlayers();
         players.add(players.get(0));
-        return players.get(players.indexOf(player) +1 );
+        return players.get(players.indexOf(player) + 1);
     }
 
     public SecretHitlerPlayer getPlayerByName(String name) {
         return playerMap.get(name);
     }
-
 
     public SecretHitlerPlayer getPreviousPresident() {
         return previousPresident;

@@ -16,20 +16,17 @@ public class MyAuthSuccessHandler implements AuthenticationSuccessHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(MyAuthSuccessHandler.class);
 
-    private RedirectStrategy redirectStrategy = new MyRedirectStrategy();
+    private final RedirectStrategy redirectStrategy = new MyRedirectStrategy();
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-
         handle(request, response, authentication);
         clearAuthenticationAttributes(request);
     }
 
     protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-
         redirectStrategy.sendRedirect(request, response, "user/userHome");
     }
-
 
     protected void clearAuthenticationAttributes(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -38,6 +35,5 @@ public class MyAuthSuccessHandler implements AuthenticationSuccessHandler {
         }
         session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
     }
-
 
 }

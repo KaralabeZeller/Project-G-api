@@ -20,8 +20,8 @@ public class LobbyHandler {
     private SimpMessageSendingOperations messagingTemplate;
 
     private final Map<String, Lobby> lobbies = new ConcurrentHashMap<>();
-    private GameHandler gameFactory = new GameHandler();
-    private Random rand = new Random();
+    private final GameHandler gameFactory = new GameHandler();
+    private final Random rand = new Random();
     private Timer timer;
 
     @Autowired
@@ -34,7 +34,6 @@ public class LobbyHandler {
         this.timer = new Timer();
         return lobby;
     }
-
 
     public void remove(String user, String session) {
         Lobby lobby = findLobbyForUser(user);
@@ -50,26 +49,23 @@ public class LobbyHandler {
     }
 
     public Lobby findLobbyForUser(String user) {
-        Lobby returnLobby = null;
-
-        for(Lobby lobby : lobbies.values()) {
-            for(String us : lobby.getUsers()) {
-                if(us.equals(user)) {
-                    returnLobby = lobby;
-                    break;
-                }
+        for (Lobby lobby : lobbies.values()) {
+            if (lobby.getUsers().contains(user)) {
+                return lobby;
             }
         }
-        return returnLobby;
+
+        return null;
     }
 
     public Lobby findLobbyByName(String lobbyName) {
-        Lobby returnLobby = null;
-
-        for(Lobby lobby : lobbies.values()) {
-            if(lobby.getName().equals(lobbyName)) return lobby;
+        for (Lobby lobby : lobbies.values()) {
+            if (lobby.getName().equals(lobbyName)) {
+                return lobby;
+            }
         }
-        return returnLobby;
+
+        return null;
     }
 
     public void add(String user, String session, String lobby) {
@@ -77,8 +73,6 @@ public class LobbyHandler {
     }
 
     public List<String> getLobbies() {
-        List<String> returnList = new ArrayList<>();
-        returnList.addAll(lobbies.keySet());
-        return returnList;
+        return new ArrayList<>(lobbies.keySet());
     }
 }

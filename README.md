@@ -49,6 +49,6 @@ http://localhost:8080/
 ## See also
 
 ### Other repositories
-* [nTer](https://github.com/KaralabeZeller/nter)  (Source repository fully migrated to Project-G-api)
+* [nTer](https://github.com/KaralabeZeller/nter) (repository fully migrated to Project-G-api)  
 * [Project-G](https://github.com/KaralabeZeller/Project-G)  
 * [Project-G-web](https://github.com/KaralabeZeller/Project-G-web)

@@ -4,17 +4,13 @@ import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.common.Message.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 
 public class Lobby {
 
@@ -23,7 +19,7 @@ public class Lobby {
     // Name of the lobby //TODO map to LobbyModel
     private String name;
 
-    private SimpMessageSendingOperations messagingTemplate;
+    private final SimpMessageSendingOperations messagingTemplate;
 
     private final Map<String, String> userSession = new ConcurrentHashMap<>();
     private final Map<String, String> sessionUser = new ConcurrentHashMap<>();
