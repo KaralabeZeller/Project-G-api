@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PlayerHandler {
-    private Map<String, SecretHitlerPlayer> playerMap;
+    private final Map<String, SecretHitlerPlayer> playerMap;
 
     private SecretHitlerPlayer lastNormalPresident;
     private SecretHitlerPlayer specialPresident;
@@ -63,8 +63,7 @@ public class PlayerHandler {
     }
 
     public List<SecretHitlerPlayer> getPlayers() {
-        List<SecretHitlerPlayer> returnList = new ArrayList<SecretHitlerPlayer>(playerMap.values());
-        return returnList;
+        return new ArrayList<>(playerMap.values());
     }
 
     public SecretHitlerPlayer getNextPlayer(SecretHitlerPlayer player) {

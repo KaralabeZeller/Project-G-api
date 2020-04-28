@@ -19,13 +19,11 @@ public class MyRedirectStrategy extends DefaultRedirectStrategy {
         logger.info("sendRedirect environment: " + environment);
         String redirectUrl = calculateRedirectUrl(request.getContextPath(), url);
         if (environment.equals("LOCAL")) {
-
             redirectUrl = response.encodeRedirectURL(redirectUrl);
-            logger.info("sendRedirect encoded URL: " + redirectUrl);
         } else {
             redirectUrl = response.encodeRedirectURL("https://" + request.getHeader("host") + "/" + redirectUrl);
-            logger.info("sendRedirect encoded URL: " + redirectUrl);
         }
+        logger.info("sendRedirect encoded URL: " + redirectUrl);
 
 
         response.sendRedirect(redirectUrl);

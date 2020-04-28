@@ -20,7 +20,7 @@ public class Lobby {
     // Name of the lobby //TODO map to LobbyModel
     private String name;
 
-    private SimpMessageSendingOperations messagingTemplate;
+    private final SimpMessageSendingOperations messagingTemplate;
 
     private final Map<String, String> userSession = new ConcurrentHashMap<>();
     private final Map<String, String> sessionUser = new ConcurrentHashMap<>();

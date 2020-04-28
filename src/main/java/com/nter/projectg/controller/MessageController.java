@@ -78,7 +78,7 @@ public class MessageController {
     private CompletableFuture<Void> process(Message message) {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
-            Game game = gameFactory.get(message.getLobby());
+            Game<?, ?> game = gameFactory.get(message.getLobby());
 
             logger.debug("Processing message: {} {}", message, game);
             try {
@@ -118,7 +118,7 @@ public class MessageController {
         return CompletableFuture.runAsync(() -> {
 
             Lobby l = lobbyHandler.findLobbyForUser(user);
-            Game game = gameFactory.get(l.getName());
+            Game<?, ?> game = gameFactory.get(l.getName());
 
             if (game != null) {
                 logger.debug("Reconnecting user in session: {} {}", user, session);

@@ -13,15 +13,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GameHandler {
 
     private final Map<String, Game<?, ?>> games = new ConcurrentHashMap<>();
-    private Random rand = new Random();
+    private final Random rand = new Random();
 
     public Game<?, ?> createGame(Constants.GAME_NAME gameName, Lobby lobby) {
         Game<?, ?> game = null;
 
-        switch (gameName) {
-            case SECRET_HITLER:
-                game = new SecretHitlerGame(lobby);
-                break;
+        if (gameName == Constants.GAME_NAME.SECRET_HITLER) {
+            game = new SecretHitlerGame(lobby);
         }
 
         games.put(lobby.getName(), game);
@@ -29,7 +27,7 @@ public class GameHandler {
 
     }
 
-    public Game get(String lobby) {
+    public Game<?, ?> get(String lobby) {
         return games.get(lobby);
     }
 }
