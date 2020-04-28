@@ -38,7 +38,7 @@
     function onConnected() {
         subscriptionLobby = stompClient.subscribe('/topic/lobby/' + lobbyName, onMessageReceived);
         subscriptionPublic = stompClient.subscribe('/topic/game/' + lobbyName, onMessageReceived);
-        subscriptionUser = stompClient.subscribe('/user/topic/game', onMessageReceived);
+        subscriptionUser = stompClient.subscribe('/user/topic/game/' + lobbyName, onMessageReceived);
 
         sendLobby('JOIN', null);
 
@@ -148,7 +148,7 @@
             lobby:  lobbyName,
             content: content,
         };
-        stompClient.send('/app/game/'+ lobbyName, {}, JSON.stringify(message));
+        stompClient.send('/app/game/' + lobbyName, {}, JSON.stringify(message));
     }
 
     // TODO move to a different file with all the other lobby stuff

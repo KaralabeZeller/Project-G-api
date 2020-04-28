@@ -13,7 +13,7 @@ public class MessageInterceptor extends HandlerInterceptorAdapter {
     private static final Logger logger = LoggerFactory.getLogger(MessageInterceptor.class);
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
         String environment = request.getHeader("host").contains("localhost") ? "LOCAL" : "REMOTE";
 
         String redirectUrl;

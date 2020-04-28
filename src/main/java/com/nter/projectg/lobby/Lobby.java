@@ -63,7 +63,7 @@ public class Lobby {
         logger.debug("sendToLobby: {}", message);
 
         // Broadcast message to all sessions
-        messagingTemplate.convertAndSend("/topic/lobby/" + getName(), message);
+        messagingTemplate.convertAndSend("/topic/lobby/" + name, message);
     }
 
     public void sendToAll(Object message) {
@@ -82,7 +82,7 @@ public class Lobby {
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create();
         headerAccessor.setSessionId(session);
         headerAccessor.setLeaveMutable(true);
-        messagingTemplate.convertAndSendToUser(session, "/topic/game", message, headerAccessor.getMessageHeaders());
+        messagingTemplate.convertAndSendToUser(session, "/topic/game/" + name, message, headerAccessor.getMessageHeaders());
     }
 
     private Message buildLobbyMessage(MessageType type, String user) {
