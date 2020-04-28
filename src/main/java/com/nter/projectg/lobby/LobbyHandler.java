@@ -2,6 +2,7 @@ package com.nter.projectg.lobby;
 
 import com.nter.projectg.games.common.GameHandler;
 import com.nter.projectg.games.common.util.Constants;
+import com.nter.projectg.games.common.util.Timer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ public class LobbyHandler {
     private final Map<String, Lobby> lobbies = new ConcurrentHashMap<>();
     private GameHandler gameFactory = new GameHandler();
     private Random rand = new Random();
+    private Timer timer;
 
     @Autowired
     private Constants constants;
@@ -29,13 +31,22 @@ public class LobbyHandler {
         String name = gameName + "-" + (rand.nextInt(999) + 100);
         Lobby lobby = new Lobby(name, messagingTemplate);
         lobbies.put(name, lobby);
-
+        this.timer = new Timer();
         return lobby;
     }
 
 
     public void remove(String user, String session) {
-        findLobbyForUser(user).remove(user, session);
+        Lobby lobby = findLobbyForUser(user);
+        lobby.remove(user, session);
+        if(lobby.getUsers().size() == 0) {
+            timer.delay(() -> closeLobby(lobby.getName()), 240);
+        }
+
+    }
+
+    private void closeLobby(String name) {
+        lobbies.remove(name);
     }
 
     public Lobby findLobbyForUser(String user) {
