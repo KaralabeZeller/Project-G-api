@@ -30,6 +30,7 @@ public class Message {
     private String lobby;
 
     private String content;
+
     public Message() {
     }
 

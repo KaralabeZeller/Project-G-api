@@ -45,7 +45,7 @@ public class SecretHitlerPlayer extends Player<SecretHitlerMessage> {
     }
 
     public boolean isHitler() {
-        return faction.equals(Faction.HITLER) ? true: false;
+        return faction.equals(Faction.HITLER) ? true : false;
     }
 
     public boolean isAlive() {

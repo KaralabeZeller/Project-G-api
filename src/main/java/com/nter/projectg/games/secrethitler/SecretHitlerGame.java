@@ -85,7 +85,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         } else {
 
             SecretHitlerPlayer candidate;
-            if(playerHandler.existsPresident()) {
+            if (playerHandler.existsPresident()) {
                 playerHandler.setPreviousPresident(playerHandler.getPresident());
                 playerHandler.getPresident().setPresident(false);
 
@@ -93,7 +93,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
             candidate = playerHandler.getNextPlayer(playerHandler.getLastNormalPresident());
 
-            while(!candidate.isAlive()) {
+            while (!candidate.isAlive()) {
                 candidate = playerHandler.getNextPlayer(candidate);
             }
 
@@ -116,7 +116,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         state = State.NOMINATION;
 
         List<SecretHitlerPlayer> eligiblePlayers = new ArrayList<>();
-        for (SecretHitlerPlayer player: playerHandler.getPlayers()) {
+        for (SecretHitlerPlayer player : playerHandler.getPlayers()) {
             if (playerHandler.getAlivePlayerCount() <= 5) {
                 if (!player.equals(playerHandler.getPreviousPresident()) && !player.isPresident() && player.isAlive()) {
                     eligiblePlayers.add(player);
@@ -176,7 +176,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         }
 
         logger.info("Nominated chancellor: {}", player);
-        if(playerHandler.existsChancellor()) {
+        if (playerHandler.existsChancellor()) {
             playerHandler.setPreviousChancellor(playerHandler.getChancellor());
             playerHandler.getChancellor().setChancellor(false);
         }
@@ -195,11 +195,11 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
         SecretHitlerMessage voteMessage = buildGameMessage(GameMessageType.VOTE, "Ja!,Nein!");
         for (SecretHitlerPlayer player : playerHandler.getPlayers()) {
-            if(player.isAlive())
+            if (player.isAlive())
                 sendToPlayer(player.getName(), voteMessage);
         }
 
-        sendStatus("Vote for the government: President - " +  playerHandler.getPresident().getName() + ", chancellor - " +  playerHandler.getChancellor().getName());
+        sendStatus("Vote for the government: President - " + playerHandler.getPresident().getName() + ", chancellor - " + playerHandler.getChancellor().getName());
     }
 
     private void processVote(String player, String vote) {
@@ -504,7 +504,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
     private void specialElection() {
         List<SecretHitlerPlayer> eligiblePlayers = new ArrayList<>();
-        for (SecretHitlerPlayer player: playerHandler.getPlayers()) {
+        for (SecretHitlerPlayer player : playerHandler.getPlayers()) {
             if (!player.isPresident() && player.isAlive()) {
                 eligiblePlayers.add(player);
             }
@@ -522,7 +522,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         logger.info("Query user to be killed by the president");
 
         List<SecretHitlerPlayer> killablePlayers = new ArrayList<>();
-        for (SecretHitlerPlayer player: playerHandler.getPlayers()) {
+        for (SecretHitlerPlayer player : playerHandler.getPlayers()) {
             if (!player.isPresident() && player.isAlive()) {
                 killablePlayers.add(player);
             }
@@ -539,7 +539,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         logger.info("Query user to be investigated by the president");
 
         List<SecretHitlerPlayer> investigablePlayers = new ArrayList<>();
-        for (SecretHitlerPlayer player: playerHandler.getPlayers()) {
+        for (SecretHitlerPlayer player : playerHandler.getPlayers()) {
             if (!player.isPresident() && player.isAlive()) {
                 investigablePlayers.add(player);
             }
@@ -635,7 +635,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
         SecretHitlerMessage factionMessage = buildGameMessage(GameMessageType.VICTORY, faction.name());
         sendToAll(factionMessage);
-        for(SecretHitlerPlayer player: playerHandler.getPlayers()) {
+        for (SecretHitlerPlayer player : playerHandler.getPlayers()) {
             sendToPlayer(getName(), factionMessage);
         }
     }

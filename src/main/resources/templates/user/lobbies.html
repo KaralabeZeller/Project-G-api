@@ -27,12 +27,12 @@
             <table>
                 <thead>
                 <tr>
-                    <th> Lobby </th>
+                    <th> Lobby</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:if="${lobbies.empty}">
-                    <td colspan="2"> No lobbies are available </td>
+                    <td colspan="2"> No lobbies are available</td>
                 </tr>
                 <tr th:each="lobby : ${lobbies}">
                     <td><span th:text="${lobby}"> Lobby </span></td>
@@ -50,11 +50,12 @@
                 </tbody>
             </table>
 
-            <form autocomplete="off" action="#" th:action="@{/createLobby}" th:object="${game}" method="post" class="form-horizontal" role="form">
+            <form autocomplete="off" action="#" th:action="@{/createLobby}" th:object="${game}" method="post"
+                  class="form-horizontal" role="form">
                 <h2>Create a new lobby</h2>
                 <div class="form-group">
                     <div class="col-sm-9">
-                        <select  id="game" name="game" >
+                        <select id="game" name="game">
                             <option value="">Select Game</option>
                             <option th:each="game : ${gameNames}" th:value="${game}" th:text="${game}"></option>
                         </select>

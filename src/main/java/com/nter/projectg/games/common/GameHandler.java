@@ -18,7 +18,7 @@ public class GameHandler {
     public Game<?, ?> createGame(Constants.GAME_NAME gameName, Lobby lobby) {
         Game<?, ?> game = null;
 
-        switch(gameName) {
+        switch (gameName) {
             case SECRET_HITLER:
                 game = new SecretHitlerGame(lobby);
                 break;

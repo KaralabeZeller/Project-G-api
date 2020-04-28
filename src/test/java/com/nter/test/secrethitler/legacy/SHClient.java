@@ -192,7 +192,7 @@ public class SHClient {
         join.put("lobby", lobbyName);
         join.put("content", content);
 
-        stompSession.send("/app/lobby/"+lobbyName, join.toString().getBytes());
+        stompSession.send("/app/lobby/" + lobbyName, join.toString().getBytes());
     }
 
     private void sendStart(String content) throws JSONException {

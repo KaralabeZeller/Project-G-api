@@ -41,9 +41,9 @@ public class LobbyHandler {
     public Lobby findLobbyForUser(String user) {
         Lobby returnLobby = null;
 
-        for(Lobby lobby : lobbies.values()) {
-            for(String us : lobby.getUsers()) {
-                if(us.equals(user)) {
+        for (Lobby lobby : lobbies.values()) {
+            for (String us : lobby.getUsers()) {
+                if (us.equals(user)) {
                     returnLobby = lobby;
                     break;
                 }
@@ -55,8 +55,8 @@ public class LobbyHandler {
     public Lobby findLobbyByName(String lobbyName) {
         Lobby returnLobby = null;
 
-        for(Lobby lobby : lobbies.values()) {
-            if(lobby.getName().equals(lobbyName)) return lobby;
+        for (Lobby lobby : lobbies.values()) {
+            if (lobby.getName().equals(lobbyName)) return lobby;
         }
         return returnLobby;
     }

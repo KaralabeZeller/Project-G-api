@@ -1,6 +1,5 @@
 package com.nter.projectg.model.common;
 
-import com.nter.projectg.model.web.RoleModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -77,12 +77,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public AuthenticationSuccessHandler myAuthenticationSuccessHandler(){
+    public AuthenticationSuccessHandler myAuthenticationSuccessHandler() {
         return new MyAuthSuccessHandler();
     }
 
     @Bean
-    public LogoutSuccessHandler myLogoutSuccessHandler(){
+    public LogoutSuccessHandler myLogoutSuccessHandler() {
         return new MyLogoutSuccessHandler();
     }
 

@@ -34,8 +34,8 @@ public abstract class Client<GameMessage extends Message> {
     private StompSession.Subscription subscriptionUser;
 
     public Client(int port) {
-       // this.url = "wss://api.project-g.xyz:443/ws";
-       this.url = "ws://localhost:" + port + "/ws";
+        // this.url = "wss://api.project-g.xyz:443/ws";
+        this.url = "ws://localhost:" + port + "/ws";
     }
 
     public void connect() throws ExecutionException, InterruptedException {
