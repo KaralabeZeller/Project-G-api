@@ -1,6 +1,7 @@
 package com.nter.projectg.config;
 
 import com.nter.projectg.handler.MyAuthSuccessHandler;
+import com.nter.projectg.handler.MyAuthFailureHandler;
 import com.nter.projectg.handler.MyLogoutSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -65,7 +67,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordParameter("password")
                 .loginProcessingUrl("/login")
                 .successHandler(myAuthenticationSuccessHandler())
-                .failureUrl("/login?error")
+                .failureHandler(customAuthenticationFailureHandler())
                 .permitAll()
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
@@ -82,4 +84,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new MyLogoutSuccessHandler();
     }
 
+    @Bean
+    public AuthenticationFailureHandler customAuthenticationFailureHandler() {
+        return new MyAuthFailureHandler();
+    }
 }
