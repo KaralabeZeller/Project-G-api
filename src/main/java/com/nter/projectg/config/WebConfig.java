@@ -1,8 +1,10 @@
 package com.nter.projectg.config;
 
+import com.nter.projectg.controller.MessageInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -21,6 +23,12 @@ public class WebConfig implements WebMvcConfigurer {
         requestLoggingFilter.setIncludeQueryString(true);
         requestLoggingFilter.setIncludePayload(true);
         return requestLoggingFilter;
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry)
+    {
+        registry.addInterceptor(new MessageInterceptor());
     }
 
 }
