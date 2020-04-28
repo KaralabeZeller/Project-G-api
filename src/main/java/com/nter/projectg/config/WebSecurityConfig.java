@@ -1,7 +1,7 @@
 package com.nter.projectg.config;
 
-import com.nter.projectg.handler.MyAuthSuccessHandler;
 import com.nter.projectg.handler.MyAuthFailureHandler;
+import com.nter.projectg.handler.MyAuthSuccessHandler;
 import com.nter.projectg.handler.MyLogoutSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -88,4 +88,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationFailureHandler customAuthenticationFailureHandler() {
         return new MyAuthFailureHandler();
     }
+
 }

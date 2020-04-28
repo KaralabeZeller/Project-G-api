@@ -12,15 +12,16 @@ import com.nter.projectg.model.secrethitler.SecretHitlerMessage.GameMessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 // TODO refactor to avoid array indexing
 public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlayer> {
 
     private static final Logger logger = LoggerFactory.getLogger(SecretHitlerGame.class);
-
-    private final Random random = new Random();
 
     private PlayerHandler playerHandler;
 

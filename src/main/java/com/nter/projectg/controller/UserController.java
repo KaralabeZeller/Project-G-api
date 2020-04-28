@@ -99,9 +99,7 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         UserModel userExists = userService.findUserByName(user.getName());
         if (userExists != null) {
-            bindingResult
-                    .rejectValue("name", "error.user",
-                            "There is already a user registered with the name provided");
+            bindingResult.rejectValue("name", "error.user", "There is already a user registered with the name provided");
         }
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName("registration");
