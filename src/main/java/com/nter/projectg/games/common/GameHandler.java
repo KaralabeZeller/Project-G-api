@@ -24,7 +24,6 @@ public class GameHandler {
 
         games.put(lobby.getName(), game);
         return game; //TODO refactor the null return value
-
     }
 
     public Game<?, ?> get(String lobby) {

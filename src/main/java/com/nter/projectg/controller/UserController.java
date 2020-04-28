@@ -33,7 +33,6 @@ public class UserController {
     @Autowired
     private LobbyHandler lobbyHandler;
 
-
     @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
     public ModelAndView login() {
         ModelAndView modelAndView = new ModelAndView();
@@ -41,7 +40,7 @@ public class UserController {
         return modelAndView;
     }
 
-
+    @SuppressWarnings("SameReturnValue")
     @RequestMapping(value = {"/health"}, method = RequestMethod.GET)
     @ResponseBody
     public String health() {
@@ -53,7 +52,7 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        logger.info("Joining lobby: " + lobbyId);
+        logger.info("Joining lobby: {}", lobbyId);
         UserModel user = userService.findUserByName(auth.getName());
         model.put("userName", user.getName());
 
@@ -66,7 +65,7 @@ public class UserController {
     public ModelAndView watch(@PathVariable("lobbyId") String lobbyId, Map<String, Object> model) {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        logger.info("Watching lobby: " + lobbyId);
+        logger.info("Watching lobby: {}", lobbyId);
         UserModel user = userService.findUserByName(auth.getName());
         model.put("userName", user.getName());
 
@@ -120,17 +119,15 @@ public class UserController {
     public ModelAndView createLobby(@Valid String game, Map<String, Object> model) {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        logger.info("Creating lobby for game: " + game);
+        logger.info("Creating lobby for game: {}", game);
         UserModel user = userService.findUserByName(auth.getName());
         model.put("userName", user.getName());
-
 
         String lobbyName = lobbyHandler.createLobby(game).getName();
         model.put("lobbyName", lobbyName);
         modelAndView.setViewName("user/lobby");
         return modelAndView;
     }
-
 
     @RequestMapping(value = "/admin/adminHome", method = RequestMethod.GET)
     public ModelAndView home() {

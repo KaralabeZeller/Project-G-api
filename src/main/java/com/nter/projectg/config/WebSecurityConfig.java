@@ -18,7 +18,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.sql.DataSource;
 
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -71,8 +70,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessHandler(myLogoutSuccessHandler());
-
-
     }
 
     @Bean
@@ -84,6 +81,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public LogoutSuccessHandler myLogoutSuccessHandler() {
         return new MyLogoutSuccessHandler();
     }
-
 
 }

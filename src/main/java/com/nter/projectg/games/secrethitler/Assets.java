@@ -32,7 +32,6 @@ public class Assets {
         initFactions();
         initPolicies();
         initPowers();
-
     }
 
     private void initPlayers() {
@@ -49,7 +48,6 @@ public class Assets {
             powers.add(Power.POLICY_PEEK);
             powers.add(Power.EXECUTION);
             powers.add(Power.EXECUTION);
-
         } else {
             if (players.size() >= 9) {
                 powers.add(Power.INVESTIGATE_LOYALTY);
@@ -60,7 +58,6 @@ public class Assets {
             powers.add(Power.EXECUTION);
             powers.add(Power.EXECUTION);
         }
-
     }
 
     public void updateNotElect(SecretHitlerPlayer a, SecretHitlerPlayer b) {
@@ -121,11 +118,9 @@ public class Assets {
         }
 
         Collections.shuffle(factions);
-
     }
 
     public List<Faction> getFactions() {
-
         return factions;
     }
 
@@ -134,7 +129,6 @@ public class Assets {
         enactedPolicies.add(pol);
         policies.remove(0);
         return pol;
-
     }
 
     public List<Policy> getTopPolicies() {
@@ -174,7 +168,6 @@ public class Assets {
         if (activePowers.size() < powers.size()) {
             activePowers.add(powers.get(activePowers.size()));
         }
-
     }
 
     public Faction getNextFaction() {

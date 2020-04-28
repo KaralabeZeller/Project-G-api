@@ -43,7 +43,6 @@ public class WebSocketEventListener {
         } else {
             logger.debug("Ignoring disconnect for unknown user: {}", session);
         }
-
     }
 
 }

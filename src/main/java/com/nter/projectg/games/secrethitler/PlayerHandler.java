@@ -76,7 +76,6 @@ public class PlayerHandler {
         return playerMap.get(name);
     }
 
-
     public SecretHitlerPlayer getPreviousPresident() {
         return previousPresident;
     }

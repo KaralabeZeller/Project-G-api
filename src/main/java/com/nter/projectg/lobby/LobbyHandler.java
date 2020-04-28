@@ -33,7 +33,6 @@ public class LobbyHandler {
         return lobby;
     }
 
-
     public void remove(String user, String session) {
         findLobbyForUser(user).remove(user, session);
     }

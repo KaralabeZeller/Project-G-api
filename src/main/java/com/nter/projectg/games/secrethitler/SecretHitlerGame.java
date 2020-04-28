@@ -29,9 +29,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     private State state;
     private Votes votes;
 
-
     private boolean specialElection;
-
 
     public SecretHitlerGame(Lobby lobby) {
         super(lobby, "SecretHitler", 5, 10);
@@ -83,12 +81,10 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             playerHandler.getSpecialPresident().setPresident(true);
             specialElection = false;
         } else {
-
             SecretHitlerPlayer candidate;
             if (playerHandler.existsPresident()) {
                 playerHandler.setPreviousPresident(playerHandler.getPresident());
                 playerHandler.getPresident().setPresident(false);
-
             }
 
             candidate = playerHandler.getNextPlayer(playerHandler.getLastNormalPresident());
@@ -100,7 +96,6 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             candidate.setPresident(true);
 
             playerHandler.setLastNormalPresident(candidate);
-
         }
 
         logger.info("Elected president: {}", playerHandler.getPresident().getName());
@@ -269,7 +264,6 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             String vetoed = players.get(presidentID).client.processQuery("VETO?");
             if (vetoed.equals("Ja!"))
                 veto = true;
-
         }
         if (!veto) {
             if (nominee.equals("FASCIST")) {
@@ -282,7 +276,6 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             logger.info("--Policy enacted by government: {}", nominee);
             assets.electionTracker = 0;
             //moveTracker();
-
         } else {
             logger.info("--Policy vetoed by government!");
             assets.electionTracker++;
@@ -371,7 +364,6 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     }
 
     private void checkAssets() {
-
         if (assets.electionTracker == 3) {
             logger.info("Election tracker: 3 - Top policy will be enacted");
             sendStatus("Election tracker: 3 - Top policy will be enacted");
@@ -632,7 +624,6 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     }
 
     private void sendVictory(Faction faction) {
-
         SecretHitlerMessage factionMessage = buildGameMessage(GameMessageType.VICTORY, faction.name());
         sendToAll(factionMessage);
         for (SecretHitlerPlayer player : playerHandler.getPlayers()) {

@@ -71,8 +71,6 @@ public class MessageController {
         } else {
             logger.warn("receiveGame: Unexpected message: {}", message);
         }
-
-
     }
 
     private CompletableFuture<Void> process(Message message) {
@@ -116,7 +114,6 @@ public class MessageController {
     private CompletableFuture<Void> reconnect(String user, String session) {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
-
             Lobby l = lobbyHandler.findLobbyForUser(user);
             Game<?, ?> game = gameFactory.get(l.getName());
 

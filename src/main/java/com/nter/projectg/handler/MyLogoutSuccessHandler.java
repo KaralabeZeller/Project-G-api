@@ -15,9 +15,8 @@ public class MyLogoutSuccessHandler implements LogoutSuccessHandler {
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-
         String environment = request.getHeader("host").contains("localhost") ? "LOCAL" : "REMOTE";
-        logger.info("onLogoutSuccess() environment: " + environment);
+        logger.info("onLogoutSuccess() environment: {}", environment);
 
         String redirectUrl;
         if (environment.equals("LOCAL")) {
@@ -25,8 +24,8 @@ public class MyLogoutSuccessHandler implements LogoutSuccessHandler {
         } else {
             redirectUrl = "https://" + request.getServerName() + ":443/";
         }
+        logger.info("onLogoutSuccess() redirectUrl: {}", redirectUrl);
 
-        logger.info("onLogoutSuccess() redirectUrl: " + redirectUrl);
         response.sendRedirect(redirectUrl);
     }
 }

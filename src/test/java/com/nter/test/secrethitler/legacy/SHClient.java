@@ -223,7 +223,6 @@ public class SHClient {
     }
 
     public static void main(String[] args) throws Exception {
-
         logger.info("Creating clients");
         SHClient SHClient1 = new SHClient();
         SHClient SHClient2 = new SHClient();
