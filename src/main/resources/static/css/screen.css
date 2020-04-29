@@ -75,6 +75,19 @@ body {
      transform: translate(-50%, -50%);
 }
 
+.rules {
+     position: fixed;
+     top: 1%;
+     left: 80%;
+     height: 98%;
+     width: 19%;
+     overflow: auto;
+     box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+     background-color: #cbd0dc;
+     font-family: "Calibri", Helvetica, Arial, sans-serif;
+     padding: 5px 5px 5px 15px;
+}
+
 .status-bar {
     width: 98%;
     height: 5%;

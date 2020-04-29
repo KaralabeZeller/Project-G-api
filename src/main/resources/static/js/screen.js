@@ -2,6 +2,7 @@
     'use strict';
 
     var splashScreen = document.getElementById('splash-page'), 
+        rules = document.getElementById('rules'),
         playersArea = document.getElementById('playersArea'),
         canvasLiberal = document.getElementById('game-canvas-liberal'),
         canvasLiberalOverlay = document.getElementById('game-canvas-liberal-overlay'),
@@ -111,6 +112,7 @@
         playersArea.classList.remove('hidden');
         statusBar.classList.remove('hidden');
         splashScreen.classList.add('hidden');
+        rules.classList.add('hidden');
 
         drawBoards();
         moveTracker(0);
