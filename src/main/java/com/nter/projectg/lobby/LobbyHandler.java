@@ -27,12 +27,11 @@ public class LobbyHandler {
     @Autowired
     private Constants constants;
 
-    public Lobby createLobby(String gameName) {
+    public void createLobby(String gameName) {
         String name = gameName + "-" + (rand.nextInt(999) + 100);
         Lobby lobby = new Lobby(name, messagingTemplate);
         lobbies.put(name, lobby);
         this.timer = new Timer();
-        return lobby;
     }
 
     public void remove(String user, String session) {

@@ -1,5 +1,6 @@
 package com.nter.projectg.controller;
 
+import com.nter.projectg.games.common.GameHandler;
 import com.nter.projectg.games.common.util.Constants;
 import com.nter.projectg.lobby.LobbyHandler;
 import com.nter.projectg.model.web.UserModel;
@@ -32,6 +33,9 @@ public class UserController {
 
     @Autowired
     private LobbyHandler lobbyHandler;
+
+    @Autowired
+    GameHandler gameFactory;
 
     @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
     public ModelAndView login() {
@@ -114,17 +118,15 @@ public class UserController {
 
     //TODO implement create new lobby with lobbyHandler
     @RequestMapping(value = "/createLobby", method = RequestMethod.POST)
-    public ModelAndView createLobby(@Valid String game, Map<String, Object> model) {
+    public String createLobby(@Valid String game, Map<String, Object> model) {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Creating lobby for game: {}", game);
-        UserModel user = userService.findUserByName(auth.getName());
-        model.put("userName", user.getName());
 
-        String lobbyName = lobbyHandler.createLobby(game).getName();
-        model.put("lobbyName", lobbyName);
-        modelAndView.setViewName("user/lobby");
-        return modelAndView;
+        if(gameFactory.gameExists(game))
+            lobbyHandler.createLobby(game);
+
+        return "redirect:/lobbies";
     }
 
     @RequestMapping(value = "/admin/adminHome", method = RequestMethod.GET)

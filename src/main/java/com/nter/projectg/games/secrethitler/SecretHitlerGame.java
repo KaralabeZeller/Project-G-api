@@ -67,6 +67,8 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         for (SecretHitlerPlayer player : playerHandler.getPlayers()) {
             Faction faction = assets.getNextFaction();
             player.setFaction(faction);
+
+
         }
 
         logger.info("Initialized factions: {}", playerHandler);
@@ -321,7 +323,8 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     public void start() {
         super.start();
 
-        SecretHitlerMessage hitlerMessage = buildGameMessage(GameMessageType.HITLER, playerHandler.getHitler().getFaction().name());
+        SecretHitlerMessage hitlerMessage = buildGameMessage(GameMessageType.HITLER, playerHandler.getHitler().getName());
+
 
         for (SecretHitlerPlayer player : playerHandler.getPlayers()) {
             // Send faction message to session
@@ -331,6 +334,14 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             // Send hitler message to fascists
             if (player.getFaction() == Faction.FASCIST) {
                 sendToPlayer(player.getName(), hitlerMessage);
+            }
+
+            // Send other fascists to hitler (5-6 players)
+            if(playerHandler.getPlayerCount() == 5 || playerHandler.getPlayerCount() == 6) {
+                if(player.getFaction() == Faction.FASCIST) {
+                    SecretHitlerMessage fascistMessage = buildGameMessage(GameMessageType.FELLOW_FASCIST, player.getName());
+                    sendToPlayer(playerHandler.getHitler().getName(), fascistMessage);
+                }
             }
         }
 

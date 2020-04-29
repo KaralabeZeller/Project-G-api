@@ -6,7 +6,9 @@
         connectingElement = document.querySelector('.connecting'),
         lobbyHeader       = document.getElementById('lobbyHeader'),
         factionCard       = document.createElement('img'),
-        membershipCard    = document.createElement('img');
+        membershipCard    = document.createElement('img'),
+        hitlerName        = document.createElement('span'),
+        fascistName       = document.createElement('span');
 
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
 
@@ -23,6 +25,8 @@
     var started = false;
     var factionShow = false;
     var membershipShow = false;
+    var hitlerShow = false;
+    var fascistShow = false;
 
     var liberalPolicies = 0;
     var fascistPolicies = 0;
@@ -90,6 +94,10 @@
             var gameType = message.gameType;
             if (gameType === 'FACTION') {
                 displayFaction(message.content);
+            } else if (gameType === 'HITLER') {
+                displayHitler(message.content);
+            } else if (gameType === 'FELLOW_FASCIST') {
+                displayFascist(message.content);
             } else if (gameType === 'QUERY_CHANCELLOR') {
                 nominateChancellor(message.content.split(','));
             } else if (gameType === 'VOTE') {
@@ -227,6 +235,51 @@
             factionShow = true;
         }
     }
+
+    function displayHitler(hitler) {
+        var factionElement = document.createElement('li');
+        factionElement.classList.add('event-message');
+
+        hitlerName.textContent='Click to see Hitler';
+        factionElement.appendChild(hitlerName);
+        hitlerName.onclick = event => showHitler(hitler);
+
+        messageArea.appendChild(factionElement);
+        messageArea.scrollTop = messageArea.scrollHeight;
+    }
+
+    function showHitler(hitler) {
+        if (!hitlerShow) {
+            hitlerName.textContent = hitler;
+            hitlerShow = true;
+        } else {
+            hitlerName.textContent='Click to see Hitler';
+            hitlerShow = false;
+        }
+    }
+
+    function displayFascist(fascist) {
+        var factionElement = document.createElement('li');
+        factionElement.classList.add('event-message');
+
+        fascistName.textContent='Click to see the fascist';
+        factionElement.appendChild(fascistName);
+        fascistName.onclick = event => showFascist(fascist);
+
+        messageArea.appendChild(factionElement);
+        messageArea.scrollTop = messageArea.scrollHeight;
+    }
+
+    function showFascist(fascist) {
+        if (!fascistShow) {
+            fascistName.textContent = fascist;
+            fascistShow = true;
+        } else {
+            fascistName.textContent='Click to see Hitler';
+            fascistShow = false;
+        }
+    }
+
 
     function showMembership(faction) {
         if (membershipShow) {

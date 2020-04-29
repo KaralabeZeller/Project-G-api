@@ -29,4 +29,11 @@ public class GameHandler {
     public Game<?, ?> get(String lobby) {
         return games.get(lobby);
     }
+
+    public boolean gameExists(String game) {
+        for(Constants.GAME_NAME name : Constants.GAME_NAME.values()) {
+            if(name.name().equals(game)) return true;
+        }
+        return false;
+    }
 }
