@@ -117,7 +117,7 @@ public class UserController {
     }
 
     //TODO implement create new lobby with lobbyHandler
-    @RequestMapping(value = "/createLobby", method = RequestMethod.GET)
+    @RequestMapping(value = "/lobbies", method = RequestMethod.POST)
     public ModelAndView createLobby(@Valid String game, Map<String, Object> model) {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
