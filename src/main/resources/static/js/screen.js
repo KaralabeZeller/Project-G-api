@@ -15,7 +15,7 @@
     var userName = document.getElementById('userName').value;
     var lobbyName = document.getElementById('lobbyName').value;
 
-    var stompClient = null;
+    var stompClient;
     var subscriptionLobby;
     var subscriptionPublic;
 //    var subscriptionUser;

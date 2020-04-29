@@ -6,24 +6,25 @@ import com.nter.projectg.lobby.Lobby;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class GameHandler {
 
     private final Map<String, Game<?, ?>> games = new ConcurrentHashMap<>();
-    private final Random rand = new Random();
 
-    public Game<?, ?> createGame(Constants.GAME_NAME gameName, Lobby lobby) {
-        Game<?, ?> game = null;
+    public Game<?, ?> createGame(Constants.GAME_NAME name, Lobby lobby) {
+        Game<?, ?> game = doCreateGame(name, lobby);
+        games.put(lobby.getName(), game);
+        return game;
+    }
 
+    private Game<?, ?> doCreateGame(Constants.GAME_NAME gameName, Lobby lobby) {
         if (gameName == Constants.GAME_NAME.SECRET_HITLER) {
-            game = new SecretHitlerGame(lobby);
+            return new SecretHitlerGame(lobby);
         }
 
-        games.put(lobby.getName(), game);
-        return game; //TODO refactor the null return value
+        throw new UnsupportedOperationException("Unsupported game: " + gameName);
     }
 
     public Game<?, ?> get(String lobby) {
@@ -31,8 +32,9 @@ public class GameHandler {
     }
 
     public boolean gameExists(String game) {
-        for(Constants.GAME_NAME name : Constants.GAME_NAME.values()) {
-            if(name.name().equals(game)) return true;
+        for (Constants.GAME_NAME name : Constants.GAME_NAME.values()) {
+            if (name.name().equals(game))
+                return true;
         }
         return false;
     }

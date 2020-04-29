@@ -12,7 +12,7 @@
 
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
 
-    var stompClient = null;
+    var stompClient;
     var subscriptionLobby;
     var subscriptionPublic;
     var subscriptionUser;
@@ -333,11 +333,11 @@
             inputType: multiChoice ? 'checkbox' : 'select',
             value:  multiChoice ?  null : options[0],
             callback: result => {
-                if (result === null) {
-                    return false;
-                } else {
+                if (result) {
                     sendGame(type, multiChoice ? result.join(',') : result);
                     return true;
+                } else {
+                    return false;
                 }
             }
         });

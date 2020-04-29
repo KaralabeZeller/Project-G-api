@@ -101,18 +101,22 @@ public class UserController {
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public ModelAndView createNewUser(@Valid UserModel user, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView();
-        UserModel userExists = userService.findUserByName(user.getName());
-        if (userExists != null) {
+
+        // TODO only lookup UserModel when BindingResult is valid
+        UserModel userModel = userService.findUserByName(user.getName());
+        if (userModel != null) {
             bindingResult.rejectValue("name", "error.user", "There is already a user registered with the name provided");
         }
-        if (bindingResult.hasErrors()) {
-            modelAndView.setViewName("registration");
-        } else {
+
+        if (!bindingResult.hasErrors()) {
             userService.saveUser(user);
             modelAndView.addObject("successMessage", "User has been registered successfully");
             modelAndView.addObject("user", new UserModel());
             modelAndView.setViewName("registration");
+        } else {
+            modelAndView.setViewName("registration");
         }
+
         return modelAndView;
     }
 
@@ -123,8 +127,9 @@ public class UserController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Creating lobby for game: {}", game);
 
-        if(gameFactory.gameExists(game))
+        if (gameFactory.gameExists(game)) {
             lobbyHandler.createLobby(game);
+        }
 
         UserModel user = new UserModel();
         modelAndView.addObject("user", user);
