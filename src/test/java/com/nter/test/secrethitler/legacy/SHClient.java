@@ -28,7 +28,7 @@ public class SHClient {
     private final Random random = new Random();
     private String username;
     private StompSession stompSession;
-    private final String lobbyName = "SECRET_HITLER-315";
+    private final String lobbyName = "SECRET_HITLER-741";
 
     public ListenableFuture<StompSession> connect() {
 
@@ -71,7 +71,7 @@ public class SHClient {
             }
         });
 
-        stompSession.subscribe("/topic/game", new StompFrameHandler() {
+        stompSession.subscribe("/topic/game/" + lobbyName , new StompFrameHandler() {
 
             public Type getPayloadType(StompHeaders stompHeaders) {
                 return byte[].class;
@@ -109,7 +109,7 @@ public class SHClient {
             }
         });
 
-        stompSession.subscribe("/user/topic/game", new StompFrameHandler() {
+        stompSession.subscribe("/user/topic/game/" + lobbyName, new StompFrameHandler() {
 
             public Type getPayloadType(StompHeaders stompHeaders) {
                 return byte[].class;

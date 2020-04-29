@@ -1,11 +1,11 @@
 (function () {
     'use strict';
 
-    var splashScreen = document.getElementById('splash-page'), 
+    var splashScreen = document.getElementById('splash-page'),
+        splashVictory = document.getElementById('splash-victory'),
         rules = document.getElementById('rules'),
         playersArea = document.getElementById('playersArea'),
         canvasLiberal = document.getElementById('game-canvas-liberal'),
-        canvasVictory = document.getElementById('game-canvas-victory'),
         canvasFascist = document.getElementById('game-canvas-fascist'),
         statusBar = document.getElementById('statusBar'),
         statusBarText = document.getElementById('statusBarText');
@@ -112,6 +112,7 @@
         statusBar.classList.remove('hidden');
         splashScreen.classList.add('hidden');
         rules.classList.add('hidden');
+        splashVictory.classList.add('hidden');
 
         drawBoards();
         moveTracker(0);
@@ -275,19 +276,13 @@
     }
     
     function processVictory(faction) {
-        var ctxVictory = canvasLiberal.getContext('2d');
 
-        var drawing = new Image();
-        drawing.onload = function() {
-            ctxVictory.drawImage(this, 0, 0);
-        }
-        if (faction === 'LIBERAL') {
-            drawing.src = '/games/secrethitler/SH1_liberals_won.png';
-        } else if (faction === 'FASCIST') {
-            drawing.src = '/games/secrethitler/SH2_fascists_won.png';
-        }
-
-        canvasVictory.classList.remove('hidden');
+       if(faction === 'LIBERAL') {
+            splashVictory.src='/games/secrethitler/SH1_liberals_won.png';
+       } else {
+            splashVictory.src='/games/secrethitler/SH2_fascists_won.png';
+       }
+       splashVictory.classList.remove('hidden');
     }
 
     function drawBoards() {
