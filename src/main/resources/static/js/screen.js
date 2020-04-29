@@ -5,7 +5,7 @@
         rules = document.getElementById('rules'),
         playersArea = document.getElementById('playersArea'),
         canvasLiberal = document.getElementById('game-canvas-liberal'),
-        canvasLiberalOverlay = document.getElementById('game-canvas-liberal-overlay'),
+        canvasVictory = document.getElementById('game-canvas-victory'),
         canvasFascist = document.getElementById('game-canvas-fascist'),
         statusBar = document.getElementById('statusBar'),
         statusBarText = document.getElementById('statusBarText');
@@ -16,7 +16,7 @@
     var userName = document.getElementById('userName').value;
     var lobbyName = document.getElementById('lobbyName').value;
 
-    var stompClient = null;
+    var stompClient;
     var subscriptionLobby;
     var subscriptionPublic;
 //    var subscriptionUser;
@@ -107,7 +107,6 @@
 
     function playSecretHitler() {
         canvasLiberal.classList.remove('hidden');
-        canvasLiberalOverlay.classList.remove('hidden');
         canvasFascist.classList.remove('hidden');
         playersArea.classList.remove('hidden');
         statusBar.classList.remove('hidden');
@@ -231,14 +230,6 @@
         // TODO implement
     }
 
-    function processVictory(faction) {
-        if (faction === 'LIBERAL') {
-
-        } else if (faction === 'FASCIST') {
-
-        }
-    }
-
     function addLiberalPolicy() {
         var ctxLiberal = canvasLiberal.getContext('2d');
         
@@ -281,6 +272,22 @@
             fascistPolicies++;
         }
         drawing.src = '/games/secrethitler/fascistp-l.png';
+    }
+    
+    function processVictory(faction) {
+        var ctxVictory = canvasLiberal.getContext('2d');
+
+        var drawing = new Image();
+        drawing.onload = function() {
+            ctxVictory.drawImage(this, 0, 0);
+        }
+        if (faction === 'LIBERAL') {
+            drawing.src = '/games/secrethitler/SH1_liberals_won.png';
+        } else if (faction === 'FASCIST') {
+            drawing.src = '/games/secrethitler/SH2_fascists_won.png';
+        }
+
+        canvasVictory.classList.remove('hidden');
     }
 
     function drawBoards() {

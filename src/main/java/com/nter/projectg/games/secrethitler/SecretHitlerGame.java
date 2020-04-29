@@ -337,8 +337,8 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             }
 
             // Send other fascists to hitler (5-6 players)
-            if(playerHandler.getPlayerCount() == 5 || playerHandler.getPlayerCount() == 6) {
-                if(player.getFaction() == Faction.FASCIST) {
+            if (playerHandler.getPlayerCount() == 5 || playerHandler.getPlayerCount() == 6) {
+                if (player.getFaction() == Faction.FASCIST) {
                     SecretHitlerMessage fascistMessage = buildGameMessage(GameMessageType.FELLOW_FASCIST, player.getName());
                     sendToPlayer(playerHandler.getHitler().getName(), fascistMessage);
                 }
@@ -392,7 +392,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
         if (getPlayers().size() < 7) { // 5 - 6 PLAYERS
             if (assets.getPolicyCount(Policy.FASCIST) == 3) { // PEAK TOP POLICY
-                if (assets.activePowers.size() == 0) {
+                if (assets.activePowers.isEmpty()) {
                     List<Policy> policies = assets.getTopPolicies();
                     logger.info("Sending top policies for the president to peek: {}", policies);
                     sendStatus("Sending top policies for the president to peek");
@@ -419,7 +419,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         if (getPlayers().size() == 7 || getPlayers().size() == 8) { // 7 - 8 PLAYERS
 
             if (assets.getPolicyCount(Policy.FASCIST) == 2) { // INVESTIGATE LOYALTY
-                if (assets.activePowers.size() == 0) {
+                if (assets.activePowers.isEmpty()) {
                     investigate();
                     assets.usePower();
                     return;
@@ -451,7 +451,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         if (getPlayers().size() == 9 || getPlayers().size() == 10) { // 9 - 10 PLAYERS
 
             if (assets.getPolicyCount(Policy.FASCIST) == 1) { // INVESTIGATE LOYALTY
-                if (assets.activePowers.size() == 0) {
+                if (assets.activePowers.isEmpty()) {
                     investigate();
                     assets.usePower();
                     return;

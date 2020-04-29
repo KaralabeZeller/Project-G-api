@@ -12,7 +12,7 @@
 
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
 
-    var stompClient = null;
+    var stompClient;
     var subscriptionLobby;
     var subscriptionPublic;
     var subscriptionUser;
@@ -118,6 +118,8 @@
                 showDialog('SPECIAL_ELECTION', 'Choose a player to be elected as president', message.content.split(','));
             } else if (gameType === 'KILLED') {
                 disconnect();
+            } else if (gameType === 'VICTORY') {
+                processVictory(message.content);
             } else {
                 console.log('Ignoring game message: %s', message);
             }
@@ -280,7 +282,6 @@
         }
     }
 
-
     function showMembership(faction) {
         if (membershipShow) {
             membershipCard.src = '/games/secrethitler/membership-cover.png';
@@ -292,6 +293,14 @@
                 membershipCard.src = '/games/secrethitler/membership-fascist.png';
             }
             membershipShow = true;
+        }
+    }
+
+    function processVictory(faction) {
+        if (faction === 'LIBERAL') {
+            alert('Liberal victory!');
+        } else if (faction === 'FASCIST') {
+            alert('Fascist victory!');
         }
     }
 
@@ -333,11 +342,11 @@
             inputType: multiChoice ? 'checkbox' : 'select',
             value:  multiChoice ?  null : options[0],
             callback: result => {
-                if (result === null) {
-                    return false;
-                } else {
+                if (result) {
                     sendGame(type, multiChoice ? result.join(',') : result);
                     return true;
+                } else {
+                    return false;
                 }
             }
         });

@@ -3,7 +3,6 @@ package com.nter.projectg.controller;
 import com.nter.projectg.games.common.Game;
 import com.nter.projectg.games.common.GameHandler;
 import com.nter.projectg.games.common.util.Constants;
-import com.nter.projectg.lobby.Lobby;
 import com.nter.projectg.lobby.LobbyHandler;
 import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.common.Message.MessageType;
@@ -77,14 +76,17 @@ public class MessageController {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
             Game<?, ?> game = gameFactory.get(message.getLobby());
-
-            logger.debug("Processing message: {} {}", message, game);
-            try {
-                game.handle(message);
-                logger.info("Processed message: {} {}", message, game);
-            } catch (Exception exception) {
-                logger.error("Failed to  process message: {} {}", message, game, exception);
-                throw exception;
+            if (game != null) {
+                logger.debug("Processing message: {} {}", message, game);
+                try {
+                    game.handle(message);
+                    logger.info("Processed message: {} {}", message, game);
+                } catch (Exception exception) {
+                    logger.error("Failed to process message: {} {}", message, game, exception);
+                    throw exception;
+                }
+            } else {
+                logger.warn("Failed to process message (game not found): {}", message);
             }
         });
     }
@@ -92,36 +94,38 @@ public class MessageController {
     private CompletableFuture<Void> start(String user) {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
-            logger.debug("Starting game: Secret Hitler {}", lobbyHandler.findLobbyForUser(user));
-            Game<?, ?> game = gameFactory.createGame(Constants.GAME_NAME.SECRET_HITLER, lobbyHandler.findLobbyForUser(user));
-            game.start();
-            logger.info("Started game: Secret Hitler {}", game);
+            lobbyHandler.findLobbyForUser(user).ifPresent(lobby -> {
+                logger.debug("Starting game: Secret Hitler {}", lobby);
+                Game<?, ?> game = gameFactory.createGame(Constants.GAME_NAME.SECRET_HITLER, lobby);
+                game.start();
+                logger.info("Started game: Secret Hitler {}", game);
 
-            // Fake timeout to reset Game
-            try {
-                Thread.sleep(TimeUnit.MINUTES.toMillis(10));
-            } catch (InterruptedException ignored) {
+                // TODO maybe move to LobbyHandler
+                // Fake timeout to reset Game
+                try {
+                    Thread.sleep(TimeUnit.MINUTES.toMillis(10));
+                } catch (InterruptedException ignored) {
 
-            }
+                }
 
-            logger.debug("Stopping game: Secret Hitler {}", game);
-            game.stop();
-            game = null;
-            logger.debug("Stopped game: Secret Hitler {}", lobbyHandler.findLobbyForUser(user));
+                logger.debug("Stopping game: Secret Hitler {}", game);
+                game.stop();
+                logger.debug("Stopped game: Secret Hitler {}", lobby);
+            });
         });
     }
 
     private CompletableFuture<Void> reconnect(String user, String session) {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
-            Lobby l = lobbyHandler.findLobbyForUser(user);
-            Game<?, ?> game = gameFactory.get(l.getName());
-
-            if (game != null) {
-                logger.debug("Reconnecting user in session: {} {}", user, session);
-                game.reconnect(user);
-                logger.info("Reconnected user in session: {} {}", user, session);
-            }
+            lobbyHandler.findLobbyForUser(user).ifPresent(lobby -> {
+                Game<?, ?> game = gameFactory.get(lobby.getName());
+                if (game != null) {
+                    logger.debug("Reconnecting user in session: {} {}", user, session);
+                    game.reconnect(user);
+                    logger.info("Reconnected user in session: {} {}", user, session);
+                }
+            });
         });
     }
 

@@ -2,8 +2,9 @@ package com.nter.projectg.games.common.util;
 
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class Constants {
@@ -14,18 +15,11 @@ public class Constants {
     }
 
     public List<String> getGames() {
-        List<String> returnList = new ArrayList<>();
-        for (GAME_NAME game : GAME_NAME.values()) {
-            returnList.add(game.name());
-        }
-        returnList.add("TEST");
-        return returnList;
+        return Arrays.stream(GAME_NAME.values()).map(Enum::toString).collect(Collectors.toList());
     }
 
     public GAME_NAME getGameByName(String name) {
-        for (GAME_NAME g : GAME_NAME.values()) {
-            if (g.name().equals(name)) return g;
-        }
-        return null;
+        return GAME_NAME.valueOf(name);
     }
+
 }
