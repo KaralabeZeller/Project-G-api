@@ -118,6 +118,8 @@
                 showDialog('SPECIAL_ELECTION', 'Choose a player to be elected as president', message.content.split(','));
             } else if (gameType === 'KILLED') {
                 disconnect();
+            } else if (gameType === 'VICTORY') {
+                processVictory(message.content);
             } else {
                 console.log('Ignoring game message: %s', message);
             }
@@ -280,7 +282,6 @@
         }
     }
 
-
     function showMembership(faction) {
         if (membershipShow) {
             membershipCard.src = '/games/secrethitler/membership-cover.png';
@@ -292,6 +293,14 @@
                 membershipCard.src = '/games/secrethitler/membership-fascist.png';
             }
             membershipShow = true;
+        }
+    }
+
+    function processVictory(faction) {
+        if (faction === 'LIBERAL') {
+            alert('Liberal victory!');
+        } else if (faction === 'FASCIST') {
+            alert('Fascist victory!');
         }
     }
 
