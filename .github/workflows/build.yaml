@@ -46,6 +46,9 @@ jobs:
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Publish Apache PMD report to stdout
+        run: cat ./target/pmd/java/pmd.txt && cat ./target/pmd/javascript/pmd.txt
+
       - name: Publish artifact
         uses: actions/upload-artifact@v2-preview
         with:

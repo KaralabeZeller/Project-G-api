@@ -137,6 +137,77 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- WORKAROUND for creating output directories for Apache PMD -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${project.build.directory}/pmd/java"/>
+                                <mkdir dir="${project.build.directory}/pmd/javascript"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- https://maven.apache.org/plugins/maven-pmd-plugin/index.html -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <format>txt</format>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>pmd-java</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>pmd</goal>
+                        </goals>
+                        <configuration>
+                            <targetDirectory>${project.build.directory}/pmd/java</targetDirectory>
+                            <rulesets>
+                                <ruleset>/category/java/bestpractices.xml</ruleset>
+                                <ruleset>/category/java/codestyle.xml</ruleset>
+                                <ruleset>/category/java/design.xml</ruleset>
+                                <ruleset>/category/java/errorprone.xml</ruleset>
+                                <ruleset>/category/java/multithreading.xml</ruleset>
+                                <ruleset>/category/java/performance.xml</ruleset>
+                            </rulesets>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>pmd-javascript</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>pmd</goal>
+                        </goals>
+                        <configuration>
+                            <language>javascript</language>
+                            <targetDirectory>${project.build.directory}/pmd/javascript</targetDirectory>
+                            <rulesets>
+                                <ruleset>/category/ecmascript/bestpractices.xml</ruleset>
+                                <ruleset>/category/ecmascript/codestyle.xml</ruleset>
+                                <ruleset>/category/ecmascript/errorprone.xml</ruleset>
+                            </rulesets>
+                            <includes>
+                                <include>**/*.js</include>
+                            </includes>
+                            <compileSourceRoots>
+                                <compileSourceRoot>${basedir}/src/main/resources/static</compileSourceRoot>
+                                <compileSourceRoot>${basedir}/src/main/resources/templates</compileSourceRoot>
+                            </compileSourceRoots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
