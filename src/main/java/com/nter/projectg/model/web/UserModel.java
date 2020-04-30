@@ -17,6 +17,7 @@ import java.util.Set;
 @Entity
 @Table(name = "USER")
 public class UserModel {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "USER_ID")
@@ -34,4 +35,5 @@ public class UserModel {
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "USER_ROLE", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
     private Set<RoleModel> roles;
+
 }

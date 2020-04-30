@@ -5,8 +5,8 @@ import com.nter.projectg.model.web.UserModel;
 public interface UserService {
 
     // TODO Optional<UserModel>
-    UserModel findUserByName(String email);
+    UserModel findByName(String name);
 
-    UserModel saveUser(UserModel user);
+    UserModel save(UserModel user);
 
 }

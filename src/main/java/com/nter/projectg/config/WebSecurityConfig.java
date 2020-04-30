@@ -42,8 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.
-                jdbcAuthentication()
+        auth.jdbcAuthentication()
                 .usersByUsernameQuery(usersQuery)
                 .authoritiesByUsernameQuery(rolesQuery)
                 .dataSource(dataSource)
@@ -66,8 +65,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .usernameParameter("name")
                 .passwordParameter("password")
                 .loginProcessingUrl("/login")
-                .successHandler(myAuthenticationSuccessHandler())
-                .failureHandler(customAuthenticationFailureHandler())
+                .successHandler(myAuthSuccessHandler())
+                .failureHandler(myAuthFailureHandler())
                 .permitAll()
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
@@ -75,18 +74,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public AuthenticationSuccessHandler myAuthenticationSuccessHandler() {
+    public AuthenticationSuccessHandler myAuthSuccessHandler() {
         return new MyAuthSuccessHandler();
+    }
+
+    @Bean
+    public AuthenticationFailureHandler myAuthFailureHandler() {
+        return new MyAuthFailureHandler();
     }
 
     @Bean
     public LogoutSuccessHandler myLogoutSuccessHandler() {
         return new MyLogoutSuccessHandler();
-    }
-
-    @Bean
-    public AuthenticationFailureHandler customAuthenticationFailureHandler() {
-        return new MyAuthFailureHandler();
     }
 
 }

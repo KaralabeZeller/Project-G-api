@@ -59,7 +59,7 @@ public class UserController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         logger.info("Joining lobby: {}", lobbyId);
-        UserModel user = userService.findUserByName(auth.getName());
+        UserModel user = userService.findByName(auth.getName());
         model.put("userName", user.getName());
 
         model.put("lobbyName", lobbyId);
@@ -72,7 +72,7 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Watching lobby: {}", lobbyId);
-        UserModel user = userService.findUserByName(auth.getName());
+        UserModel user = userService.findByName(auth.getName());
         model.put("userName", user.getName());
 
         model.put("lobbyName", lobbyId);
@@ -105,13 +105,13 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
 
         // TODO only lookup UserModel when BindingResult is valid
-        UserModel userModel = userService.findUserByName(user.getName());
+        UserModel userModel = userService.findByName(user.getName());
         if (userModel != null) {
             bindingResult.rejectValue("name", "error.user", "There is already a user registered with the name provided");
         }
 
         if (!bindingResult.hasErrors()) {
-            userService.saveUser(user);
+            userService.save(user);
             modelAndView.addObject("successMessage", "User has been registered successfully");
             modelAndView.addObject("user", new UserModel());
             modelAndView.setViewName("registration");
@@ -155,7 +155,7 @@ public class UserController {
     public ModelAndView home() {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserModel user = userService.findUserByName(auth.getName());
+        UserModel user = userService.findByName(auth.getName());
         modelAndView.addObject("userName", "Welcome " + user.getName());
         modelAndView.addObject("adminMessage", "This Page is available to Users with Admin Role");
         modelAndView.setViewName("admin/adminHome");
@@ -166,7 +166,7 @@ public class UserController {
     public ModelAndView user() {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserModel user = userService.findUserByName(auth.getName());
+        UserModel user = userService.findByName(auth.getName());
 
         modelAndView.addObject("userName", "Welcome " + user.getName());
         modelAndView.addObject("userMessage", "This Page is available to Users with User Role");
