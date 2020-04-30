@@ -1,5 +1,6 @@
 package com.nter.projectg.controller;
 
+import com.nter.projectg.config.RedirectConfig;
 import com.nter.projectg.games.common.GameHandler;
 import com.nter.projectg.games.common.util.Constants;
 import com.nter.projectg.lobby.LobbyHandler;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -122,7 +124,7 @@ public class UserController {
 
     //TODO implement create new lobby with lobbyHandler
     @RequestMapping(value = "/createLobby", method = RequestMethod.POST)
-    public String createLobby(@Valid String game, final RedirectAttributes redirectAttributes, HttpServletResponse response) {
+    public String createLobby(@Valid String game, final RedirectAttributes redirectAttributes, HttpServletResponse response, HttpServletRequest request) throws IOException {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Creating lobby for game: {}", game);
@@ -130,11 +132,21 @@ public class UserController {
         if (gameFactory.gameExists(game)) {
             lobbyHandler.createLobby(game);
         }
-        try {
-            response.sendRedirect("/lobbies");
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        String environment = request.getHeader("host").contains("localhost") ? "LOCAL" : "REMOTE";
+        logger.info("sendRedirect environment: {}", environment);
+
+        String redirectUrl = "/lobbies";
+        if (environment.equals("LOCAL")) {
+            redirectUrl = response.encodeRedirectURL(redirectUrl);
+            RedirectConfig.setLocation("LOCAL");
+        } else {
+            redirectUrl = response.encodeRedirectURL("https://" + request.getHeader("host") + "/" + redirectUrl);
+            RedirectConfig.setLocation("REMOTE");
         }
+        logger.info("sendRedirect encoded URL: {}", redirectUrl);
+
+        response.sendRedirect(redirectUrl);
         return "redirect:user/lobbies";
 
     }
