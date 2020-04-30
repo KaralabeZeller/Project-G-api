@@ -121,8 +121,8 @@ public class UserController {
     }
 
     //TODO implement create new lobby with lobbyHandler
-    @RequestMapping(value = "/lobbies", method = RequestMethod.POST)
-    public ModelAndView createLobby(@Valid String game, Map<String, Object> model) {
+    @RequestMapping(value = "/createLobby", method = RequestMethod.GET)
+    public String createLobby(@Valid String game, Map<String, Object> model) {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Creating lobby for game: {}", game);
@@ -131,12 +131,7 @@ public class UserController {
             lobbyHandler.createLobby(game);
         }
 
-        UserModel user = new UserModel();
-        modelAndView.addObject("user", user);
-        modelAndView.addObject("gameNames", constants.getGames());
-        modelAndView.addObject("lobbies", lobbyHandler.getLobbies());
-        modelAndView.setViewName("user/lobbies");
-        return modelAndView;
+        return "redirect:/lobbies";
 
     }
 
