@@ -71,7 +71,7 @@ public class SHClient {
             }
         });
 
-        stompSession.subscribe("/topic/game/" + lobbyName , new StompFrameHandler() {
+        stompSession.subscribe("/topic/game/" + lobbyName, new StompFrameHandler() {
 
             public Type getPayloadType(StompHeaders stompHeaders) {
                 return byte[].class;

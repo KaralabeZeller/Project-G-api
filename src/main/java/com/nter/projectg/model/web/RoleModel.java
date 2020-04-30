@@ -14,10 +14,13 @@ import javax.persistence.*;
 @Entity
 @Table(name = "ROLE")
 public class RoleModel {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ROLE_ID")
     private int id;
+
     @Column(name = "ROLE")
     private String role;
+
 }

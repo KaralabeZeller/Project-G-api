@@ -13,27 +13,30 @@ import java.util.HashSet;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Override
-    public UserModel findUserByName(String name) {
+    public UserModel findByName(String name) {
         return userRepository.findByName(name);
     }
 
     @Override
-    public UserModel saveUser(UserModel user) {
+    public UserModel save(UserModel user) {
+        // Encode password
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+
+        // TODO Assign role
         RoleModel userRole = roleRepository.findByRole("ADMIN");
         user.setRoles(new HashSet<RoleModel>(Collections.singletonList(userRole)));
+
         return userRepository.save(user);
     }
 

@@ -28,4 +28,5 @@ public class MyLogoutSuccessHandler implements LogoutSuccessHandler {
 
         response.sendRedirect(redirectUrl);
     }
+
 }

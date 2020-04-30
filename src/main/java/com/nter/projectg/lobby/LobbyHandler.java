@@ -45,7 +45,7 @@ public class LobbyHandler {
         return lobbies.values().stream().filter(l -> l.getUsers().contains(user)).findFirst();
     }
 
-    public void add(String user, String session, String lobby) {
+    public void add(String lobby, String user, String session) {
         findLobbyByName(lobby).add(user, session);
     }
 

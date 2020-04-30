@@ -9,7 +9,6 @@ import com.nter.projectg.model.common.Message.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -31,18 +30,18 @@ public class MessageController {
     GameHandler gameFactory;
 
     @MessageMapping("/lobby/{lobbyId}")
-    public void receiveLobby(@DestinationVariable String lobbyId, @Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
+    public void receiveLobby(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
         logger.info("receiveLobby: Received message: {} {}", message, headerAccessor);
 
-        String user = message.getSender();
         String lobby = message.getLobby();
+        String user = message.getSender();
         String session = headerAccessor.getSessionId();
 
         // TODO avoid storing username in WebSocket / STOMP session
         headerAccessor.getSessionAttributes().put("username", user);
 
         // Update lobby and broadcast notification message
-        lobbyHandler.add(user, session, lobby);
+        lobbyHandler.add(lobby, user, session);
 
         // Handle reconnection and restore state
         reconnect(user, session);
@@ -75,7 +74,8 @@ public class MessageController {
     private CompletableFuture<Void> process(Message message) {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
-            Game<?, ?> game = gameFactory.get(message.getLobby());
+            String lobby = message.getLobby();
+            Game<?, ?> game = gameFactory.get(lobby);
             if (game != null) {
                 logger.debug("Processing message: {} {}", message, game);
                 try {
