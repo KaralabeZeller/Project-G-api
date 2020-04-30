@@ -136,7 +136,7 @@ public class UserController {
         String environment = request.getHeader("host").contains("localhost") ? "LOCAL" : "REMOTE";
         logger.info("sendRedirect environment: {}", environment);
 
-        String redirectUrl = "/lobbies";
+        String redirectUrl = "lobbies";
         if (environment.equals("LOCAL")) {
             redirectUrl = response.encodeRedirectURL(redirectUrl);
             RedirectConfig.setLocation("LOCAL");
