@@ -14,8 +14,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -118,8 +121,8 @@ public class UserController {
     }
 
     //TODO implement create new lobby with lobbyHandler
-    @RequestMapping(value = "/createLobby", method = RequestMethod.GET)
-    public String createLobby(@Valid String game, Map<String, Object> model) {
+    @RequestMapping(value = "/createLobby", method = RequestMethod.POST)
+    public String createLobby(@Valid String game, final RedirectAttributes redirectAttributes, HttpServletResponse response) {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Creating lobby for game: {}", game);
@@ -127,8 +130,12 @@ public class UserController {
         if (gameFactory.gameExists(game)) {
             lobbyHandler.createLobby(game);
         }
-
-        return "redirect:/lobbies";
+        try {
+            response.sendRedirect("/lobbies");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "redirect:user/lobbies";
 
     }
 
