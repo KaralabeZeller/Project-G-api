@@ -17,3 +17,7 @@
 .settings
 .springBeans
 .sts4-cache
+
+
+# PSD files
+*.psd
