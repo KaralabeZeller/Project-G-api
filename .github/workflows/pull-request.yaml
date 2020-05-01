@@ -40,8 +40,11 @@ jobs:
       - name: Build with Maven
         run: mvn -B verify --file pom.xml
 
-      - name: Publish Apache PMD report to stdout
-        run: cat ./target/pmd/java/pmd.txt && cat ./target/pmd/javascript/pmd.txt
+      - name: Publish Apache PMD report - Java
+        run: cat ./target/pmd/java/pmd.txt
+
+      - name: Publish Apache PMD report - JavaScript
+        run: cat ./target/pmd/javascript/pmd.txt
 
       - name: Publish test report as GitHub annotations
         uses: ashley-taylor/junit-report-annotations-action@v1.0
