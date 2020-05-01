@@ -27,6 +27,7 @@
     var chancellor = null;
     var liberalPolicies = 0;
     var fascistPolicies = 0;
+    var tracker = 0;
 
     connectScreen();
 
@@ -114,8 +115,9 @@
         rules.classList.add('hidden');
         splashVictory.classList.add('hidden');
 
-        drawBoards();
-        moveTracker(0);
+        drawLiberalBoard();
+        drawFascistBoard();
+
         users.forEach(drawPlayer);
     }
     
@@ -214,9 +216,9 @@
            output = '';
         }
         setTimeout(function () {
-                    div.innerHTML = output;
-                    div.classList.remove('hide');
-                }, 500);
+            div.innerHTML = output;
+            div.classList.remove('hide');
+        }, 500);
     }
 
     function enactPolicy(policy) {
@@ -227,8 +229,12 @@
         }
     }
 
-    function moveTracker(tracker) {
-        // TODO implement election tracker
+    function moveTracker(track) {
+        tracker = track;
+
+        drawLiberalBoard();
+        setTimeout(redrawLiberal, 10);
+
     }
 
     function addLiberalPolicy() {
@@ -248,6 +254,30 @@
                 ctxLiberal.drawImage(this, 970, 160);
             }
             liberalPolicies++;
+        }
+        drawing.src = '/games/secrethitler/liberalp-l.png';
+    }
+
+    function redrawLiberal() {
+        var ctxLiberal = canvasLiberal.getContext('2d');
+
+        var drawing = new Image();
+        var i = 0;
+
+        drawing.onload = function() {
+            for(i; i <=liberalPolicies; i++){
+                if (i === 1) {
+                    ctxLiberal.drawImage(this, 250, 160);
+                } else if (i === 2) {
+                    ctxLiberal.drawImage(this, 430, 160);
+                } else if (i === 3) {
+                    ctxLiberal.drawImage(this, 610, 160);
+                } else if (i === 4) {
+                    ctxLiberal.drawImage(this, 790, 160);
+                } else if (i === 5) {
+                    ctxLiberal.drawImage(this, 970, 160);
+                }
+            }
         }
         drawing.src = '/games/secrethitler/liberalp-l.png';
     }
@@ -284,24 +314,11 @@
        splashVictory.classList.remove('hidden');
     }
 
-    function drawBoards() {
-        var ctxLiberal = canvasLiberal.getContext('2d');
+    function drawFascistBoard() {
         var ctxFascist = canvasFascist.getContext('2d');
 
-        var drawingLiberal = new Image();
         var drawingFascist = new Image();
-        
-        drawingLiberal.onload = function() {
-            var width = this.naturalWidth,
-                height = this.naturalHeight;
 
-            canvasLiberal.width = Math.floor(width / 2);
-            canvasLiberal.height = Math.floor(height / 2);
-
-            ctxLiberal.scale(0.5, 0.5);
-            ctxLiberal.drawImage(this, 0, 0);
-            ctxLiberal.scale(2,2);
-        };
         drawingFascist.onload = function() {
             var width = this.naturalWidth,
                 height = this.naturalHeight;
@@ -314,8 +331,6 @@
             ctxFascist.scale(2,2);
         };
 
-        drawingLiberal.src = '/games/secrethitler/SH1.png';
-
         if (users.length === 5 || users.length === 6) {
             drawingFascist.src = '/games/secrethitler/SH2.png';
         } else if (users.length === 7 || users.length === 8) {
@@ -326,7 +341,35 @@
             console.log('Failed to draw boards: Invalid user count: %s', users)
         }
 
-        moveTracker(1);
+    }
+
+    function drawLiberalBoard() {
+        var ctxLiberal = canvasLiberal.getContext('2d');
+
+        var drawingLiberal = new Image();
+
+        drawingLiberal.onload = function() {
+            var width = this.naturalWidth,
+                height = this.naturalHeight;
+
+            canvasLiberal.width = Math.floor(width / 2);
+            canvasLiberal.height = Math.floor(height / 2);
+
+            ctxLiberal.scale(0.5, 0.5);
+            ctxLiberal.drawImage(this, 0, 0);
+            ctxLiberal.scale(2,2);
+        };
+
+        if (tracker == 0) {
+            drawingLiberal.src = '/games/secrethitler/SH1_0.png';
+        } else if (tracker == 1) {
+            drawingLiberal.src = '/games/secrethitler/SH1_1.png';
+        } else if (tracker == 2) {
+            drawingLiberal.src = '/games/secrethitler/SH1_2.png';
+        } else if (tracker == 3) {
+            drawingLiberal.src = '/games/secrethitler/SH1_3.png';
+        }
+
     }
 
     function getRandomColor(color) {

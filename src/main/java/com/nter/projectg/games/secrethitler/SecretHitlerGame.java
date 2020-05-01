@@ -217,6 +217,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
                 logger.info("Vote result: Ja!");
                 sendStatus("Vote result: Ja!");
                 assets.electionTracker = 0;
+                moveTracker();
 
                 if (assets.getPolicyCount(Policy.FASCIST) >= 3) {
                     // TODO move to checkAssets
@@ -235,7 +236,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
                 logger.info("Votes result: Nein!");
                 sendStatus("Vote result: Nein!");
                 assets.electionTracker++;
-                //moveTracker(); TODO implement
+                moveTracker();
                 state = State.ELECTION;
                 scheduleCheckAssets();
             }
@@ -244,6 +245,11 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         }
 
         logger.debug("Processed vote: {} {} {}", player, vote, votes);
+    }
+
+    private void moveTracker() {
+        SecretHitlerMessage trackerMessage = buildGameMessage(GameMessageType.TRACKER, Integer.toString(assets.electionTracker));
+        sendToAll(trackerMessage);
     }
 
     private void processSpecialElection(String content) {
@@ -312,7 +318,6 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         sendStatus("Chancellor " + playerHandler.getChancellor().getName() + " has enacted a " + policy + " policy");
 
         assets.enactPolicy(Policy.valueOf(policy));
-
         state = State.ELECTION;
         scheduleCheckAssets();
     }
@@ -383,7 +388,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
             logger.info("Policy enacted: {}", topPolicy);
             assets.electionTracker = 0;
-            //moveTracker();
+            moveTracker();
         }
 
         if (getPlayers().size() < 7) { // 5 - 6 PLAYERS

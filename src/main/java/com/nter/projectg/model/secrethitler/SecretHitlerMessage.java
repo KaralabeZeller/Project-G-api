@@ -30,6 +30,7 @@ public class SecretHitlerMessage extends Message {
         STATE,
         VICTORY,
         FELLOW_FASCIST,
+        TRACKER,
         VETO,
     }
 
