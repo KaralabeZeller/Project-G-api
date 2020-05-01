@@ -1,6 +1,6 @@
 package com.nter.projectg.service;
 
-import com.nter.projectg.model.web.UserModel;
+import com.nter.projectg.model.data.UserModel;
 
 public interface UserService {
 

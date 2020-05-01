@@ -25,7 +25,7 @@ public class MyAuthSuccessHandler implements AuthenticationSuccessHandler {
     }
 
     protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        redirectStrategy.sendRedirect(request, response, "user/userHome");
+        redirectStrategy.sendRedirect(request, response, "user/home");
     }
 
     protected void clearAuthenticationAttributes(HttpServletRequest request) {

@@ -1,6 +1,6 @@
 package com.nter.projectg.repository;
 
-import com.nter.projectg.model.web.RoleModel;
+import com.nter.projectg.model.data.RoleModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

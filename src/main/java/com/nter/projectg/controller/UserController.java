@@ -4,7 +4,7 @@ import com.nter.projectg.config.RedirectConfig;
 import com.nter.projectg.games.common.GameHandler;
 import com.nter.projectg.games.common.util.Constants;
 import com.nter.projectg.lobby.LobbyHandler;
-import com.nter.projectg.model.web.UserModel;
+import com.nter.projectg.model.data.UserModel;
 import com.nter.projectg.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,18 +150,18 @@ public class UserController {
 
     }
 
-    @RequestMapping(value = "/admin/adminHome", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/home", method = RequestMethod.GET)
     public ModelAndView home() {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserModel user = userService.findByName(auth.getName());
         modelAndView.addObject("userName", "Welcome " + user.getName());
         modelAndView.addObject("adminMessage", "This Page is available to Users with Admin Role");
-        modelAndView.setViewName("admin/adminHome");
+        modelAndView.setViewName("admin/home");
         return modelAndView;
     }
 
-    @RequestMapping(value = "/user/userHome", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/home", method = RequestMethod.GET)
     public ModelAndView user() {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -169,7 +169,7 @@ public class UserController {
 
         modelAndView.addObject("userName", "Welcome " + user.getName());
         modelAndView.addObject("userMessage", "This Page is available to Users with User Role");
-        modelAndView.setViewName("user/userHome");
+        modelAndView.setViewName("user/home");
         return modelAndView;
     }
 }

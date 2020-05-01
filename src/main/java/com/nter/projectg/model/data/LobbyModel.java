@@ -1,4 +1,4 @@
-package com.nter.projectg.model.common;
+package com.nter.projectg.model.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,7 +1,7 @@
 package com.nter.projectg.service;
 
-import com.nter.projectg.model.web.RoleModel;
-import com.nter.projectg.model.web.UserModel;
+import com.nter.projectg.model.data.RoleModel;
+import com.nter.projectg.model.data.UserModel;
 import com.nter.projectg.repository.RoleRepository;
 import com.nter.projectg.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.nter.test.secrethitler.legacy;
+package com.nter.legacy;
 
 import org.json.JSONException;
 import org.json.JSONObject;

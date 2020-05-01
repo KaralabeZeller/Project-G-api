@@ -1,4 +1,4 @@
-package com.nter.projectg.model.web;
+package com.nter.projectg.model.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
