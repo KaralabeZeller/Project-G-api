@@ -29,7 +29,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public ViewResolver internalResourceViewResolver() {
-        return new InternalResourceViewResolver(){{
+        return new InternalResourceViewResolver() {{
             setRedirectHttp10Compatible(false);
         }};
     }

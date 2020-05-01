@@ -644,7 +644,9 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         return "SecretHitlerGame{" +
                 "super=" + super.toString() +
                 ", state=" + state +
+                ", specialElection=" + specialElection +
                 ", votes=" + votes +
                 '}';
     }
+
 }

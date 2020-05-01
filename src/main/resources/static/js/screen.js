@@ -1,13 +1,13 @@
 (function () {
     'use strict';
 
-    var splashScreen = document.getElementById('splash-page'),
+    var splashScreen  = document.getElementById('splash-page'),
         splashVictory = document.getElementById('splash-victory'),
-        rules = document.getElementById('rules'),
-        playersArea = document.getElementById('playersArea'),
+        rules         = document.getElementById('rules'),
+        playersArea   = document.getElementById('playersArea'),
         canvasLiberal = document.getElementById('game-canvas-liberal'),
         canvasFascist = document.getElementById('game-canvas-fascist'),
-        statusBar = document.getElementById('statusBar'),
+        statusBar     = document.getElementById('statusBar'),
         statusBarText = document.getElementById('statusBarText');
 
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
@@ -208,7 +208,7 @@
         var output = '';
         if (content === 'Ja!') {
             output = '<img src="/games/secrethitler/ballot-ja.png" height="60" />';
-        } else if (content == 'Nein!') {
+        } else if (content === 'Nein!') {
             output = '<img src="/games/secrethitler/ballot-no.png" height="60" />';
         } else {
            output = '';
@@ -228,7 +228,7 @@
     }
 
     function moveTracker(tracker) {
-        // TODO implement
+        // TODO implement election tracker
     }
 
     function addLiberalPolicy() {
@@ -236,15 +236,15 @@
         
         var drawing = new Image();
         drawing.onload = function() {
-            if (liberalPolicies == 0) {
+            if (liberalPolicies === 0) {
                 ctxLiberal.drawImage(this, 250, 160);
-            } else if (liberalPolicies == 1) {
+            } else if (liberalPolicies === 1) {
                 ctxLiberal.drawImage(this, 430, 160);
-            } else if (liberalPolicies == 2) {
+            } else if (liberalPolicies === 2) {
                 ctxLiberal.drawImage(this, 610, 160);
-            } else if (liberalPolicies == 3) {
+            } else if (liberalPolicies === 3) {
                 ctxLiberal.drawImage(this, 790, 160);
-            } else if (liberalPolicies == 4) {
+            } else if (liberalPolicies === 4) {
                 ctxLiberal.drawImage(this, 970, 160);
             }
             liberalPolicies++;
@@ -257,17 +257,17 @@
         
         var drawing = new Image();
         drawing.onload = function() {
-            if (fascistPolicies == 0) {
+            if (fascistPolicies === 0) {
                 ctxFascist.drawImage(this, 150, 160);
-            } else if (fascistPolicies == 1) {
+            } else if (fascistPolicies === 1) {
                 ctxFascist.drawImage(this, 330, 160);
-            } else if (fascistPolicies == 2) {
+            } else if (fascistPolicies === 2) {
                 ctxFascist.drawImage(this, 510, 160);
-            } else if (fascistPolicies == 3) {
+            } else if (fascistPolicies === 3) {
                 ctxFascist.drawImage(this, 690, 160);
-            } else if (fascistPolicies == 4) {
+            } else if (fascistPolicies === 4) {
                 ctxFascist.drawImage(this, 870, 160);
-            } else if (fascistPolicies == 5) {
+            } else if (fascistPolicies === 5) {
                 ctxFascist.drawImage(this, 1050, 160);
             }
             fascistPolicies++;
@@ -276,8 +276,7 @@
     }
     
     function processVictory(faction) {
-
-       if(faction === 'LIBERAL') {
+       if (faction === 'LIBERAL') {
             splashVictory.src='/games/secrethitler/SH1_liberals_won.png';
        } else {
             splashVictory.src='/games/secrethitler/SH2_fascists_won.png';
@@ -317,17 +316,17 @@
 
         drawingLiberal.src = '/games/secrethitler/SH1.png';
 
-        if (users.length == 5 || users.length == 6) {
+        if (users.length === 5 || users.length === 6) {
             drawingFascist.src = '/games/secrethitler/SH2.png';
-        } else if (users.length == 7 || users.length == 8) {
+        } else if (users.length === 7 || users.length === 8) {
             drawingFascist.src = '/games/secrethitler/SH2_2.png';
-        } else if (users.length == 9 || users.length == 10) {
+        } else if (users.length === 9 || users.length === 10) {
             drawingFascist.src = '/games/secrethitler/SH2_3.png';
         } else {
             console.log('Failed to draw boards: Invalid user count: %s', users)
         }
 
-        moveTracker('1');
+        moveTracker(1);
     }
 
     function getRandomColor(color) {

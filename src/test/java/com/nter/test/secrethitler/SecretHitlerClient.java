@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class SecretHitlerClient extends Client<SecretHitlerMessage> {
 
     private static final Logger logger = LoggerFactory.getLogger(SecretHitlerClient.class);

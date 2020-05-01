@@ -1,9 +1,5 @@
 package com.nter.projectg.config;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
-
-
 public class RedirectConfig {
     public static String getLocation() {
         return location;

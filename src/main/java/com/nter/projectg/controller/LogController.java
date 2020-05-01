@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 @Controller
 @RestController
 @RequestMapping(path = "/log")
+@SuppressWarnings({"CanBeFinal", "FieldMayBeFinal"})
 public class LogController {
 
     @Value("${log-controller.api-key}")

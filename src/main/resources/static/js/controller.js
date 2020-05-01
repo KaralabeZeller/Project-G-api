@@ -352,10 +352,10 @@
         });
     }
 
-    function getAvatarColor(messageSender) {
+    function getAvatarColor(name) {
         var hash = 0;
-        for (var i = 0; i < messageSender.length; i++) {
-            hash = 31 * hash + messageSender.charCodeAt(i);
+        for (var i = 0; i < name.length; i++) {
+            hash = 31 * hash + name.charCodeAt(i);
         }
         var index = Math.abs(hash % colors.length);
         return colors[index];

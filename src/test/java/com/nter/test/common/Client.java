@@ -26,7 +26,6 @@ public abstract class Client<GameMessage extends Message> {
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
 
     private final String url;
-    private final String lobbyName = "SECRET_HITLER-396";
 
     private StompSession session;
     private StompSession.Subscription subscriptionLobby;
@@ -70,7 +69,7 @@ public abstract class Client<GameMessage extends Message> {
     public void subscribe() {
         logger.debug("Subscribing: {} {} {}", subscriptionLobby, subscriptionPublic, subscriptionUser);
 
-        subscriptionLobby = session.subscribe("/topic/lobby/" + lobbyName, createHandlerLobby());
+        subscriptionLobby = session.subscribe("/topic/lobby", createHandlerLobby());
         subscriptionPublic = session.subscribe("/topic/game", createHandlerPublic());
         subscriptionUser = session.subscribe("/user/topic/game", createHandlerUser());
 
@@ -96,7 +95,7 @@ public abstract class Client<GameMessage extends Message> {
     protected void sendLobby(Message message) {
         logger.info("sendLobby: {}", message);
 
-        session.send("/app/lobby/" + lobbyName, message);
+        session.send("/app/lobby", message);
     }
 
     protected void sendGame(Message message) {

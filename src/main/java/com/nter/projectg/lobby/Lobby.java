@@ -109,8 +109,8 @@ public class Lobby {
     @Override
     public String toString() {
         return "Lobby{" +
-                "name=" + name +
-                "userSession=" + userSession +
+                "name='" + name + '\'' +
+                ", userSession=" + userSession +
                 ", sessionUser=" + sessionUser +
                 '}';
     }

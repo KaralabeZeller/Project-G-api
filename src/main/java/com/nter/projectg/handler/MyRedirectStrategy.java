@@ -3,7 +3,6 @@ package com.nter.projectg.handler;
 import com.nter.projectg.config.RedirectConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.DefaultRedirectStrategy;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,4 +30,5 @@ public class MyRedirectStrategy extends DefaultRedirectStrategy {
 
         response.sendRedirect(redirectUrl);
     }
+
 }

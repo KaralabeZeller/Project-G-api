@@ -65,4 +65,5 @@ public class SecretHitlerPlayer extends Player<SecretHitlerMessage> {
                 ", alive=" + alive +
                 '}';
     }
+
 }

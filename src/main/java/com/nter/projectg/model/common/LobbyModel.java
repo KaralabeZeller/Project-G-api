@@ -15,6 +15,7 @@ import java.util.Set;
 @Entity
 @Table(name = "LOBBY")
 public class LobbyModel {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "LOBBY_ID")
