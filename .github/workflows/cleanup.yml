@@ -1,17 +1,16 @@
 name: Nightly Maintenance
 
 on:
-   schedule:
+  schedule:
     - cron: "0 2 * * *"
 
 jobs:
   remove-old-artifacts:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    
     steps:
-    - name: Remove old artifacts
-      uses: c-hive/gha-remove-artifacts@v1
-      with:
-        age: '1 day'
-        skip-tags: true
+      - name: Remove old artifacts
+        uses: c-hive/gha-remove-artifacts@v1
+        with:
+          age: '1 day'
+          skip-tags: true
