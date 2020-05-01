@@ -1,7 +1,13 @@
 package com.nter.projectg.model.secrethitler;
 
 import com.nter.projectg.model.common.Message;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
+@Data
+@SuperBuilder
+@AllArgsConstructor
 public class SecretHitlerMessage extends Message {
 
     public enum GameMessageType {
@@ -31,22 +37,6 @@ public class SecretHitlerMessage extends Message {
 
     public SecretHitlerMessage() {
         setType(MessageType.GAME);
-    }
-
-    public GameMessageType getGameType() {
-        return gameType;
-    }
-
-    public void setGameType(GameMessageType gameType) {
-        this.gameType = gameType;
-    }
-
-    @Override
-    public String toString() {
-        return "SecretHitlerMessage{" +
-                "super=" + super.toString() +
-                ", gameType=" + gameType +
-                '}';
     }
 
 }
