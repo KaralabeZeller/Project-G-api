@@ -32,23 +32,7 @@ function initCall(_send) {
     {urls:'stun:stun.voipbuster.com'},
     {urls:'stun:stun.voipstunt.com'},
     {urls:'stun:stun.voxgratia.org'},
-    {urls:'stun:stun.xten.com'},
-    {
-    	urls: 'turn:numb.viagenie.ca',
-    	credential: 'muazkh',
-    	username: 'webrtc@live.com'
-    },
-    {
-    	urls: 'turn:192.158.29.39:3478?transport=udp',
-    	credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-    	username: '28224511:1379330808'
-    },
-    {
-    	urls: 'turn:192.158.29.39:3478?transport=tcp',
-    	credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-    	username: '28224511:1379330808'
-    }
-    ]};
+    {urls:'stun:stun.xten.com'}]};
 
     var lobbyName = document.getElementById('lobbyName').value;
 
@@ -133,27 +117,23 @@ function initCall(_send) {
     function gotOffer(desc) {
       console.log(`gotOffer()\n${desc.sdp}`);
       pc1Remote.setRemoteDescription(desc, createAnswer, onCreateSessionDescriptionError);
-
-    }
-    function setLocal(desc) {
-        console.log(`setLocal()`);
-        pc1Remote.setLocalDescription(desc, ()=>{}, onCreateSessionDescriptionError);
     }
 
-    function createAnswer(desc) {
+    function createAnswer() {
         console.log(`createAnswer()`);
-        pc1Remote.createAnswer(sendAnswer, onCreateSessionDescriptionError).then( () => setLocal(desc));
-
+        pc1Remote.createAnswer(sendAnswer, onCreateSessionDescriptionError);
     }
 
     function sendAnswer(desc) {
       console.log(`sendAnswer()\n${desc.sdp}`);
-
       send(desc, 'ANSWER');
-
+      setLocal(desc);
     }
 
-
+    function setLocal(desc) {
+        console.log(`setLocal()`);
+        pc1Remote.setLocalDescription(desc, ()=>{}, onCreateSessionDescriptionError);
+    }
 
     function hangup() {
       console.log('Ending calls');
