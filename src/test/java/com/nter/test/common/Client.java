@@ -2,6 +2,7 @@ package com.nter.test.common;
 
 import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.common.Message.MessageType;
+import com.nter.projectg.model.lobby.LobbyMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
@@ -116,7 +117,10 @@ public abstract class Client<GameMessage extends Message> {
             Message message = (Message) payload;
             logger.debug("handleFrame: Received message: {} {}", message, headers);
 
-            if (message.getType() == MessageType.GAME /* && message instanceof GameMessage */) {
+            if (message.getType() == MessageType.LOBBY /* && message instanceof LobbyMessage */) {
+                LobbyMessage lobbyMessage = (LobbyMessage) message;
+                handleLobby(lobbyMessage);
+            } else if (message.getType() == MessageType.GAME /* && message instanceof GameMessage */) {
                 GameMessage gameMessage = (GameMessage) message;
                 handleGame(gameMessage);
             } else {
@@ -126,6 +130,10 @@ public abstract class Client<GameMessage extends Message> {
 
         protected void handleOther(Message message) {
             logger.debug("Ignoring other message: {}", message);
+        }
+
+        protected void handleLobby(LobbyMessage message) {
+            logger.debug("Ignoring lobby message: {}", message);
         }
 
         protected void handleGame(GameMessage message) {

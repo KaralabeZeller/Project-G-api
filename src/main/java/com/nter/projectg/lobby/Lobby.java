@@ -1,7 +1,8 @@
 package com.nter.projectg.lobby;
 
 import com.nter.projectg.model.common.Message;
-import com.nter.projectg.model.common.Message.MessageType;
+import com.nter.projectg.model.lobby.LobbyMessage;
+import com.nter.projectg.model.lobby.LobbyMessage.LobbyMessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -41,7 +42,7 @@ public class Lobby {
         sessionUser.put(session, user);
 
         // Broadcast notification message message to all sessions
-        Message message = buildLobbyMessage(MessageType.JOIN, user);
+        LobbyMessage message = buildLobbyMessage(LobbyMessageType.JOIN, user);
         sendToLobby(message);
 
         logger.info("User joined lobby: {} {}", user, this);
@@ -54,27 +55,27 @@ public class Lobby {
         sessionUser.remove(session);
 
         // Broadcast notification message message to all sessions
-        Message message = buildLobbyMessage(MessageType.LEAVE, user);
+        LobbyMessage message = buildLobbyMessage(LobbyMessageType.LEAVE, user);
         sendToLobby(message);
 
         logger.info("User left lobby: {} {}", user, this);
     }
 
-    public void sendToLobby(Object message) {
+    public void sendToLobby(LobbyMessage message) {
         logger.debug("sendToLobby: {}", message);
 
         // Broadcast message to all sessions
         messagingTemplate.convertAndSend("/topic/lobby/" + name, message);
     }
 
-    public void sendToAll(Object message) {
+    public void sendToAll(Message message) {
         logger.debug("sendToAll: {}", message);
 
         // Broadcast message to all sessions
         messagingTemplate.convertAndSend("/topic/game/" + name, message);
     }
 
-    public void sendToUser(String user, Object message) {
+    public void sendToUser(String user, Message message) {
         logger.debug("sendToUser: {} {}", user, message);
 
         String session = userSession.get(user);
@@ -86,11 +87,11 @@ public class Lobby {
         messagingTemplate.convertAndSendToUser(session, "/topic/game/" + name, message, headerAccessor.getMessageHeaders());
     }
 
-    private Message buildLobbyMessage(MessageType type, String user) {
-        Message message = new Message();
-        message.setType(type);
+    private LobbyMessage buildLobbyMessage(LobbyMessageType type, String user) {
+        LobbyMessage message = new LobbyMessage();
         message.setSender(user);
         message.setLobby(getName());
+        message.setLobbyType(type);
         message.setContent(String.join(",", getUsers()));
         return message;
     }

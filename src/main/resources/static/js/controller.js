@@ -79,8 +79,9 @@
     function onMessageReceived(payload) {
         var message = JSON.parse(payload.body);
         var type = message.type;
-        if (type === 'JOIN' || type === 'LEAVE') {
-            if (!started) {
+        if (type === 'LOBBY') {
+            var lobbyType = message.lobbyType;
+            if (lobbyType === 'JOIN' || lobbyType === 'LEAVE' && !started) {
                 var split = message.content.split(',');
                 users.length = 0;
                 users.push(...split);
@@ -132,7 +133,8 @@
 
     function sendLobby(type, content) {
         var message = {
-            type: type,
+            type: 'LOBBY',
+            lobbyType: type,
             sender: userName,
             lobby: lobbyName,
             content: content,

@@ -20,6 +20,7 @@ import org.springframework.web.socket.sockjs.frame.Jackson2SockJsMessageCodec;
 import java.lang.reflect.Type;
 import java.util.*;
 
+// TODO eliminate JSONObject and String
 public class SHClient {
 
     private static final Logger logger = LoggerFactory.getLogger(SHClient.class);
@@ -28,7 +29,7 @@ public class SHClient {
     private final Random random = new Random();
     private String username;
     private StompSession stompSession;
-    private final String lobbyName = "SECRET_HITLER-867";
+    private final String lobbyName = "SECRET_HITLER-716";
 
     public ListenableFuture<StompSession> connect() {
 
@@ -60,7 +61,7 @@ public class SHClient {
                     logger.info("Received lobby message: {} {}", message, stompHeaders);
 
                     String type = message.getString("type");
-                    if (type.equals("JOIN") || type.equals("LEAVE")) {
+                    if (type.equals("LOBBY")) {
                         // ignore
                     } else {
                         logger.warn("Unexpected lobby message: {}", new String((byte[]) o));
@@ -92,7 +93,7 @@ public class SHClient {
                         String gameType = message.getString("gameType");
                         if (gameType.equals("PRESIDENT") || gameType.equals("CHANCELLOR") ||
                                 gameType.equals("VOTED") || gameType.equals("ENACTED_POLICY") ||
-                                gameType.equals("KILLED")) {
+                                gameType.equals("KILLED") || gameType.equals("STATE")) {
                             // ignore
                         } else if (gameType.equals("VOTE")) {
                             chooseOne(content, "VOTE");
@@ -125,7 +126,7 @@ public class SHClient {
 
                         String content = message.getString("content");
                         String gameType = message.getString("gameType");
-                        if (gameType.equals("FACTION") || gameType.equals("HITLER")) {
+                        if (gameType.equals("FACTION") || gameType.equals("HITLER") || gameType.equals("FELLOW_FASCIST")) {
                             // ignore
                         } else if (gameType.equals("VOTE")) {
                             chooseOne(content, "VOTE");
@@ -187,7 +188,8 @@ public class SHClient {
 
     public void sendLobby(String type, String content) throws JSONException {
         JSONObject join = new JSONObject();
-        join.put("type", type);
+        join.put("type", "LOBBY");
+        join.put("lobbyType", type);
         join.put("sender", username);
         join.put("lobby", lobbyName);
         join.put("content", content);
@@ -196,24 +198,24 @@ public class SHClient {
     }
 
     private void sendStart(String content) throws JSONException {
-        JSONObject join = new JSONObject();
-        join.put("type", "START");
-        join.put("sender", username);
-        join.put("lobby", lobbyName);
-        join.put("content", content);
+        JSONObject start = new JSONObject();
+        start.put("type", "START");
+        start.put("sender", username);
+        start.put("lobby", lobbyName);
+        start.put("content", content);
 
-        stompSession.send("/app/game/" + lobbyName, join.toString().getBytes());
+        stompSession.send("/app/game/" + lobbyName, start.toString().getBytes());
     }
 
     public void sendGame(String type, String content) throws JSONException {
-        JSONObject join = new JSONObject();
-        join.put("type", "GAME");
-        join.put("sender", username);
-        join.put("gameType", type);
-        join.put("content", content);
-        join.put("lobby", lobbyName);
+        JSONObject game = new JSONObject();
+        game.put("type", "GAME");
+        game.put("sender", username);
+        game.put("gameType", type);
+        game.put("content", content);
+        game.put("lobby", lobbyName);
 
-        stompSession.send("/app/game/" + lobbyName, join.toString().getBytes());
+        stompSession.send("/app/game/" + lobbyName, game.toString().getBytes());
     }
 
     private static class SessionHandler extends StompSessionHandlerAdapter {

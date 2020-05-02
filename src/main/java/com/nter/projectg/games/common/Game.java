@@ -105,7 +105,7 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
 
     public void start() {
         // Broadcast start message to all sessions
-        Message message = buildStartMessage(getName(), MessageType.START);
+        Message message = buildMessage(getName(), MessageType.START);
         lobby.sendToAll(message);
     }
 
@@ -114,20 +114,21 @@ public abstract class Game<GameMessage extends Message, GamePlayer extends Playe
         GamePlayer player = findPlayer(user);
 
         // Send start message to all sessions
-        Message message = buildStartMessage(player.getName(), MessageType.START);
+        Message message = buildMessage(player.getName(), MessageType.START);
         lobby.sendToUser(player.getName(), message);
     }
 
     public void stop() {
         // Send stop message to all sessions
-        Message message = buildStartMessage(getName(), MessageType.STOP);
+        Message message = buildMessage(getName(), MessageType.STOP);
         lobby.sendToAll(message);
     }
 
-    private Message buildStartMessage(String sender, MessageType type) {
+    private Message buildMessage(String sender, MessageType type) {
         Message message = new Message();
         message.setType(type);
         message.setSender(sender);
+        message.setLobby(lobby.getName());
         message.setContent(name);
         return message;
     }

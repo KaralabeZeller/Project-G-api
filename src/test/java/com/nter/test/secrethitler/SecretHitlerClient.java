@@ -2,6 +2,8 @@ package com.nter.test.secrethitler;
 
 import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.common.Message.MessageType;
+import com.nter.projectg.model.lobby.LobbyMessage;
+import com.nter.projectg.model.lobby.LobbyMessage.LobbyMessageType;
 import com.nter.projectg.model.secrethitler.SecretHitlerMessage;
 import com.nter.projectg.model.secrethitler.SecretHitlerMessage.GameMessageType;
 import com.nter.test.common.Client;
@@ -41,47 +43,43 @@ public class SecretHitlerClient extends Client<SecretHitlerMessage> {
     }
 
     public void sendJoin(String user) {
-        Message message = buildJoinMessage(user);
+        LobbyMessage message = buildJoinMessage(user);
         sendLobby(message);
     }
 
-    private Message buildJoinMessage(String user) {
-        Message message = new Message();
-        message.setType(MessageType.JOIN);
+    private LobbyMessage buildJoinMessage(String user) {
+        LobbyMessage message = new LobbyMessage();
         message.setSender(user);
+        message.setLobby("TODO");
+        message.setLobbyType(LobbyMessageType.JOIN);
         return message;
     }
 
     // TODO use CompletableFuture / ListenableFuture similarly to Client#connect
     public Set<String> expectJoin() {
-        Message message = handlerLobby.peekJoin(); // handlerPublic.expectJoin().get()
+        LobbyMessage message = handlerLobby.peekJoin(); // handlerPublic.expectJoin().get()
         String[] users = message.getContent().split(",");
         return new HashSet<>(Arrays.asList(users));
     }
 
     private static class FrameHandlerLobby extends FrameHandler<Message> {
 
-        private volatile Message joinMessage;
+        private volatile LobbyMessage joinMessage;
 
-        public Message peekJoin() {
+        public LobbyMessage peekJoin() {
             return joinMessage;
         }
 
         @Override
-        protected void handleOther(Message message) {
+        protected void handleLobby(LobbyMessage message) {
             logger.info("Received lobby message: {}", message);
 
-            MessageType type = message.getType();
-            if (type == MessageType.JOIN || type == MessageType.LEAVE) {
+            LobbyMessageType type = message.getLobbyType();
+            if (type == LobbyMessageType.JOIN || type == LobbyMessageType.LEAVE) {
                 joinMessage = message;
             } else {
                 logger.debug("Ignoring lobby message: {}", message);
             }
-        }
-
-        @Override
-        protected void handleGame(Message message) {
-            logger.warn("Unexpected lobby message: {}", message);
         }
 
     }

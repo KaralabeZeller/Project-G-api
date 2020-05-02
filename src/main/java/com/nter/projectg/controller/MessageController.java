@@ -6,6 +6,8 @@ import com.nter.projectg.games.common.util.Constants.GameName;
 import com.nter.projectg.lobby.LobbyHandler;
 import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.common.Message.MessageType;
+import com.nter.projectg.model.lobby.LobbyMessage;
+import com.nter.projectg.model.lobby.LobbyMessage.LobbyMessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,21 +32,26 @@ public class MessageController {
     GameHandler gameFactory;
 
     @MessageMapping("/lobby/{lobbyId}")
-    public void receiveLobby(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
+    public void receiveLobby(@Payload LobbyMessage message, SimpMessageHeaderAccessor headerAccessor) {
         logger.info("receiveLobby: Received message: {} {}", message, headerAccessor);
 
-        String lobby = message.getLobby();
-        String user = message.getSender();
         String session = headerAccessor.getSessionId();
+        String user = message.getSender();
+        String lobby = message.getLobby();
 
-        // TODO avoid storing username in WebSocket / STOMP session
-        Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("username", user);
+        LobbyMessageType type = message.getLobbyType();
+        if (type == LobbyMessageType.JOIN) {
+            // TODO avoid storing username in WebSocket / STOMP session
+            Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("username", user);
 
-        // Update lobby and broadcast notification message
-        lobbyHandler.add(lobby, user, session);
+            // Update lobby and broadcast notification message
+            lobbyHandler.add(lobby, user, session);
 
-        // Handle reconnection and restore state
-        reconnect(user, session);
+            // Handle reconnection and restore state
+            reconnect(user, session);
+        } else {
+            logger.warn("receiveLobby: Unexpected message: {}", message);
+        }
     }
 
     @MessageMapping("/game/{lobbyId}")

@@ -70,10 +70,13 @@
     function onMessageReceived(payload) {
         var message = JSON.parse(payload.body);
         var type = message.type;
-        if (type === 'JOIN' || type === 'LEAVE') {
-            var split = message.content.split(',');
-            users.length = 0;
-            users.push(...split);
+        if (type === 'LOBBY') {
+            var lobbyType = message.lobbyType;
+            if (lobbyType === 'JOIN' || lobbyType === 'LEAVE') {
+                var split = message.content.split(',');
+                users.length = 0;
+                users.push(...split);
+            }
         } else if (type === 'START') {
             subscriptionLobby.unsubscribe();
             playSecretHitler();
