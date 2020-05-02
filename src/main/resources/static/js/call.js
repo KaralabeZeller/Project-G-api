@@ -81,28 +81,33 @@ function initCall(_send) {
 
     function sendOffer(desc) {
       console.log(`Offer from pc1Local\n${desc.sdp}`);
-      pc1Local.setLocalDescription(desc);
+      pc1Local.setLocalDescription(desc, ()=>{}, onCreateSessionDescriptionError);
       send(desc, 'OFFER');
 
     }
 
     function gotOffer(desc) {
       console.log(`offer from pc1Remote\n${desc.sdp}`);
-      pc1Local.setRemoteDescription(desc);
-      pc1Remote.createAnswer().then(sendAnswer, onCreateSessionDescriptionError);
+      pc1Remote.setRemoteDescription(desc, createAnswer, onCreateSessionDescriptionError);
+
+
+    }
+    function createAnswer() {
+        console.log(`Create answer to pc1Remote`);
+        pc1Remote.createAnswer(sendAnswer, onCreateSessionDescriptionError);
 
     }
 
     function sendAnswer(desc) {
-      console.log(`Answer from pc1Local\n${desc.sdp}`);
+      console.log(`Answer from pc1Remote\n${desc.sdp}`);
       send(desc, 'ANSWER');
-      pc1Remote.setLocalDescription(desc);
+      pc1Remote.setLocalDescription(desc, ()=>{}, onCreateSessionDescriptionError);
 
     }
 
     function gotAnswer(desc) {
       console.log(`Answer from pc2Remote\n${desc.sdp}`);
-      pc1Local.setRemoteDescription(desc);
+      pc1Local.setRemoteDescription(desc, ()=>{}, onCreateSessionDescriptionError);
     }
 
 
