@@ -2,6 +2,7 @@ package com.nter.projectg.model.common;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.nter.projectg.model.lobby.CallMessage;
 import com.nter.projectg.model.lobby.LobbyMessage;
 import com.nter.projectg.model.secrethitler.SecretHitlerMessage;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ import lombok.experimental.SuperBuilder;
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = LobbyMessage.class, name = "LOBBY"),
+        @JsonSubTypes.Type(value = CallMessage.class, name = "CALL"),
         @JsonSubTypes.Type(value = SecretHitlerMessage.class, name = "GAME"),
 })
 public class Message {
@@ -30,6 +32,7 @@ public class Message {
         LOBBY,
         START,
         STOP,
+        CALL,
         GAME
     }
 

@@ -54,4 +54,7 @@ public class LobbyHandler {
         });
     }
 
+    public Lobby get(String lobby) {
+        return lobbies.get(lobby);
+    }
 }

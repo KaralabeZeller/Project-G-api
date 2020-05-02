@@ -6,6 +6,7 @@ import com.nter.projectg.games.common.util.Constants.GameName;
 import com.nter.projectg.lobby.LobbyHandler;
 import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.common.Message.MessageType;
+import com.nter.projectg.model.lobby.CallMessage;
 import com.nter.projectg.model.lobby.LobbyMessage;
 import com.nter.projectg.model.lobby.LobbyMessage.LobbyMessageType;
 import org.slf4j.Logger;
@@ -134,6 +135,23 @@ public class MessageController {
                 }
             });
         });
+    }
+
+    @MessageMapping("/call/{lobbyId}")
+    public void receiveCall(@Payload CallMessage message, SimpMessageHeaderAccessor headerAccessor) {
+        logger.info("receiveCall: Received message: {} {}", message, headerAccessor);
+
+        String user = message.getSender();
+        String lobby = message.getLobby();
+
+        CallMessage.CallMessageType type = message.getCallType();
+        if (type == CallMessage.CallMessageType.CALL) {
+
+            lobbyHandler.get(lobby).sendToAll(message);
+        } else {
+            logger.warn("receiveLobby: Unexpected message: {}", message);
+        }
+
     }
 
 }

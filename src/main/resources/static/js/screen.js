@@ -1,3 +1,4 @@
+
 (function () {
     'use strict';
 
@@ -29,6 +30,8 @@
     var fascistPolicies = 0;
     var tracker = 0;
 
+    var call;
+
     connectScreen();
 
     function connectScreen() {
@@ -40,7 +43,17 @@
     function onConnected() {
         subscriptionLobby = stompClient.subscribe('/topic/lobby/' + lobbyName, onMessageReceived);
         subscriptionPublic = stompClient.subscribe('/topic/game/' + lobbyName, onMessageReceived);
-//        subscriptionUser = stompClient.subscribe('/user/topic/game' + lobbyName, onMessageReceived);
+
+        call = initCall(desc => {
+            var message = {
+              type: 'CALL',
+              callType: 'CALL',
+              sender: userName,
+              lobby:  lobbyName,
+              data: desc,
+            };
+            stompClient.send('/app/call/' + lobbyName, {}, JSON.stringify(message));
+        });
     }
 
     function onError(error) {
@@ -104,6 +117,8 @@
             }
         } else if (type === 'STOP') {
             disconnectScreen();
+        } else if (type === 'CALL') {
+            processCall(message.data);
         } else {
             console.log('Ignoring other message: %s', message);
         }
@@ -372,6 +387,10 @@
         } else if (tracker === 3) {
             drawingLiberal.src = '/games/secrethitler/SH1_3.png';
         }
+
+    }
+
+    function processCall(data) {
 
     }
 
