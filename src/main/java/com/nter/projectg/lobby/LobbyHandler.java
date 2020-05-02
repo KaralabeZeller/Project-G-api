@@ -1,6 +1,5 @@
 package com.nter.projectg.lobby;
 
-import com.nter.projectg.games.common.util.Constants;
 import com.nter.projectg.games.common.util.Timer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -18,9 +17,6 @@ public class LobbyHandler {
     private final Map<String, Lobby> lobbies = new ConcurrentHashMap<>();
     private final Random rand = new Random();
     private Timer timer;
-
-    @Autowired
-    private Constants constants;
 
     public List<String> getLobbies() {
         return new ArrayList<>(lobbies.keySet());

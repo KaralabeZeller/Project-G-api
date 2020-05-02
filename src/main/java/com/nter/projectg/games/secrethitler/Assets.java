@@ -18,7 +18,7 @@ public class Assets {
     private List<Policy> enactedPolicies;
     private List<Power> powers;
     public List<Power> activePowers;
-    public final SecretHitlerPlayer[] nonCandidates; //TODO remove
+    public final SecretHitlerPlayer[] nonCandidates; // TODO remove
     public final HashMap<Integer, Integer> playerMap;
     public final List<SecretHitlerPlayer> players;
 

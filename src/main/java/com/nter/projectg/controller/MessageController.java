@@ -2,7 +2,7 @@ package com.nter.projectg.controller;
 
 import com.nter.projectg.games.common.Game;
 import com.nter.projectg.games.common.GameHandler;
-import com.nter.projectg.games.common.util.Constants;
+import com.nter.projectg.games.common.util.Constants.GameName;
 import com.nter.projectg.lobby.LobbyHandler;
 import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.common.Message.MessageType;
@@ -96,7 +96,7 @@ public class MessageController {
         return CompletableFuture.runAsync(() -> {
             lobbyHandler.findLobbyForUser(user).ifPresent(lobby -> {
                 logger.debug("Starting game: Secret Hitler {}", lobby);
-                Game<?, ?> game = gameFactory.createGame(Constants.GAME_NAME.SECRET_HITLER, lobby);
+                Game<?, ?> game = gameFactory.createGame(GameName.SECRET_HITLER, lobby);
                 game.start();
                 logger.info("Started game: Secret Hitler {}", game);
 

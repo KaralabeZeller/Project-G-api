@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
         // Encode password
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
-        // TODO Assign role
+        // TODO assign role to user
         RoleModel userRole = roleRepository.findByRole("ADMIN");
         user.setRoles(new HashSet<RoleModel>(Collections.singletonList(userRole)));
 

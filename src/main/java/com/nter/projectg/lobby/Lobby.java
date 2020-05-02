@@ -16,7 +16,8 @@ public class Lobby {
 
     private static final Logger logger = LoggerFactory.getLogger(Lobby.class);
 
-    // Name of the lobby //TODO map to LobbyModel
+    // Name of the lobby
+    // TODO map to LobbyModel
     private String name;
 
     private final SimpMessageSendingOperations messagingTemplate;

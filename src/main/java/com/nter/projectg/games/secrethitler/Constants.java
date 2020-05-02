@@ -2,18 +2,13 @@ package com.nter.projectg.games.secrethitler;
 
 public class Constants {
 
+    private Constants() {
+    }
+
     public enum Faction {
         HITLER,
         LIBERAL,
         FASCIST
-    }
-
-    public enum State {
-        ELECTION,
-        NOMINATION,
-        VOTE,
-        ENACTMENT,
-        FINISHED
     }
 
     public enum Policy {
@@ -26,6 +21,14 @@ public class Constants {
         SPECIAL_ELECTION,
         POLICY_PEEK,
         EXECUTION
+    }
+
+    public enum State {
+        ELECTION,
+        NOMINATION,
+        VOTE,
+        ENACTMENT,
+        FINISHED
     }
 
 }

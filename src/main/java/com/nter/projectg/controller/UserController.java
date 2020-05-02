@@ -30,9 +30,6 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private Constants constants;
-
-    @Autowired
     private LobbyHandler lobbyHandler;
 
     @Autowired
@@ -93,7 +90,7 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         UserModel user = new UserModel();
         modelAndView.addObject("user", user);
-        modelAndView.addObject("gameNames", constants.getGames());
+        modelAndView.addObject("gameNames", Constants.GameName.values());
         modelAndView.addObject("lobbies", lobbyHandler.getLobbies());
         modelAndView.setViewName("user/lobbies");
         return modelAndView;
@@ -121,7 +118,7 @@ public class UserController {
         return modelAndView;
     }
 
-    //TODO implement create new lobby with lobbyHandler
+    // TODO implement create new lobby with lobbyHandler
     @RequestMapping(value = "/createLobby", method = RequestMethod.POST)
     @SuppressWarnings("SameReturnValue")
     public String createLobby(@Valid String game, final RedirectAttributes redirectAttributes, HttpServletResponse response, HttpServletRequest request) throws IOException {
@@ -129,7 +126,7 @@ public class UserController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Creating lobby for game: {}", game);
 
-        if (gameFactory.gameExists(game)) {
+        if (gameFactory.exists(game)) {
             lobbyHandler.createLobby(game);
         }
 
