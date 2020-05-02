@@ -360,13 +360,13 @@
             ctxLiberal.scale(2,2);
         };
 
-        if (tracker == 0) {
+        if (tracker === 0) {
             drawingLiberal.src = '/games/secrethitler/SH1_0.png';
-        } else if (tracker == 1) {
+        } else if (tracker === 1) {
             drawingLiberal.src = '/games/secrethitler/SH1_1.png';
-        } else if (tracker == 2) {
+        } else if (tracker === 2) {
             drawingLiberal.src = '/games/secrethitler/SH1_2.png';
-        } else if (tracker == 3) {
+        } else if (tracker === 3) {
             drawingLiberal.src = '/games/secrethitler/SH1_3.png';
         }
 

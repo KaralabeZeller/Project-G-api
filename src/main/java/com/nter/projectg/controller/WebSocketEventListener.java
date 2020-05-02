@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.util.Objects;
+
 @Component
 public class WebSocketEventListener {
 
@@ -30,7 +32,7 @@ public class WebSocketEventListener {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
         // TODO avoid storing username in WebSocket / STOMP session
-        String user = (String) headerAccessor.getSessionAttributes().get("username");
+        String user = (String) Objects.requireNonNull(headerAccessor.getSessionAttributes()).get("username");
         String session = headerAccessor.getSessionId(); // event.getSessionId()
 
         if (user != null) {

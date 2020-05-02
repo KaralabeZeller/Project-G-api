@@ -3,6 +3,7 @@ package com.nter.projectg.games.secrethitler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class PlayerHandler {
@@ -19,15 +20,21 @@ public class PlayerHandler {
     }
 
     public SecretHitlerPlayer getPresident() {
-        return playerMap.values().stream().filter(p -> p.isPresident()).findFirst().get();
+        Optional<SecretHitlerPlayer> president = playerMap.values().stream().filter(p -> p.isPresident()).findFirst();
+        assert president.isPresent();
+        return president.get();
     }
 
     public SecretHitlerPlayer getHitler() {
-        return playerMap.values().stream().filter(p -> p.isHitler()).findFirst().get();
+        Optional<SecretHitlerPlayer> hitler = playerMap.values().stream().filter(p -> p.isHitler()).findFirst();
+        assert hitler.isPresent();
+        return hitler.get();
     }
 
     public SecretHitlerPlayer getChancellor() {
-        return playerMap.values().stream().filter(p -> p.isChancellor()).findFirst().get();
+        Optional<SecretHitlerPlayer> chancellor = playerMap.values().stream().filter(p -> p.isChancellor()).findFirst();
+        assert chancellor.isPresent();
+        return chancellor.get();
     }
 
     public boolean existsChancellor() {

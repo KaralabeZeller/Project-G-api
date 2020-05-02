@@ -38,7 +38,7 @@ public class MessageController {
         String session = headerAccessor.getSessionId();
 
         // TODO avoid storing username in WebSocket / STOMP session
-        headerAccessor.getSessionAttributes().put("username", user);
+        Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("username", user);
 
         // Update lobby and broadcast notification message
         lobbyHandler.add(lobby, user, session);
@@ -52,7 +52,7 @@ public class MessageController {
         logger.info("receiveGame: Received message: {} {}", message, headerAccessor);
 
         // TODO avoid storing username in WebSocket / STOMP session
-        String user = (String) headerAccessor.getSessionAttributes().get("username");
+        String user = (String) Objects.requireNonNull(headerAccessor.getSessionAttributes()).get("username");
 
         // Validate message
         if (!Objects.equals(user, message.getSender())) {

@@ -123,6 +123,7 @@ public class UserController {
 
     //TODO implement create new lobby with lobbyHandler
     @RequestMapping(value = "/createLobby", method = RequestMethod.POST)
+    @SuppressWarnings("SameReturnValue")
     public String createLobby(@Valid String game, final RedirectAttributes redirectAttributes, HttpServletResponse response, HttpServletRequest request) throws IOException {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
