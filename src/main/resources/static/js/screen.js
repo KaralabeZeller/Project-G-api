@@ -44,10 +44,10 @@
         subscriptionLobby = stompClient.subscribe('/topic/lobby/' + lobbyName, onMessageReceived);
         subscriptionPublic = stompClient.subscribe('/topic/game/' + lobbyName, onMessageReceived);
 
-        call = initCall(desc => {
+        call = initCall((desc, type) => {
             var message = {
               type: 'CALL',
-              callType: 'CALL',
+              callType: type,
               sender: userName,
               lobby:  lobbyName,
               data: desc,
@@ -118,7 +118,13 @@
         } else if (type === 'STOP') {
             disconnectScreen();
         } else if (type === 'CALL') {
-            processCall(message.data);
+            var callType = message.calLType;
+
+            if(callType === 'ANSWER'){
+                call.gotAnswer(message.data);
+            } else if (callType === 'OFFER') {
+                call.gotOffer(message.data);
+            }
         } else {
             console.log('Ignoring other message: %s', message);
         }
@@ -387,10 +393,6 @@
         } else if (tracker === 3) {
             drawingLiberal.src = '/games/secrethitler/SH1_3.png';
         }
-
-    }
-
-    function processCall(data) {
 
     }
 

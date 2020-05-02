@@ -24,7 +24,8 @@ import org.json.JSONObject;
 public class CallMessage extends Message {
 
     public enum CallMessageType {
-        CALL
+        ANSWER,
+        OFFER
     }
 
     private CallMessageType callType;

@@ -145,8 +145,7 @@ public class MessageController {
         String lobby = message.getLobby();
 
         CallMessage.CallMessageType type = message.getCallType();
-        if (type == CallMessage.CallMessageType.CALL) {
-
+        if (type == CallMessage.CallMessageType.ANSWER ||type == CallMessage.CallMessageType.OFFER ) {
             lobbyHandler.get(lobby).sendToAll(message);
         } else {
             logger.warn("receiveLobby: Unexpected message: {}", message);
