@@ -38,7 +38,6 @@ function initCall(_send) {
 
     const video1 = document.querySelector('video#video1');
     const video2 = document.querySelector('video#video2');
-    const video3 = document.querySelector('video#video3');
 
     let pc1Local;
     let pc1Remote;
