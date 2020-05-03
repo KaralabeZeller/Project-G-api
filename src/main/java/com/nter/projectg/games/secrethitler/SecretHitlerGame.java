@@ -154,6 +154,8 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             processInvestigate(message.getContent());
         } else if (type == GameMessageType.SPECIAL_ELECTION) {
             processSpecialElection(message.getContent());
+        }  else if (type == GameMessageType.VETO) {
+            processVeto(message.getContent());
         } else {
             logger.warn("Unexpected message: {}", message);
         }
@@ -257,41 +259,27 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
         specialElection = true;
     }
 
+    private void processVeto(String content) {
+        if(content.equals("Ja!")) {
+            logger.debug("President has also VETO-ed the policies");
+            assets.electionTracker ++;
+            moveTracker();
+            sendStatus("President " + playerHandler.getPresident().getName() + " has also VETO-ed the policies");
+        } else {
+            logger.debug("President has not VETO-ed the policies");
+            logger.info("Passing previous policies from president to chancellor: {} {} {}", assets.getPreviousPolicies(), playerHandler.getPresident(), playerHandler.getChancellor());
+            SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.POLICY, assets.getPreviousPolicies());
+            sendToPlayer(playerHandler.getChancellor().getName(), policyMessage);
+            sendStatus("Chancellor " + playerHandler.getChancellor().getName() + " is selecting a policy to be enacted");
+        }
+    }
+
     private void selectPolicy() {
         List<Policy> policies = assets.getTopPolicies();
         logger.info("Policies for the president: {}", policies);
         SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.POLICIES, policiesAsString(policies));
         sendToPlayer(playerHandler.getPresident().getName(), policyMessage);
         sendStatus("President " + playerHandler.getPresident().getName() + " is selecting policies to pass to the chancellor");
-
-        // TODO add to processPolicies
-        /*
-        if (nominee.equals("VETO"))
-        {
-            String vetoed = players.get(presidentID).client.processQuery("VETO?");
-            if (vetoed.equals("Ja!"))
-                veto = true;
-        }
-        if (!veto) {
-            if (nominee.equals("FASCIST")) {
-                assets.enactPolicy(Policy.FASCIST);
-                ui.enactPolicy(Policy.FASCIST);
-            } else {
-                assets.enactPolicy(Policy.LIBERAL);
-                ui.enactPolicy(Policy.LIBERAL);
-            }
-            logger.info("--Policy enacted by government: {}", nominee);
-            assets.electionTracker = 0;
-            //moveTracker();
-        } else {
-            logger.info("--Policy vetoed by government!");
-            assets.electionTracker++;
-            //moveTracker();
-        }
-
-        state = State.ELECTION;
-        //clearChancellor(chancellorID);
-         */
     }
 
     private void processPolicies(String player, String policies) {
@@ -300,10 +288,14 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             return;
         }
 
+        if(assets.isVetoActive())
+            policies += ",VETO";
+
         logger.info("Passing policies from president to chancellor: {} {} {}", policies, playerHandler.getPresident(), playerHandler.getChancellor());
         SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.POLICY, policies);
         sendToPlayer(playerHandler.getChancellor().getName(), policyMessage);
         sendStatus("Chancellor " + playerHandler.getChancellor().getName() + " is selecting a policy to be enacted");
+        assets.setPrevoiusPolicies(policies);
     }
 
     private void enactPolicies(String policy) {
@@ -312,14 +304,24 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             return;
         }
 
-        logger.info("Enacted policy by chancellor: {} {} {}", policy, playerHandler.getPresident(), playerHandler.getChancellor());
-        SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.ENACTED_POLICY, policy);
-        sendToAll(policyMessage);
-        sendStatus("Chancellor " + playerHandler.getChancellor().getName() + " has enacted a " + policy + " policy");
+        if(policy.equals("VETO"))
+        {
+            logger.info("policy vetoed by the chancellor: {} {}", policy,  playerHandler.getChancellor());
+            SecretHitlerMessage vetoMessage = buildGameMessage(GameMessageType.VETO, "Ja!,Nein!");
+            sendToPlayer(playerHandler.getPresident().getName(), vetoMessage);
+            sendStatus("Chancellor " + playerHandler.getChancellor().getName() + " has VETO-ed the policies");
+        } else {
 
-        assets.enactPolicy(Policy.valueOf(policy));
-        state = State.ELECTION;
-        scheduleCheckAssets();
+
+            logger.info("Enacted policy by chancellor: {} {} {}", policy, playerHandler.getPresident(), playerHandler.getChancellor());
+            SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.ENACTED_POLICY, policy);
+            sendToAll(policyMessage);
+            sendStatus("Chancellor " + playerHandler.getChancellor().getName() + " has enacted a " + policy + " policy");
+
+            assets.enactPolicy(Policy.valueOf(policy));
+            state = State.ELECTION;
+            scheduleCheckAssets();
+        }
     }
 
     @Override
@@ -389,6 +391,10 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             logger.info("Policy enacted: {}", topPolicy);
             assets.electionTracker = 0;
             moveTracker();
+        }
+
+        if(assets.getPolicyCount(Policy.FASCIST) == 5) {
+            assets.setVetoActive(true);
         }
 
         if (getPlayers().size() < 7) { // 5 - 6 PLAYERS
@@ -621,6 +627,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
 
     private String policiesAsString(List<Policy> policies) {
         List<String> policyNames = policies.stream().map(Enum::toString).collect(Collectors.toList());
+
         return String.join(",", policyNames);
     }
 

@@ -22,12 +22,16 @@ public class Assets {
     public final HashMap<Integer, Integer> playerMap;
     public final List<SecretHitlerPlayer> players;
 
+    private boolean vetoActive;
+    private String previousPolicies;
+
     public Assets(List<SecretHitlerPlayer> players) {
         this.players = players;
         nonCandidates = new SecretHitlerPlayer[2];
         electionTracker = 0;
         playerMap = new HashMap<>();
 
+        setVetoActive(false);
         initPlayers();
         initFactions();
         initPolicies();
@@ -174,5 +178,21 @@ public class Assets {
         Faction f = factions.get(0);
         factions.remove(0);
         return f;
+    }
+
+    public boolean isVetoActive() {
+        return vetoActive;
+    }
+
+    public void setVetoActive(boolean vetoActive) {
+        this.vetoActive = vetoActive;
+    }
+
+    public void setPrevoiusPolicies(String policies) {
+        previousPolicies = policies;
+    }
+
+    public String getPreviousPolicies() {
+        return previousPolicies;
     }
 }
