@@ -121,7 +121,7 @@ function setupCall(_lobbyName, _send) {
 
     function createOffer() {
         console.log(`createOffer:\n${offerOptions}`);
-        peerLocal.createOffer(offerOptions), sendOffer, onError);
+        peerLocal.createOffer(offerOptions, sendOffer, onError);
     }
     
     function sendOffer(desc) {
