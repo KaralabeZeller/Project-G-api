@@ -46,7 +46,7 @@ function setupCall(_lobbyName, _send) {
 
     const mediaOptions = {
         audio: true,
-        video: true,
+        video: false,
     };
 
     const offerOptions = {
