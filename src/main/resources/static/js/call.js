@@ -42,8 +42,7 @@ function setupCall(_lobbyName, _send) {
     const video1 = document.querySelector('video#video1');
     const video2 = document.querySelector('video#video2');
 
-    let peerLocal;
-    let peerRemote;
+    let peer;
 
     const mediaOptions = {
         audio: true,
@@ -69,13 +68,12 @@ function setupCall(_lobbyName, _send) {
             .then(onLocalStream)
             .catch(e => console.log('getUserMedia() error: ', e));
 
-        peerLocal = new RTCPeerConnection(servers);
-        peerRemote = new RTCPeerConnection(servers);
+        peer = new RTCPeerConnection(servers);
     }
-    
+
     function onLocalStream(stream) {
         callButton.disabled = false;
-        
+
         if (video1.srcObject !== stream) {
             console.log('onLocalStream: Received local stream: %s', stream);
             video1.srcObject = stream;
@@ -84,18 +82,28 @@ function setupCall(_lobbyName, _send) {
     }
     
     function onRemoteStream(e) {
-        if (video2.srcObject !== e.streams[0]) {
+        var stream = e.streams[0];
+        if (video2.srcObject !== stream) {
             console.log('onRemoteStream: Received remote stream: %s', stream);
-            video2.srcObject = e.streams[0];
+            video2.srcObject = stream;
         }
-    }    
+    }
     
-    // TODO other way around
-    // CALLER - peerLocal
-    
+    function hangup() {
+        console.log('hangup: Closing local and remote peer connection objects');
+        peer.close();
+        peer = null;
+        console.log('hangup: Closed local and remote peer connection objects');
+
+        hangupButton.disabled = true;
+        callButton.disabled = false;
+    }
+
+    // CALLER
+
     function onError(error) {
         console.log(`Failed to process call: ${error.toString()}`, error);
-    }        
+    }
 
     function call() {
         callButton.disabled = true;
@@ -111,90 +119,59 @@ function setupCall(_lobbyName, _send) {
             console.log(`Using video device: ${videoTracks[0].label}`);
         }
 
-        peerRemote.ontrack = onRemoteStream;
-        peerLocal.onicecandidate = iceCallbackLocal;
-        peerRemote.onicecandidate = iceCallbackRemote;
+        peer.ontrack = onRemoteStream;
+        peer.onicecandidate = sendCandidate;
         console.log('call: Created local and remote peer connection objects');
 
         console.log('call: Adding local stream tracks to local connection');
-        window.localStream.getTracks().forEach(track => peerLocal.addTrack(track, window.localStream));
+        window.localStream.getTracks().forEach(track => peer.addTrack(track, window.localStream));
 
-        createOffer()
+        createOffer();
     }
 
     function createOffer() {
         console.log(`createOffer:\n${offerOptions}`);
-        peerLocal.createOffer(sendOffer, onError, offerOptions);
+        peer.createOffer(sendOffer, onError, offerOptions);
     }
     
     function sendOffer(desc) {
         console.log(`sendOffer:\n${desc.sdp}`);
-        peerLocal.setLocalDescription(desc, () => {}, onError);
+        peer.setLocalDescription(desc, () => {}, onError);
         send('OFFER', desc);
     }
 
     function onAnswer(desc) {
         console.log(`onAnswer:\n${desc.sdp}`);
-        peerLocal.setRemoteDescription(desc, () => {}, onError);
+        peer.setRemoteDescription(desc, () => {}, onError);
     }
 
-    // TODO other way around
-    // RECEIVER - peerRemote
+    // RECEIVER
     
     function onOffer(desc) {
         console.log(`onOffer:\n${desc.sdp}`);
-        peerRemote.setRemoteDescription(desc, createAnswer, onError);
+        peer.setRemoteDescription(desc, createAnswer, onError);
     }
 
     function createAnswer() {
         console.log(`createAnswer:\n${answerOptions}`);
-        peerRemote.createAnswer(sendAnswer, onError, answerOptions);
+        peer.createAnswer(sendAnswer, onError, answerOptions);
     }
 
     function sendAnswer(desc) {
         console.log(`sendAnswer:\n${desc.sdp}`);
+        peer.setLocalDescription(desc, () => {}, onError);
         send('ANSWER', desc);
-        setLocal(desc);
-    }
-
-    function setLocal(desc) {
-        console.log(`setLocal:\n${desc.sdp}`);
-        peerRemote.setLocalDescription(desc, () => {}, onError);
-    }
-    
-    // COMMON
-
-    function hangup() {
-        console.log('hangup: Closing local and remote peer connection objects');
-        peerLocal.close();
-        peerRemote.close();
-        peerLocal = peerRemote = null;
-        console.log('hangup: Closed local and remote peer connection objects');
-
-        hangupButton.disabled = true;
-        callButton.disabled = false;
     }
 
     // ICE - STUN, TURN
 
     function onCandidate(desc) {
         var candidate = new RTCIceCandidate(desc);
-        console.log(`Adding ICE candidate: ${desc} ${candidate}`);
-        
-        // TODO fix candidate negotiation
-        peerLocal.addIceCandidate(candidate, onAddIceCandidateSuccess, onAddIceCandidateError);
-        peerRemote.addIceCandidate(candidate, onAddIceCandidateSuccess, onAddIceCandidateError);
+        console.log(`Adding ICE candidate: ${candidate}`);
+        peer.addIceCandidate(candidate, onAddIceCandidateSuccess, onAddIceCandidateError);
     }
 
-    function iceCallbackLocal(event) {
-        var candidate = event.candidate;
-        if (candidate) {
-            console.log(`Sending ICE candidate: ${candidate}`);
-            send('CANDIDATE', candidate);
-        }
-    }
-
-    function iceCallbackRemote(event) {
+    function sendCandidate(event) {
         var candidate = event.candidate;
         if (candidate) {
             console.log(`Sending ICE candidate: ${candidate}`);
@@ -209,7 +186,8 @@ function setupCall(_lobbyName, _send) {
     function onAddIceCandidateError(error) {
         console.log(`Failed to add ICE candidate: ${error.toString()}`, error);
     }
-
+    
+    // Return object with public functions
     return {
         onOffer: onOffer,
         onAnswer: onAnswer,
