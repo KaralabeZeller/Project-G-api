@@ -37,6 +37,10 @@ public class LobbyHandler {
         lobbies.remove(name);
     }
 
+    public Lobby get(String lobby) {
+        return lobbies.get(lobby);
+    }
+
     public Optional<Lobby> findLobbyForUser(String user) {
         return lobbies.values().stream().filter(l -> l.getUsers().contains(user)).findFirst();
     }
@@ -54,7 +58,4 @@ public class LobbyHandler {
         });
     }
 
-    public Lobby get(String lobby) {
-        return lobbies.get(lobby);
-    }
 }

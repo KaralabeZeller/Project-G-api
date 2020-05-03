@@ -1,6 +1,7 @@
-function initCall(_send) {
+function setupCall(_lobbyName, _send) {
     'use strict';
 
+    const lobbyName = _lobbyName
     const send = _send;
     
     const startButton = document.getElementById('startButton');
@@ -38,47 +39,66 @@ function initCall(_send) {
         ]
     };
 
-    var lobbyName = document.getElementById('lobbyName').value;
-
     const video1 = document.querySelector('video#video1');
     const video2 = document.querySelector('video#video2');
 
-    let pc1Local;
-    let pc1Remote;
+    let peerLocal;
+    let peerRemote;
+
+    const mediaOptions = {
+        audio: true,
+        video: false,    
+    };
 
     const offerOptions = {
         offerToReceiveAudio: 1,
         offerToReceiveVideo: 0,
     };
 
-    function gotStream(stream) {
-        console.log('Received local stream');
-        video1.srcObject = stream;
-        window.localStream = stream;
-        callButton.disabled = false;
-    }
+    // COMMON
 
     function start() {
         startButton.disabled = true;
 
-        console.log('Requesting local stream');
+        console.log('start: Requesting local stream');
         navigator.mediaDevices
-            .getUserMedia({
-                audio: true,
-                video: false
-            })
-            .then(gotStream)
+            .getUserMedia(mediaOptions)
+            .then(onLocalStream)
             .catch(e => console.log('getUserMedia() error: ', e));
 
-        pc1Local = new RTCPeerConnection(servers);
-        pc1Remote = new RTCPeerConnection(servers);
+        peerLocal = new RTCPeerConnection(servers);
+        peerRemote = new RTCPeerConnection(servers);
     }
+    
+    function onLocalStream(stream) {
+        callButton.disabled = false;
+        
+        if (video1.srcObject !== stream) {
+            console.log('onLocalStream: Received local stream: %s', stream);
+            video1.srcObject = stream;
+            window.localStream = stream;
+        }
+    }
+    
+    function onRemoteStream(e) {
+        if (video2.srcObject !== e.streams[0]) {
+            console.log('onRemoteStream: Received remote stream: %s', stream);
+            video2.srcObject = e.streams[0];
+        }
+    }    
+    
+    // TODO other way around
+    // CALLER - peerLocal
+    
+    function onError(error) {
+        console.log(`Failed to process call: ${error.toString()}`, error);
+    }        
 
     function call() {
         callButton.disabled = true;
         hangupButton.disabled = false;
 
-        console.log('Starting calls');
+        console.log('Creating local and remote peer connection objects');
         const audioTracks = window.localStream.getAudioTracks();
         const videoTracks = window.localStream.getVideoTracks();
         if (audioTracks.length > 0) {
@@ -88,102 +108,98 @@ function initCall(_send) {
             console.log(`Using video device: ${videoTracks[0].label}`);
         }
 
-        pc1Remote.ontrack = gotRemoteStream1;
-        pc1Local.onicecandidate = iceCallback1Local;
-        pc1Remote.onicecandidate = iceCallback1Remote;
-        console.log('pc1: created local and remote peer connection objects');
+        peerRemote.ontrack = onRemoteStream;
+        peerLocal.onicecandidate = iceCallbackLocal;
+        peerRemote.onicecandidate = iceCallbackRemote;
+        console.log('Created local and remote peer connection objects');
 
-        window.localStream.getTracks()
-            .forEach(track => pc1Local.addTrack(track, window.localStream));
-        console.log('Adding local stream to pc1Local');
+        console.log('Adding local stream tracks to local connection');
+        window.localStream.getTracks().forEach(track => peerLocal.addTrack(track, window.localStream));
 
-        pc1Local.createOffer(offerOptions)
-            .then(sendOffer, onCreateSessionDescriptionError);
-
+        createOffer()
     }
 
-    function onCreateSessionDescriptionError(error) {
-        console.log(`Failed to create session description: ${error.toString()}`);
+    function createOffer() {
+        console.log(`createOffer:\n${offerOptions}`);
+        peerLocal.createOffer(offerOptions), sendOffer, onError);
+    }
+    
+    function sendOffer(desc) {
+        console.log(`sendOffer:\n${desc.sdp}`);
+        peerLocal.setLocalDescription(desc, () => {}, onError);
+        send('OFFER', desc);
+    }
+
+    function onAnswer(desc) {
+        console.log(`onAnswer:\n${desc.sdp}`);
+        peerLocal.setRemoteDescription(desc, () => {}, onError);
     }
 
     // TODO other way around
+    // RECEIVER - peerRemote
     
-    //CALLER
-    function sendOffer(desc) {
-        console.log(`sendOffer\n${desc.sdp}`);
-        pc1Local.setLocalDescription(desc, () => {}, onCreateSessionDescriptionError);
-        send(desc, 'OFFER');
-
-    }
-
-    function gotAnswer(desc) {
-        console.log(`gotAnswer()\n${desc.sdp}`);
-        pc1Local.setRemoteDescription(desc, () => {}, onCreateSessionDescriptionError);
-    }
-
-    //RECEIVER
-    function gotOffer(desc) {
-        console.log(`gotOffer()\n${desc.sdp}`);
-        pc1Remote.setRemoteDescription(desc, createAnswer, onCreateSessionDescriptionError);
+    function onOffer(desc) {
+        console.log(`onOffer:\n${desc.sdp}`);
+        peerRemote.setRemoteDescription(desc, createAnswer, onError);
     }
 
     function createAnswer() {
-        console.log(`createAnswer()`);
-        pc1Remote.createAnswer(sendAnswer, onCreateSessionDescriptionError);
+        console.log(`createAnswer:\n`);
+        peerRemote.createAnswer(sendAnswer, onError);
     }
 
     function sendAnswer(desc) {
-        console.log(`sendAnswer()\n${desc.sdp}`);
-        send(desc, 'ANSWER');
+        console.log(`sendAnswer:\n${desc.sdp}`);
+        send('ANSWER', desc);
         setLocal(desc);
     }
 
     function setLocal(desc) {
-        console.log(`setLocal()`);
-        pc1Remote.setLocalDescription(desc, () => {}, onCreateSessionDescriptionError);
+        console.log(`setLocal:\n${desc.sdp}`);
+        peerRemote.setLocalDescription(desc, () => {}, onError);
     }
+    
+    // COMMON
 
     function hangup() {
-        console.log('Ending calls');
-        pc1Local.close();
-        pc1Remote.close();
-        pc1Local = pc1Remote = null;
+        console.log('Closing local and remote peer connection objects');
+        peerLocal.close();
+        peerRemote.close();
+        peerLocal = peerRemote = null;
+        console.log('Closed local and remote peer connection objects');
+
         hangupButton.disabled = true;
         callButton.disabled = false;
     }
 
-    function gotRemoteStream1(e) {
-        if (video2.srcObject !== e.streams[0]) {
-            video2.srcObject = e.streams[0];
-            console.log('pc1: received remote stream');
-        }
+    // ICE - STUN, TURN
+
+    function onCandidate(candidate) {
+        console.log(`Adding ICE candidate: ${candidate ? candidate.candidate : '(null)'}`);
+        // TODO fix candidate negotiation
+        peerLocal.addIceCandidate(candidate, onAddIceCandidateSuccess, onAddIceCandidateError);
+        peerRemote.addIceCandidate(candidate, onAddIceCandidateSuccess, onAddIceCandidateError);
     }
 
-    function iceCallback1Local(event) {
-        handleCandidate(event.candidate, pc1Remote, 'pc1: ', 'local');
+    function iceCallbackLocal(event) {
+        send('CANDIDATE', event.candidate);
     }
 
-    function iceCallback1Remote(event) {
-        handleCandidate(event.candidate, pc1Local, 'pc1: ', 'remote');
+    function iceCallbackRemote(event) {
+        send('CANDIDATE', event.candidate);
     }
 
-    // TODO fix handleCandidate
-    function handleCandidate(candidate, dest, prefix, type) {
-        dest.addIceCandidate(candidate)
-            .then(onAddIceCandidateSuccess, onAddIceCandidateError);
-        console.log(`${prefix}New ${type} ICE candidate: ${candidate ? candidate.candidate : '(null)'}`);
-    }
-
-    function onAddIceCandidateSuccess() {
-        console.log('AddIceCandidate success.');
+    function onAddIceCandidateSuccess(candidate) {
+        console.log(`Added ICE candidate: ${candidate.toString()}`);
     }
 
     function onAddIceCandidateError(error) {
-        console.log(`Failed to add ICE candidate: ${error.toString()}`);
+        console.log(`Failed to add ICE candidate: ${error.toString()}`, error);
     }
 
     return {
-        gotOffer: gotOffer,
-        gotAnswer: gotAnswer,
+        onOffer: onOffer,
+        onAnswer: onAnswer,
+        onCandidate: onCandidate,
     };
 }

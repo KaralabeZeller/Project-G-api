@@ -137,6 +137,7 @@ public class MessageController {
         });
     }
 
+    // TODO maybe move to CallController
     @MessageMapping("/call/{lobbyId}")
     public void receiveCall(@Payload CallMessage message, SimpMessageHeaderAccessor headerAccessor) {
         logger.info("receiveCall: Received message: {} {}", message, headerAccessor);
@@ -144,13 +145,8 @@ public class MessageController {
         String user = message.getSender();
         String lobby = message.getLobby();
 
-        CallMessage.CallMessageType type = message.getCallType();
-        if (type == CallMessage.CallMessageType.ANSWER ||type == CallMessage.CallMessageType.OFFER ) {
-            lobbyHandler.get(lobby).sendToAll(message);
-        } else {
-            logger.warn("receiveLobby: Unexpected message: {}", message);
-        }
-
+        logger.info("Forwarding call message from user '{}' to lobby '{}'", user, lobby);
+        lobbyHandler.get(lobby).sendToAll(message);
     }
 
 }

@@ -25,7 +25,8 @@ public class CallMessage extends Message {
 
     public enum CallMessageType {
         ANSWER,
-        OFFER
+        OFFER,
+        CANDIDATE,
     }
 
     private CallMessageType callType;

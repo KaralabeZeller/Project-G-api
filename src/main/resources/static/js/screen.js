@@ -43,18 +43,7 @@
         subscriptionLobby = stompClient.subscribe('/topic/lobby/' + lobbyName, onMessageReceived);
         subscriptionPublic = stompClient.subscribe('/topic/game/' + lobbyName, onMessageReceived);
 
-        call = initCall((desc, type) => sendCall(desc, type));
-    }
-    
-    function sendCall(desc, type) {
-        var message = {
-            type: 'CALL',
-            callType: type,
-            sender: userName,
-            lobby:  lobbyName,
-            data: desc,
-        };
-        stompClient.send('/app/call/' + lobbyName, {}, JSON.stringify(message));
+        call = setupCall(lobbyName, (type, data) => sendCall(type, data));
     }
 
     function onError(error) {
@@ -121,13 +110,26 @@
         } else if (type === 'CALL') {
             var callType = message.callType;
             if (callType === 'ANSWER' && message.sender !== userName) {
-                call.gotAnswer(message.data);
+                call.onAnswer(message.data);
             } else if (callType === 'OFFER' && message.sender !== userName) {
-                call.gotOffer(message.data);
+                call.onOffer(message.data);
+            } else if (callType === 'CANDIDATE' && message.sender !== userName) {
+                call.onCandidate(message.data);
             }
         } else {
             console.log('Ignoring other message: %s', message);
         }
+    }
+
+    function sendCall(type, data) {
+        var message = {
+            type: 'CALL',
+            callType: type,
+            sender: userName,
+            lobby:  lobbyName,
+            data: data,
+        };
+        stompClient.send('/app/call/' + lobbyName, {}, JSON.stringify(message));
     }
 
     function playSecretHitler() {

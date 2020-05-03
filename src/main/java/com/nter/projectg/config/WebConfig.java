@@ -36,14 +36,14 @@ public class WebConfig implements WebMvcConfigurer {
         }};
     }
 
-    @Bean
-    public Module jsonModule() {
-        return new JsonOrgModule();
-    }
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new MessageInterceptor());
+    }
+
+    @Bean
+    public Module jsonOrgModule() {
+        return new JsonOrgModule();
     }
 
 }
