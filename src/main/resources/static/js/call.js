@@ -55,7 +55,10 @@ function setupCall(_lobbyName, _send) {
         offerToReceiveVideo: 0,
     };
 
-    const answerOptions = offerOptions;
+    const answerOptions = {
+        offerToReceiveAudio: 1,
+        offerToReceiveVideo: 0,
+    };
 
     // COMMON
 
@@ -122,7 +125,7 @@ function setupCall(_lobbyName, _send) {
     }
 
     function createOffer() {
-        console.log(`createOffer:\n${offerOptions.toString()}`);
+        console.log(`createOffer:\n${offerOptions}`);
         peerLocal.createOffer(sendOffer, onError, offerOptions);
     }
     
@@ -146,7 +149,7 @@ function setupCall(_lobbyName, _send) {
     }
 
     function createAnswer() {
-        console.log(`createAnswer:\n`);
+        console.log(`createAnswer:\n${answerOptions}`);
         peerRemote.createAnswer(sendAnswer, onError, answerOptions);
     }
 
@@ -192,7 +195,7 @@ function setupCall(_lobbyName, _send) {
     }
 
     function onAddIceCandidateSuccess(candidate) {
-        console.log(`Added ICE candidate: ${candidate.toString()}`);
+        console.log(`Added ICE candidate: ${candidate ? candidate : '(null)'}`);
     }
 
     function onAddIceCandidateError(error) {
