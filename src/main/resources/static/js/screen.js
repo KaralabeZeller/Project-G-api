@@ -117,17 +117,16 @@
             }
         } else if (type === 'STOP') {
             disconnectScreen();
-
         } else if (type === 'CALL') {
             var callType = message.callType;
-            if(callType === 'ANSWER' && message.sender !== userName){
+            if (callType === 'ANSWER' && message.sender !== userName) {
                 console.log('Call - ANSWER message: %s', message);
                 call.gotAnswer(message.data);
             } else if (callType === 'OFFER' && message.sender !== userName) {
                 console.log('Call - OFFER message: %s', message);
                 call.gotOffer(message.data);
             }
-        }else {
+        } else {
             console.log('Ignoring other message: %s', message);
         }
     }
