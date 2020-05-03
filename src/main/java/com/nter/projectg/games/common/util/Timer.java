@@ -21,6 +21,7 @@ public class Timer {
     public void delay(Runnable task, int seconds) {
         logger.info("Delaying task for {} seconds: {}", seconds, task);
         executorService.schedule(task, seconds, TimeUnit.SECONDS);
+        //task.run(); //TODO remove
     }
 
     public void schedule(Runnable task, int seconds) {
