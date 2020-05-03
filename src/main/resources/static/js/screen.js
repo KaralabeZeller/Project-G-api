@@ -1,4 +1,3 @@
-
 (function () {
     'use strict';
 
@@ -30,7 +29,7 @@
     var fascistPolicies = 0;
     var tracker = 0;
 
-    var call;
+    var call; // see call.js
 
     connectScreen();
 
@@ -44,16 +43,18 @@
         subscriptionLobby = stompClient.subscribe('/topic/lobby/' + lobbyName, onMessageReceived);
         subscriptionPublic = stompClient.subscribe('/topic/game/' + lobbyName, onMessageReceived);
 
-        call = initCall((desc, type) => {
-            var message = {
-              type: 'CALL',
-              callType: type,
-              sender: userName,
-              lobby:  lobbyName,
-              data: desc,
-            };
-            stompClient.send('/app/call/' + lobbyName, {}, JSON.stringify(message));
-        });
+        call = initCall((desc, type) => sendCall(desc, type));
+    }
+    
+    function sendCall(desc, type) {
+        var message = {
+            type: 'CALL',
+            callType: type,
+            sender: userName,
+            lobby:  lobbyName,
+            data: desc,
+        };
+        stompClient.send('/app/call/' + lobbyName, {}, JSON.stringify(message));
     }
 
     function onError(error) {
@@ -120,10 +121,8 @@
         } else if (type === 'CALL') {
             var callType = message.callType;
             if (callType === 'ANSWER' && message.sender !== userName) {
-                console.log('Call - ANSWER message: %s', message);
                 call.gotAnswer(message.data);
             } else if (callType === 'OFFER' && message.sender !== userName) {
-                console.log('Call - OFFER message: %s', message);
                 call.gotOffer(message.data);
             }
         } else {
