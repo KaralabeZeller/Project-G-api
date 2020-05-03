@@ -55,6 +55,8 @@ function setupCall(_lobbyName, _send) {
         offerToReceiveVideo: 0,
     };
 
+    const answerOptions = offerOptions;
+
     // COMMON
 
     function start() {
@@ -98,7 +100,7 @@ function setupCall(_lobbyName, _send) {
         callButton.disabled = true;
         hangupButton.disabled = false;
 
-        console.log('Creating local and remote peer connection objects');
+        console.log('call: Creating local and remote peer connection objects');
         const audioTracks = window.localStream.getAudioTracks();
         const videoTracks = window.localStream.getVideoTracks();
         if (audioTracks.length > 0) {
@@ -111,17 +113,17 @@ function setupCall(_lobbyName, _send) {
         peerRemote.ontrack = onRemoteStream;
         peerLocal.onicecandidate = iceCallbackLocal;
         peerRemote.onicecandidate = iceCallbackRemote;
-        console.log('Created local and remote peer connection objects');
+        console.log('call: Created local and remote peer connection objects');
 
-        console.log('Adding local stream tracks to local connection');
+        console.log('call: Adding local stream tracks to local connection');
         window.localStream.getTracks().forEach(track => peerLocal.addTrack(track, window.localStream));
 
         createOffer()
     }
 
     function createOffer() {
-        console.log(`createOffer:\n${offerOptions}`);
-        peerLocal.createOffer(offerOptions, sendOffer, onError);
+        console.log(`createOffer:\n${offerOptions.toString()}`);
+        peerLocal.createOffer(sendOffer, onError, offerOptions);
     }
     
     function sendOffer(desc) {
@@ -145,7 +147,7 @@ function setupCall(_lobbyName, _send) {
 
     function createAnswer() {
         console.log(`createAnswer:\n`);
-        peerRemote.createAnswer(sendAnswer, onError);
+        peerRemote.createAnswer(sendAnswer, onError, answerOptions);
     }
 
     function sendAnswer(desc) {
@@ -162,11 +164,11 @@ function setupCall(_lobbyName, _send) {
     // COMMON
 
     function hangup() {
-        console.log('Closing local and remote peer connection objects');
+        console.log('hangup: Closing local and remote peer connection objects');
         peerLocal.close();
         peerRemote.close();
         peerLocal = peerRemote = null;
-        console.log('Closed local and remote peer connection objects');
+        console.log('hangup: Closed local and remote peer connection objects');
 
         hangupButton.disabled = true;
         callButton.disabled = false;

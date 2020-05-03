@@ -291,7 +291,7 @@
         var i = 0;
 
         drawing.onload = function() {
-            for(i; i <=liberalPolicies; i++){
+            for (i; i <=liberalPolicies; i++) {
                 if (i === 1) {
                     ctxLiberal.drawImage(this, 250, 160);
                 } else if (i === 2) {
