@@ -56,8 +56,6 @@ function setupCall(_lobbyName, _send) {
     };
 
     const answerOptions = {
-        offerToReceiveAudio: 1,
-        offerToReceiveVideo: 0,
     };
 
     // COMMON
@@ -179,19 +177,27 @@ function setupCall(_lobbyName, _send) {
 
     // ICE - STUN, TURN
 
-    function onCandidate(candidate) {
-        console.log(`Adding ICE candidate: ${candidate ? candidate.candidate : '(null)'}`);
+    function onCandidate(desc) {
+        var candidate = new RTCIceCandidate(desc.candidate);
+        console.log(`Adding ICE candidate: ${candidate`);
+        
         // TODO fix candidate negotiation
         peerLocal.addIceCandidate(candidate, onAddIceCandidateSuccess, onAddIceCandidateError);
         peerRemote.addIceCandidate(candidate, onAddIceCandidateSuccess, onAddIceCandidateError);
     }
 
     function iceCallbackLocal(event) {
-        send('CANDIDATE', event.candidate);
+        if (event.candidate) {
+            console.log(`Sending ICE candidate: ${event.candidate}`);
+            send('CANDIDATE', event.candidate);
+        }
     }
 
     function iceCallbackRemote(event) {
-        send('CANDIDATE', event.candidate);
+        if (event.candidate) {
+            console.log(`Sending ICE candidate: ${event.candidate}`);
+            send('CANDIDATE', event.candidate);
+        }
     }
 
     function onAddIceCandidateSuccess(candidate) {
