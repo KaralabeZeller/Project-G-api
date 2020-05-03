@@ -29,7 +29,7 @@ public class SHClient {
     private final Random random = new Random();
     private String username;
     private StompSession stompSession;
-    private final String lobbyName = "SECRET_HITLER-1062";
+    private final String lobbyName = "SECRET_HITLER-787";
 
     public ListenableFuture<StompSession> connect() {
 
@@ -146,6 +146,9 @@ public class SHClient {
                             chooseOne(content, "INVESTIGATE");
                         } else if (gameType.equals("INVESTIGATE_RESULT")) {
                             logger.info("Investigation result: {}", content);
+                        } else if (gameType.equals("VETO")) {
+                            logger.info("VETO: {}", content);
+                            chooseOne(content, "VETO");
                         } else {
                             logger.warn("Unexpected user game message: {}", new String((byte[]) o));
                         }

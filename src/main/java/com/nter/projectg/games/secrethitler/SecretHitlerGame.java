@@ -288,14 +288,16 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
             return;
         }
 
-        if(assets.isVetoActive())
+        if(assets.isVetoActive()) {
+            assets.setPrevoiusPolicies(policies);
             policies += ",VETO";
+        }
 
         logger.info("Passing policies from president to chancellor: {} {} {}", policies, playerHandler.getPresident(), playerHandler.getChancellor());
         SecretHitlerMessage policyMessage = buildGameMessage(GameMessageType.POLICY, policies);
         sendToPlayer(playerHandler.getChancellor().getName(), policyMessage);
         sendStatus("Chancellor " + playerHandler.getChancellor().getName() + " is selecting a policy to be enacted");
-        assets.setPrevoiusPolicies(policies);
+
     }
 
     private void enactPolicies(String policy) {
