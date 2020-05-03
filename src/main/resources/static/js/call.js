@@ -46,12 +46,12 @@ function setupCall(_lobbyName, _send) {
 
     const mediaOptions = {
         audio: true,
-        video: false,    
+        video: true,
     };
 
     const offerOptions = {
         offerToReceiveAudio: 1,
-        offerToReceiveVideo: 0,
+        offerToReceiveVideo: 1,
     };
 
     const answerOptions = {
@@ -68,7 +68,11 @@ function setupCall(_lobbyName, _send) {
             .then(onLocalStream)
             .catch(e => console.log('getUserMedia() error: ', e));
 
+        console.log('start: Creating peer connection object');
         peer = new RTCPeerConnection(servers);
+        peer.ontrack = onRemoteStream;
+        peer.onicecandidate = sendCandidate;
+        console.log('start: Created peer connection object');
     }
 
     function onLocalStream(stream) {
@@ -88,12 +92,30 @@ function setupCall(_lobbyName, _send) {
             video2.srcObject = stream;
         }
     }
+
+    function startStream() {
+        callButton.disabled = true;
+        hangupButton.disabled = false;
+
+        console.log('call: Enumerating local stream tracks');
+        const audioTracks = window.localStream.getAudioTracks();
+        const videoTracks = window.localStream.getVideoTracks();
+        if (audioTracks.length > 0) {
+            console.log(`Using audio device: ${audioTracks[0].label}`);
+        }
+        if (videoTracks.length > 0) {
+            console.log(`Using video device: ${videoTracks[0].label}`);
+        }
+
+        console.log('call: Adding local stream tracks to peer connection');
+        window.localStream.getTracks().forEach(track => peer.addTrack(track, window.localStream));
+    }
     
     function hangup() {
-        console.log('hangup: Closing local and remote peer connection objects');
+        console.log('hangup: Closing peer connection object');
         peer.close();
         peer = null;
-        console.log('hangup: Closed local and remote peer connection objects');
+        console.log('hangup: Closed peer connection object');
 
         hangupButton.disabled = true;
         callButton.disabled = false;
@@ -106,25 +128,7 @@ function setupCall(_lobbyName, _send) {
     }
 
     function call() {
-        callButton.disabled = true;
-        hangupButton.disabled = false;
-
-        console.log('call: Creating local and remote peer connection objects');
-        const audioTracks = window.localStream.getAudioTracks();
-        const videoTracks = window.localStream.getVideoTracks();
-        if (audioTracks.length > 0) {
-            console.log(`Using audio device: ${audioTracks[0].label}`);
-        }
-        if (videoTracks.length > 0) {
-            console.log(`Using video device: ${videoTracks[0].label}`);
-        }
-
-        peer.ontrack = onRemoteStream;
-        peer.onicecandidate = sendCandidate;
-        console.log('call: Created local and remote peer connection objects');
-
-        console.log('call: Adding local stream tracks to local connection');
-        window.localStream.getTracks().forEach(track => peer.addTrack(track, window.localStream));
+        startStream();
 
         createOffer();
     }
@@ -148,6 +152,8 @@ function setupCall(_lobbyName, _send) {
     // RECEIVER
     
     function onOffer(desc) {
+        startStream();
+
         console.log(`onOffer:\n${desc.sdp}`);
         peer.setRemoteDescription(desc, createAnswer, onError);
     }
@@ -186,7 +192,7 @@ function setupCall(_lobbyName, _send) {
     function onAddIceCandidateError(error) {
         console.log(`Failed to add ICE candidate: ${error.toString()}`, error);
     }
-    
+
     // Return object with public functions
     return {
         onOffer: onOffer,
