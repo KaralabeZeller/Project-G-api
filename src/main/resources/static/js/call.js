@@ -178,8 +178,8 @@ function setupCall(_lobbyName, _send) {
     // ICE - STUN, TURN
 
     function onCandidate(desc) {
-        var candidate = new RTCIceCandidate(desc.candidate);
-        console.log(`Adding ICE candidate: ${candidate}`);
+        var candidate = new RTCIceCandidate(desc);
+        console.log(`Adding ICE candidate: ${desc} ${candidate}`);
         
         // TODO fix candidate negotiation
         peerLocal.addIceCandidate(candidate, onAddIceCandidateSuccess, onAddIceCandidateError);
@@ -187,16 +187,18 @@ function setupCall(_lobbyName, _send) {
     }
 
     function iceCallbackLocal(event) {
-        if (event.candidate) {
-            console.log(`Sending ICE candidate: ${event.candidate}`);
-            send('CANDIDATE', event.candidate);
+        var candidate = event.candidate;
+        if (candidate) {
+            console.log(`Sending ICE candidate: ${candidate}`);
+            send('CANDIDATE', candidate);
         }
     }
 
     function iceCallbackRemote(event) {
-        if (event.candidate) {
-            console.log(`Sending ICE candidate: ${event.candidate}`);
-            send('CANDIDATE', event.candidate);
+        var candidate = event.candidate;
+        if (candidate) {
+            console.log(`Sending ICE candidate: ${candidate}`);
+            send('CANDIDATE', candidate);
         }
     }
 
