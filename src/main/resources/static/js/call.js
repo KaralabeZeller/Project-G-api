@@ -179,7 +179,7 @@ function setupCall(_lobbyName, _send) {
 
     function onCandidate(desc) {
         var candidate = new RTCIceCandidate(desc.candidate);
-        console.log(`Adding ICE candidate: ${candidate`);
+        console.log(`Adding ICE candidate: ${candidate}`);
         
         // TODO fix candidate negotiation
         peerLocal.addIceCandidate(candidate, onAddIceCandidateSuccess, onAddIceCandidateError);
