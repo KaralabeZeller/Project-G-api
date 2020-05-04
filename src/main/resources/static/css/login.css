@@ -25,12 +25,19 @@ body {
     display:flex;
 }
 
+.title {
+    position: absolute;
+    left: 500px;
+}
+
 #form_wrapper {
     width: 1000px;
     height: 700px;
     /* this will help us center it*/
     margin:auto;
+
     background-color: var(--form_bg);
+    box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
     /* make it a grid container*/
     display: grid;
     /* with two columns of same width*/

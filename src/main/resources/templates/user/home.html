@@ -5,33 +5,32 @@
 <head>
     <title>Admin Page</title>
     <link rel="stylesheet" href="/css/global.css"/>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/home.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
 <body>
-<div class="container">
 
-    <form th:action="@{/logout}" method="get">
-        <button class="btn btn-md btn-danger btn-block" name="registration" type="Submit">Logout</button>
-    </form>
-
-    <div class="panel-group" style="margin-top:40px">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <span th:utext="${userName}"></span>
-            </div>
-            <div class="panel-body">
-                <form th:action="@{/lobbies}" method="get">
-                    <button class="btn btn-lg btn-primary btn-block" type="Submit">Lobbies</button>
-                </form>
-            </div>
-            <p class="admin-message-text text-center" th:utext="${userMessage}"></p>
-        </div>
-    </div>
-
-</div>
+    <table>
+        <tr>
+            <td>
+                <nav id="navMenu"></nav>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-top:100px;">
+                <div class="container">
+                    <div class="panel-heading">
+                        <h2><span th:utext="${userName}"></span></h2>
+                    </div>
+                    <span id='lobbies'>
+                        <a href="/lobbies">lobbies</a>
+                    </span>
+                </div>
+            </td>
+        </tr>
+    </table>
+<script src="/js/common.js"></script>
 </body>
 </html>
