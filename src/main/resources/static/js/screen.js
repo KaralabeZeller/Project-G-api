@@ -8,7 +8,8 @@
         canvasLiberal = document.getElementById('game-canvas-liberal'),
         canvasFascist = document.getElementById('game-canvas-fascist'),
         statusBar     = document.getElementById('statusBar'),
-        statusBarText = document.getElementById('statusBarText');
+        statusBarText = document.getElementById('statusBarText'),
+        qrCode        = document.getElementById("qrCode");
 
     var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0' ];
 
@@ -44,6 +45,8 @@
         subscriptionPublic = stompClient.subscribe('/topic/game/' + lobbyName, onMessageReceived);
 
         call = setupCall(lobbyName, (type, data) => sendCall(type, data));
+        statusText('Scan the QR on your phone to join the game');
+        generateQR();
     }
 
     function onError(error) {
@@ -62,13 +65,17 @@
         console.log('DISCONNECTED');
     }
 
-     function statusText(text) {
+    function statusText(text) {
         statusBarText.classList.add('hide');
         setTimeout(function () {
             statusBarText.innerHTML = text;
             statusBarText.classList.remove('hide');
         }, 500);
-     }
+    }
+
+    function generateQR() {
+        qrCode.src = "https://qrickit.com/api/qr.php?d=https://api.project-g.xyz/join/" + lobbyName  ;
+    }
 
     function onMessageReceived(payload) {
         var message = JSON.parse(payload.body);
