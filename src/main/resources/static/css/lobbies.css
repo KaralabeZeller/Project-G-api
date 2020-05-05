@@ -9,7 +9,6 @@
         --icon_color:#6b6b6b;
  }
 
-
 .container {
     width: 1000px;
     height: 700px;
@@ -20,17 +19,29 @@
     background-color: var(--form_bg);
     box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
 
-    padding: 15px 15px;
+    padding: 1vh 15px;
 }
 
- /* make it responsive */
-@media screen and (max-width:768px) {
+#createLobby {
+    width:100%;
+    padding: 10px;
+    border: 2px;
+}
 
-    /* make the layout  a single column and add some margin to the wrapper */
-    .container {
-        grid-template-columns: 1fr;
-        margin-left: 10px;
-        margin-right: 10px;
-    }
+#lobbyList {
+    height: 50px;
 
+}
+
+.tableButton {
+    background-color: var(--submit_bg);
+
+    color: white;
+    text-transform: uppercase;
+
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+    height: 40px;
+    padding: 10px;
 }

@@ -11,8 +11,7 @@
 </head>
 
 <body>
-
-    <table>
+    <table id="bodyTable">
         <tr>
             <td>
                 <nav id="navMenu"></nav>
@@ -24,9 +23,10 @@
                     <div class="panel-heading">
                         <h2><span th:utext="${userName}"></span></h2>
                     </div>
-                    <span id='lobbies'>
-                        <a href="/lobbies">lobbies</a>
-                    </span>
+                    <div>
+                        <form action="/lobbies" method="get" id="lobbiesForm"/>
+                        <button type="submit" form="lobbiesForm" value="Submit" class="defaultButton">Lobbies</button>
+                    </div>
                 </div>
             </td>
         </tr>

@@ -48,7 +48,7 @@ body {
     padding: 5vh 15px;
 }
 
- #form_left {
+#form_left {
     /* center the image */
     display: flex;
     justify-content: center;
