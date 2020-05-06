@@ -35,15 +35,7 @@ public class UserController {
     @Autowired
     GameHandler gameFactory;
 
-    @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
-    public ModelAndView login(HttpServletRequest request) {
-        String referrer = request.getHeader("Referer");
-        request.getSession().setAttribute("referrer", referrer);
 
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("login");
-        return modelAndView;
-    }
 
     @SuppressWarnings("SameReturnValue")
     @RequestMapping(value = {"/health"}, method = RequestMethod.GET)
