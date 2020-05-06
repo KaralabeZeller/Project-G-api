@@ -9,6 +9,7 @@ import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/*
 @Configuration
 public class ServerConfig {
 
@@ -37,4 +38,4 @@ public class ServerConfig {
         connector.setRedirectPort(8443);
         return connector;
     }
-}
+}*/
