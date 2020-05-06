@@ -1,6 +1,5 @@
 package com.nter.projectg.controller;
 
-import com.nter.projectg.config.RedirectConfig;
 import com.nter.projectg.games.common.GameHandler;
 import com.nter.projectg.games.common.util.Constants;
 import com.nter.projectg.lobby.LobbyHandler;
@@ -36,13 +35,24 @@ public class UserController {
     GameHandler gameFactory;
 
 
-
     @SuppressWarnings("SameReturnValue")
     @RequestMapping(value = {"/health"}, method = RequestMethod.GET)
     @ResponseBody
     public String health() {
         return "OK";
     }
+
+
+    @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
+    public ModelAndView login(HttpServletRequest request) {
+        String referrer = request.getHeader("Referer");
+        request.getSession().setAttribute("referrer", referrer);
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("login");
+        return modelAndView;
+    }
+
 
     @RequestMapping(value = {"/join/{lobbyId}"}, method = RequestMethod.GET)
     public ModelAndView join(@PathVariable("lobbyId") String lobbyId, Map<String, Object> model) {
@@ -128,17 +138,7 @@ public class UserController {
         String environment = request.getHeader("host").contains("localhost") ? "LOCAL" : "REMOTE";
         logger.info("sendRedirect environment: {}", environment);
 
-        String redirectUrl = "lobbies";
-        if (environment.equals("LOCAL")) {
-            redirectUrl = response.encodeRedirectURL(redirectUrl);
-            RedirectConfig.setLocation("LOCAL");
-        } else {
-            redirectUrl = response.encodeRedirectURL("https://" + request.getHeader("host") + "/" + redirectUrl);
-            RedirectConfig.setLocation("REMOTE");
-        }
-        logger.info("sendRedirect encoded URL: {}", redirectUrl);
-
-        response.sendRedirect(redirectUrl);
+        response.sendRedirect("lobbies");
         return "redirect:user/lobbies";
 
     }

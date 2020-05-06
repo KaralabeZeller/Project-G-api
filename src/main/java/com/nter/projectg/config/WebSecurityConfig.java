@@ -65,6 +65,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
 
+        http
+                .requiresChannel()
+                .anyRequest()
+                .requiresSecure();
+
 
 
         http.authorizeRequests()
@@ -72,16 +77,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
+                .loginPage("/login.html")
                 .loginPage("/login")
+                .loginProcessingUrl("/login")
                 .usernameParameter("name")
                 .passwordParameter("password")
-                .loginProcessingUrl("/login")
-                .successHandler(myAuthSuccessHandler())
-                .failureHandler(myAuthFailureHandler())
+                .defaultSuccessUrl("/user/home")
+                .failureUrl("/login?error")
                 .permitAll()
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessHandler(myLogoutSuccessHandler());
+                .logoutSuccessUrl("/login");
     }
 
     @Bean
