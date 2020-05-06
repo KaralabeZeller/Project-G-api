@@ -44,6 +44,16 @@ public class UserController {
         return "OK";
     }
 
+    @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
+    public ModelAndView login(HttpServletRequest request) {
+        String referrer = request.getHeader("Referer");
+        request.getSession().setAttribute("referrer", referrer);
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("login");
+        return modelAndView;
+    }
+
     @RequestMapping(value = {"/join/{lobbyId}"}, method = RequestMethod.GET)
     public ModelAndView join(@PathVariable("lobbyId") String lobbyId, Map<String, Object> model) {
         ModelAndView modelAndView = new ModelAndView();
