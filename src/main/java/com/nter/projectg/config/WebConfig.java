@@ -2,10 +2,12 @@ package com.nter.projectg.config;
 
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.datatype.jsonorg.JsonOrgModule;
+import com.nter.projectg.controller.MessageInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -33,6 +35,12 @@ public class WebConfig implements WebMvcConfigurer {
             setRedirectHttp10Compatible(false);
         }};
     }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new MessageInterceptor());
+    }
+
     @Bean
     public Module jsonOrgModule() {
         return new JsonOrgModule();

@@ -19,8 +19,12 @@ public class MyAuthFailureHandler implements AuthenticationFailureHandler {
         logger.info("onAuthenticationFailure() environment: {}", environment);
 
         String redirectUrl;
-
-        redirectUrl = request.getScheme() + "://" + request.getServerName() + (request.getServerPort() != 80 ? ":" + request.getServerPort() : "") + "/login?error";
+        if (environment.equals("LOCAL")) {
+            redirectUrl = request.getScheme() + "://" + request.getServerName() + (request.getServerPort() != 80 ? ":" + request.getServerPort() : "") + "/login?error";
+        } else {
+            redirectUrl = "https://" + request.getServerName() + ":443/login?error";
+        }
+        logger.info("onAuthenticationFailure() redirectUrl: {}", redirectUrl);
 
         response.sendRedirect(redirectUrl);
     }
