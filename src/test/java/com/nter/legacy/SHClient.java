@@ -29,7 +29,7 @@ public class SHClient {
     private final Random random = new Random();
     private String username;
     private StompSession stompSession;
-    private final String lobbyName = "SECRET_HITLER-747";
+    private final String lobbyName = "SECRET_HITLER-1092";
 
     public ListenableFuture<StompSession> connect() {
 
@@ -41,8 +41,8 @@ public class SHClient {
 
         WebSocketStompClient stompClient = new WebSocketStompClient(sockJsClient);
 
-        //String url = "wss://api.project-g.xyz:443/ws";
-        String url = "ws://localhost:8080/ws";
+        String url = "ws://api.project-g.xyz:8080/ws";
+        //String url = "ws://localhost:8080/ws";
         return stompClient.connect(url, headers, new SessionHandler());
     }
 
