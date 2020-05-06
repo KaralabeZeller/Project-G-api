@@ -267,7 +267,7 @@
         tracker = track;
 
         drawLiberalBoard();
-        setTimeout(redrawLiberal, 50);
+        setTimeout(redrawLiberal, 100);
 
     }
 
