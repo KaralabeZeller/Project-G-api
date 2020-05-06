@@ -36,4 +36,8 @@ public class GameHandler {
         return Arrays.stream(GameName.values()).anyMatch(n -> n.name().equals(name));
     }
 
+    public void remove(String lobbyID) {
+        games.remove(lobbyID);
+    }
+
 }

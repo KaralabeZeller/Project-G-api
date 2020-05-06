@@ -1,3 +1,7 @@
+#controllerBody {
+    background-color: #c9ccce;
+}
+
 .form-control {
 	width: 100%;
 	min-height: 38px;
@@ -86,6 +90,7 @@ button.accent {
 #chat-page {
 	position: relative;
 	height: 100%;
+	background-color: #c9ccce;
 }
 
 .chat-container {
@@ -95,7 +100,7 @@ button.accent {
     top: 5%;
 	left: 1%;
 	height: 80%;
-	width: 98%;
+	width: 25%;
 }
 
 #chat-page ul {
@@ -196,4 +201,10 @@ button.accent {
 	position: absolute;
 	top: 65px;
 	width: 100%;
+}
+
+@media (max-width: 600px) {
+    .chat-container {
+    	width: 98%
+    }
 }

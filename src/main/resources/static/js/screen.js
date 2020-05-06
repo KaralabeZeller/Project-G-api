@@ -147,6 +147,7 @@
         splashScreen.classList.add('hidden');
         rules.classList.add('hidden');
         splashVictory.classList.add('hidden');
+        qrCode.classList.add('hidden');
 
         drawLiberalBoard();
         drawFascistBoard();

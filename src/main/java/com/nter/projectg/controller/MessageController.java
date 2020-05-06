@@ -107,18 +107,6 @@ public class MessageController {
                 Game<?, ?> game = gameFactory.createGame(GameName.SECRET_HITLER, lobby);
                 game.start();
                 logger.info("Started game: Secret Hitler {}", game);
-
-                // TODO maybe move to LobbyHandler
-                // Fake timeout to reset Game
-                try {
-                    Thread.sleep(TimeUnit.MINUTES.toMillis(10));
-                } catch (InterruptedException ignored) {
-
-                }
-
-                logger.debug("Stopping game: Secret Hitler {}", game);
-                game.stop();
-                logger.debug("Stopped game: Secret Hitler {}", lobby);
             });
         });
     }
