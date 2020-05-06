@@ -25,7 +25,18 @@ public class MyAuthSuccessHandler implements AuthenticationSuccessHandler {
     }
 
     protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        redirectStrategy.sendRedirect(request, response, "user/home");
+        String redirect = (String) request.getSession().getAttribute("refferer");
+        try {
+            if (redirect != null) {
+                request.getSession().removeAttribute("refferer");
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        if(redirect != null)
+            redirectStrategy.sendRedirect(request, response, redirect);
+        else
+            redirectStrategy.sendRedirect(request, response, "user/home");
     }
 
     protected void clearAuthenticationAttributes(HttpServletRequest request) {
