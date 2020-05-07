@@ -74,7 +74,7 @@
     }
 
     function generateQR() {
-        qrCode.src = "https://qrickit.com/api/qr.php?d=https://api.project-g.xyz/join/" + lobbyName  ;
+        qrCode.src = "https://qrickit.com/api/qr.php?d=http://api.project-g.xyz:8080/join/" + lobbyName  ;
     }
 
     function onMessageReceived(payload) {
