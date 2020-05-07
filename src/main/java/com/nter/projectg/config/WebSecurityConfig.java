@@ -3,10 +3,7 @@ package com.nter.projectg.config;
 import com.nter.projectg.handler.MyAuthFailureHandler;
 import com.nter.projectg.handler.MyAuthSuccessHandler;
 import com.nter.projectg.handler.MyLogoutSuccessHandler;
-import org.apache.catalina.Context;
-import org.apache.catalina.connector.Connector;
-import org.apache.tomcat.util.descriptor.web.SecurityCollection;
-import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
