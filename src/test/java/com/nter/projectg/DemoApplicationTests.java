@@ -74,7 +74,7 @@ public class DemoApplicationTests {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void testJoin() throws InterruptedException {
         logger.info("Heló!");
         List<String> users = Arrays.asList("TESTER1", "TESTER2", "TESTER3", "TESTER4", "TESTER5");

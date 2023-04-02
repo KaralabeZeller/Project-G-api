@@ -33,7 +33,7 @@ public class SecretHitlerGame extends Game<SecretHitlerMessage, SecretHitlerPlay
     private boolean specialElection;
 
     public SecretHitlerGame(Lobby lobby) {
-        super(lobby, "SecretHitler", 5, 10);
+        super(lobby, "SecretHitler", 2, 10);
 
         logger.debug("Initializing Secret Hitler: {}", this);
         initializeAssets();

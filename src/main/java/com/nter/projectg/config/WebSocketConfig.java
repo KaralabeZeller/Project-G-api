@@ -17,7 +17,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // TODO restrict allowed origins instead of *
         registry.addEndpoint("/ws/")
-                .setAllowedOrigins("*")
+                //.setAllowedOrigins("*")
                 .withSockJS()
                 .setHeartbeatTime(TimeUnit.SECONDS.toMillis(10))
                 .setDisconnectDelay(TimeUnit.MINUTES.toMillis(1));
