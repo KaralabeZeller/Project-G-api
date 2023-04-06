@@ -29,7 +29,7 @@ public class BlackJackMessage extends Message {
         SPLIT,
         DOUBLE,
         BET,
-        DEAL
+        SCREEN, DEAL
     }
 
     private BlackJackMessage.GameMessageType gameType;

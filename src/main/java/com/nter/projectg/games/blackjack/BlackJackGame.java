@@ -53,8 +53,14 @@ public class BlackJackGame extends Game<BlackJackMessage, BlackJackPlayer> {
             logger.info("{} was dealt {} of {}", player.getName(), randomCard1.getRank(), randomCard1.getSuit());
             logger.info("{} was dealt {} of {}", player.getName(), randomCard2.getRank(), randomCard2.getSuit());
 
-            BlackJackMessage dealermessage = buildGameMessage(BlackJackMessage.GameMessageType.DEAL, randomCard1.toString() + "," + randomCard2.toString());
-            sendToPlayer(player.getName(), dealermessage);
+            String content = randomCard1.toString() + "," + randomCard2.toString();
+
+            BlackJackMessage dealerMessage = buildGameMessage(BlackJackMessage.GameMessageType.DEAL, content);
+            sendToPlayer(player.getName(), dealerMessage);
+
+            BlackJackMessage tableMessage = buildGameMessage(BlackJackMessage.GameMessageType.SCREEN, player.getName() + ": " + content);
+            sendToAll(tableMessage);
+            //sendStatus("President " + playerHandler.getPresident().getName() + " has nominated " + playerHandler.getChancellor().getName() + " as a chancellor");
         }
     }
 

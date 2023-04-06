@@ -1,22 +1,10 @@
-.game-canvas-liberal {
-	width: 55%;
-	height: 40%;
+.poker-board{
+	width: 98%;
+	height: 82%;
 	background-color: #fff;
 	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
 	position: absolute;
 	top: 5%;
-	left: 1%;
-	image-rendering: optimizeQuality; /* Awesome future-browsers       */
-}
-
-
-.game-canvas-fascist {
-	width: 55%;
-	height: 40%;
-	background-color: #fff;
-	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
-	position: absolute;
-	top: 46%;
 	left: 1%;
 	image-rendering: optimizeQuality; /* Awesome future-browsers       */
 }
@@ -31,10 +19,6 @@
     left: 60%;
     padding: 0px 0px 5px 0px;
  }
-
-.player-role {
-    font-weight:bold;
-}
 
 .splash-screen {
      position: fixed;
@@ -100,77 +84,6 @@
 }
 .hide {
     opacity: 0 !important;
-}
-
-*[id^='playerVote-']{
-   opacity: 1;
-   transition: opacity 0.5s;
- }
- .hide {
-   opacity: 0 !important;
- }
-
-/*
- *  Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree.
- */
-button {
-  margin: 0 20px 0 0;
-  width: 85px;
-}
-
-button#hangupButton {
-    margin: 0;
-}
-
-#buttonDiv {
-   position: absolute;
-   top: 1%;
-   left: 1%;
-}
-
-video {
-  margin: 0 0 20px 0;
-  --width: 40%;
-  width: var(--width);
-  height: calc(var(--width) * 0.75);
-}
-
-video#video1 {
-  position: absolute;
-  margin: 0 20px 20px 0;
-}
-
-video#video2 {
-  position: absolute;
-  left: 500px;
-  margin: 0 20px 20px 0;
-}
-
-@media screen and (max-width: 756px) {
-  button {
-    margin: 0 11px 10px 0;
-  }
-
-  video {
-    height: 100px;
-    margin: 0 0 10px 0;
-    width: calc(50% - 8px);
-  }
-
-  video#video1 {
-    position: absolute;
-    margin: 0 10px 10px 0;
-  }
-
-  video#video2 {
-    position: absolute;
-    left: 200px;
-    margin: 0 10px 10px 0;
-  }
 }
 
 #qrCode {

@@ -82,27 +82,52 @@
             playBlackJack();
         } else if (type === 'GAME') {
             var gameType = message.gameType;
+            if (gameType === 'SCREEN') {
+               updatePlayer(message.content);
+            } else {
+                console.log('Ignoring game message: %s', message);
+            }
         } else if (type === 'STOP') {
             disconnectScreen();
         } else {
             console.log('Ignoring other message: %s', message);
         }
     }
+
+    function updatePlayer(message) {
+
+        var split = message.split(': ');
+        var player = split[0];
+        var cards = split[1].split(',');
+
+        console.log("Player %s is dealt %s and %s", player, cards[0], cards[1]);
+
+        var cardName1 =  '/games/common/cards/poker/' + cards[0] + '.svg';
+        var cardName2 =  '/games/common/cards/poker/' + cards[1] + '.svg';
+
+        var div1 = document.getElementById('card1-' + player);
+        var output = '<img src="' + cardName1 + '" height="60" />';
+        div1.innerHTML = output;
+
+        var div2 = document.getElementById('card2-' + player);
+        var output2 = '<img src="' + cardName2 + '" height="60" />';
+        div2.innerHTML = output2;
+    }
     
-     function playBlackJack() {
+    function playBlackJack() {
             
-            pokerBoard.classList.remove('hidden');
-            playersArea.classList.remove('hidden');
-            statusBar.classList.remove('hidden');
-            splashScreen.classList.add('hidden');
-            rules.classList.add('hidden');
-          
-            qrCode.classList.add('hidden');
-    
-            users.forEach(drawPlayer);
-            
-            drawPokerBoard();
-        }
+        pokerBoard.classList.remove('hidden');
+        playersArea.classList.remove('hidden');
+        statusBar.classList.remove('hidden');
+        splashScreen.classList.add('hidden');
+        rules.classList.add('hidden');
+
+        qrCode.classList.add('hidden');
+
+        users.forEach(drawPlayer);
+
+        drawPokerBoard();
+    }
         
     function drawPokerBoard() {
         var ctxBoard = pokerBoard.getContext('2d');
@@ -122,7 +147,7 @@
         };
 
 
-        drawingBoard.src = '/games/blackjack/poker_table.png';
+        drawingBoard.src = '/games/blackjack/felt.jpg';
     
     }
 
@@ -133,8 +158,8 @@
         var row = document.createElement('tr');
         var avatar = document.createElement('td');
         var playerName = document.createElement('td');
-        var playerRole = document.createElement('td');
-        var playerVote = document.createElement('td');
+        var card1 = document.createElement('td');
+        var card2 = document.createElement('td');
         var color = '#c9ccce';
 
         table.id = 'table-' + player;
@@ -144,16 +169,15 @@
         playerName.id = 'name-' + player;
         playerName.width = '150 px';
         playerName.style.fontWeight = 'bold';
-        playerRole.id = player;
-        playerVote.id = 'playerVote-' + player;
-        playerRole.width = '230 px';
+        card1.id = 'card1-' + player;
+        card2.id = 'card2-' + player;
         avatar.id = 'avatar-' + player;
         avatar.innerHTML = '<img src="/games/secrethitler/lizard.png" width="60" height="60" />';
 
         row.appendChild(avatar);
         row.appendChild(playerName);
-        row.appendChild(playerRole);
-        row.appendChild(playerVote);
+        row.appendChild(card1);
+        row.appendChild(card2);
         body.appendChild(row);
         table.appendChild(body);
         div.appendChild(table);
