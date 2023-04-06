@@ -1,0 +1,180 @@
+.game-canvas-liberal {
+	width: 55%;
+	height: 40%;
+	background-color: #fff;
+	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+	position: absolute;
+	top: 5%;
+	left: 1%;
+	image-rendering: optimizeQuality; /* Awesome future-browsers       */
+}
+
+
+.game-canvas-fascist {
+	width: 55%;
+	height: 40%;
+	background-color: #fff;
+	box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+	position: absolute;
+	top: 46%;
+	left: 1%;
+	image-rendering: optimizeQuality; /* Awesome future-browsers       */
+}
+
+.players {
+    min-width: 100px;
+    height: auto;
+    box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    left: 60%;
+    padding: 0px 0px 5px 0px;
+ }
+
+.player-role {
+    font-weight:bold;
+}
+
+.splash-screen {
+     position: fixed;
+     top: 45%;
+     left: 40%;
+     transform: translate(-50%, -50%);
+}
+
+.splash-victory {
+     position: fixed;
+     top: 47%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+     z-index:10;
+}
+
+.rules {
+     position: fixed;
+     top: 1%;
+     left: 80%;
+     height: 91.5%;
+     width: 19%;
+     overflow: auto;
+     box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+     background-color: #cbd0dc;
+     font-family: "Calibri", Helvetica, Arial, sans-serif;
+     padding: 5px 15px 5px 15px;
+}
+
+.status-bar {
+    width: 98%;
+    height: 5%;
+    box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+    position: absolute;
+    top: 94%;
+    left: 1%;
+    background-color: #dcdfe0;
+    text-align : center;
+    padding: 0px 0px 20px 20px;
+ }
+
+ .status-bar-text {
+    font-family: "Arial Black", Gadget, sans-serif;
+	font-size: 30px;
+	letter-spacing: 1px;
+	word-spacing: 1px;
+	color: #6B6B6B;
+	margin : auto;
+    position : absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+ }
+
+#game-canvas-victory{
+    background:transparent;
+}
+
+#statusBarText {
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+.hide {
+    opacity: 0 !important;
+}
+
+*[id^='playerVote-']{
+   opacity: 1;
+   transition: opacity 0.5s;
+ }
+ .hide {
+   opacity: 0 !important;
+ }
+
+/*
+ *  Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree.
+ */
+button {
+  margin: 0 20px 0 0;
+  width: 85px;
+}
+
+button#hangupButton {
+    margin: 0;
+}
+
+#buttonDiv {
+   position: absolute;
+   top: 1%;
+   left: 1%;
+}
+
+video {
+  margin: 0 0 20px 0;
+  --width: 40%;
+  width: var(--width);
+  height: calc(var(--width) * 0.75);
+}
+
+video#video1 {
+  position: absolute;
+  margin: 0 20px 20px 0;
+}
+
+video#video2 {
+  position: absolute;
+  left: 500px;
+  margin: 0 20px 20px 0;
+}
+
+@media screen and (max-width: 756px) {
+  button {
+    margin: 0 11px 10px 0;
+  }
+
+  video {
+    height: 100px;
+    margin: 0 0 10px 0;
+    width: calc(50% - 8px);
+  }
+
+  video#video1 {
+    position: absolute;
+    margin: 0 10px 10px 0;
+  }
+
+  video#video2 {
+    position: absolute;
+    left: 200px;
+    margin: 0 10px 10px 0;
+  }
+}
+
+#qrCode {
+    position:absolute;
+    top:78%;
+    left:1%
+}

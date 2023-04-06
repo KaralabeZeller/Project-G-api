@@ -29,7 +29,7 @@ public class SHClient {
     private final Random random = new Random();
     private String username;
     private StompSession stompSession;
-    private final String lobbyName = "SECRET_HITLER-429";
+    private final String lobbyName = "SECRET_HITLER-330";
 
     public ListenableFuture<StompSession> connect() {
 

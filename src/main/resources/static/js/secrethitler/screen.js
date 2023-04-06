@@ -30,7 +30,6 @@
     var fascistPolicies = 0;
     var tracker = '0';
 
-    var call; // see call.js
 
     connectScreen();
 
@@ -44,7 +43,6 @@
         subscriptionLobby = stompClient.subscribe('/topic/lobby/' + lobbyName, onMessageReceived);
         subscriptionPublic = stompClient.subscribe('/topic/game/' + lobbyName, onMessageReceived);
 
-        call = setupCall(lobbyName, (type, data) => sendCall(type, data));
         statusText('Scan the QR on your phone to join the game');
         generateQR();
     }
@@ -114,29 +112,9 @@
             }
         } else if (type === 'STOP') {
             disconnectScreen();
-        } else if (type === 'CALL') {
-            var callType = message.callType;
-            if (callType === 'ANSWER' && message.sender !== userName) {
-                call.onAnswer(message.data);
-            } else if (callType === 'OFFER' && message.sender !== userName) {
-                call.onOffer(message.data);
-            } else if (callType === 'CANDIDATE' && message.sender !== userName) {
-                call.onCandidate(message.data);
-            }
         } else {
             console.log('Ignoring other message: %s', message);
         }
-    }
-
-    function sendCall(type, data) {
-        var message = {
-            type: 'CALL',
-            callType: type,
-            sender: userName,
-            lobby:  lobbyName,
-            data: data,
-        };
-        stompClient.send('/app/call/' + lobbyName, {}, JSON.stringify(message));
     }
 
     function playSecretHitler() {

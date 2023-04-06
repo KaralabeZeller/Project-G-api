@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>BLACK_JACK | Project-G</title>
+    <link rel="stylesheet" href="/css/global.css"/>
+    <link rel="stylesheet" href="/css/blackjack/screen.css"/>
+</head>
+<body>
+<input type="hidden" id="userName" th:value="${userName}"/>
+<input type="hidden" id="lobbyName" th:value="${lobbyName}"/>
+
+<noscript>
+    <h2>Sorry! Your browser doesn't support Javascript</h2>
+</noscript>
+
+<img id="splash-page" class="splash-screen" src="/games/blackjack/blackjack_splash.png" alt="Secret Hitler">
+<div id="game-page">
+    <div class="game-page-container">
+        <canvas id="poker-board" class="game-canvas-liberal hidden" style="z-index: 0;"></canvas>
+        <div id="playersArea" class="players hidden"></div>
+        <div id="statusBar" class="status-bar">
+            <p id="statusBarText" class="status-bar-text"></p>
+        </div>
+    </div>
+</div>
+
+<img id="qrCode"/>
+
+<div id="rules" class="rules">
+    <h2 style="text-align: justify;"><strong>OVERVIEW</strong></h2>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<script src="/js/blackjack/screen.js"></script>
+</body>
+</html>

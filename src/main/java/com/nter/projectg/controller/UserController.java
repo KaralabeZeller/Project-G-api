@@ -63,8 +63,17 @@ public class UserController {
         UserModel user = userService.findByName(auth.getName());
         model.put("userName", user.getName());
 
+        String modelName = "";
+        for(Constants.GameName name : Constants.GameName.values()) {
+            if (lobbyId.startsWith(name.toString()))
+                modelName = name.toString();
+        }
+
+        logger.info("Creating view for: {}", modelName);
+
+
         model.put("lobbyName", lobbyId);
-        modelAndView.setViewName("user/lobby");
+        modelAndView.setViewName("game/lobby/" + modelName);
         return modelAndView;
     }
 
@@ -77,7 +86,16 @@ public class UserController {
         model.put("userName", user.getName());
 
         model.put("lobbyName", lobbyId);
-        modelAndView.setViewName("user/screen");
+
+        String modelName = "";
+        for(Constants.GameName name : Constants.GameName.values()) {
+            if (lobbyId.startsWith(name.toString()))
+                modelName = name.toString();
+        }
+
+        logger.info("Creating view for: {}", modelName);
+
+        modelAndView.setViewName("game/screen/" + modelName);
         return modelAndView;
     }
 

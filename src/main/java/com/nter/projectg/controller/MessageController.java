@@ -2,6 +2,7 @@ package com.nter.projectg.controller;
 
 import com.nter.projectg.games.common.Game;
 import com.nter.projectg.games.common.GameHandler;
+import com.nter.projectg.games.common.util.Constants;
 import com.nter.projectg.games.common.util.Constants.GameName;
 import com.nter.projectg.lobby.LobbyHandler;
 import com.nter.projectg.model.common.Message;
@@ -103,10 +104,17 @@ public class MessageController {
         // Fake asynchronous computation
         return CompletableFuture.runAsync(() -> {
             lobbyHandler.findLobbyForUser(user).ifPresent(lobby -> {
-                logger.debug("Starting game: Secret Hitler {}", lobby);
-                Game<?, ?> game = gameFactory.createGame(GameName.SECRET_HITLER, lobby);
+                logger.debug("Starting game: {}", lobby);
+
+                String modelName = "";
+                for(Constants.GameName name : Constants.GameName.values()) {
+                    if (lobby.getName().startsWith(name.toString()))
+                        modelName = name.toString();
+                }
+                logger.debug("Creating game from : {}", modelName);
+                Game<?, ?> game = gameFactory.createGame(gameFactory.getGameName(modelName), lobby);
                 game.start();
-                logger.info("Started game: Secret Hitler {}", game);
+                logger.info("Started game: {}", game);
             });
         });
     }
@@ -123,18 +131,6 @@ public class MessageController {
                 }
             });
         });
-    }
-
-    // TODO maybe move to CallController
-    @MessageMapping("/call/{lobbyId}")
-    public void receiveCall(@Payload CallMessage message, SimpMessageHeaderAccessor headerAccessor) {
-        logger.info("receiveCall: Received message: {} {}", message, headerAccessor);
-
-        String user = message.getSender();
-        String lobby = message.getLobby();
-
-        logger.info("Forwarding call message from user '{}' to lobby '{}'", user, lobby);
-        lobbyHandler.get(lobby).sendToAll(message);
     }
 
 }

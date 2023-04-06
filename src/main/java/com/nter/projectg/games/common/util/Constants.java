@@ -6,8 +6,9 @@ public class Constants {
     }
 
     // TODO add game name if one is implemented
-    public enum GameName {
-        SECRET_HITLER
+    public static enum GameName {
+        SECRET_HITLER,
+        BLACK_JACK
     }
 
 }

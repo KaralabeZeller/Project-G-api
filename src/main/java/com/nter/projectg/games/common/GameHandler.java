@@ -1,5 +1,6 @@
 package com.nter.projectg.games.common;
 
+import com.nter.projectg.games.blackjack.BlackJackGame;
 import com.nter.projectg.games.common.util.Constants.GameName;
 import com.nter.projectg.games.secrethitler.SecretHitlerGame;
 import com.nter.projectg.lobby.Lobby;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -24,6 +26,9 @@ public class GameHandler {
         if (name == GameName.SECRET_HITLER) {
             return new SecretHitlerGame(lobby);
         }
+        if (name == GameName.BLACK_JACK) {
+            return new BlackJackGame(lobby);
+        }
 
         throw new UnsupportedOperationException("Unsupported game: " + name);
     }
@@ -36,6 +41,9 @@ public class GameHandler {
         return Arrays.stream(GameName.values()).anyMatch(n -> n.name().equals(name));
     }
 
+    public GameName getGameName(String name) {
+        return Arrays.stream(GameName.values()).filter(n -> n.toString().equals(name)).findFirst().orElse(null);
+    }
     public void remove(String lobbyID) {
         games.remove(lobbyID);
     }

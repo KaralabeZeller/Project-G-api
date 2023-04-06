@@ -1,5 +1,6 @@
 package com.nter.projectg.lobby;
 
+import com.nter.projectg.games.common.util.Constants;
 import com.nter.projectg.model.common.Message;
 import com.nter.projectg.model.lobby.LobbyMessage;
 import com.nter.projectg.model.lobby.LobbyMessage.LobbyMessageType;
@@ -21,6 +22,7 @@ public class Lobby {
     // TODO map to LobbyModel
     private String name;
 
+    private Constants.GameName gameName;
     private final SimpMessageSendingOperations messagingTemplate;
 
     private final Map<String, String> userSession = new ConcurrentHashMap<>();
